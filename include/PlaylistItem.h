@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <cstdio>
+#include <iostream>
 
 class PlaylistItem {
 
@@ -10,10 +12,10 @@ protected:
 	int duration;							// Duration in seconds
 
 public:
-	PlaylistItem();
-	virtual ~PlaylistItem();
+	PlaylistItem();							// PlayList Item default constructor
+	virtual ~PlaylistItem();				// Playlist Item destructor
 
-	virtual void displayItem() = 0;
-	int getDuration();
+	virtual void displayItem() = 0;			// Abstract function for displaying a Playlist Item
+	int getDuration();						// Returns Playlist Item duration
 
 };

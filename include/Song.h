@@ -3,15 +3,15 @@
 #include <iostream>
 class Song : public PlaylistItem {
 private:
-	std::string artist;		// artist name
-	std::string album;		// album name
-	std::string genre;		// genre name
-	int playCount;			// number of plays
+	std::string artist;		// Artist name
+	std::string album;		// Album name
+	std::string genre;		// Genre name
+	int playCount;			// Number of plays
 
 public:
-	Song();							// default constructor
-	virtual ~Song();				// destructor
-	virtual void displayItem();		// outputs item
-	void incrementPlayCount();		// increments the play count
+	Song();							// Default constructor
+	virtual ~Song();				// Destructor
+	virtual void displayItem();		// Outputs item
+	void incrementPlayCount();		// Increments the play count
 };
 

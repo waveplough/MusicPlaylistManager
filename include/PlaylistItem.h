@@ -12,11 +12,18 @@ protected:
 	int duration;							// Duration in seconds
 
 public:
-	PlaylistItem();							// PlayList Item default constructor
-	virtual ~PlaylistItem();				// Playlist Item destructor
+	// Constructors
+	PlaylistItem();																		// PlayList Item default constructor
+	PlaylistItem(const std::string id, const std::string& title, int duration);			// Parameterized constructor
+
+	virtual ~PlaylistItem();															// Playlist Item destructor
+
+	// Getters
 	const std::string& getItemID() const { return itemID; }
 	const std::string& getTitle() const { return title;  }
-	virtual void displayItem();			// Abstract function for displaying a Playlist Item
-	int getDuration() const { return duration; }						// Returns Playlist Item duration
+	int getDuration() const { return duration; }										// Returns Playlist Item duration
+
+	virtual void displayItem() = 0;														// Abstract function for displaying a Playlist Item
+	
 
 };

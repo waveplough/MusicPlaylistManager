@@ -1,17 +1,31 @@
 #include "Song.h"
 
-Song::Song() : artist(""), album(""), genre(""), playCount(0) {}	// Default constructor
+Song::Song() : artist(""), album(""), genre(""), playCount(0) {}								// Default constructor
 
-Song::~Song() {}													// Destructor
+Song::Song(const std::string& id, const std::string& title, int dur, const std::string& artist	// Parameterized constructor
+	,const std::string& album, const std::string& genre)
+
+	:	PlaylistItem(id,title,dur),
+		artist(artist),
+		album(album),
+		genre(genre)
+{}
 
 
-void Song::displayItem() {											// Displays item
+
+
+Song::~Song() {}																				// Destructor
+
+
+void Song::displayItem() {																		// Displays item
 	PlaylistItem::displayItem();
-	printf("Artist: %s\nAlbum: %s\nGenre: %s\nPlay Count: %d\n",
-		artist.c_str(), album.c_str(), genre.c_str(), playCount);
+	printf("Artist: %s\n",
+			"Album: %s\n",
+			"Genre: %s\n",
+			"Play Count: %d\n", artist.c_str(), album.c_str(), genre.c_str(), playCount);
 }
 
-void Song::incrementPlayCount() {									// Increments the play count
+void Song::incrementPlayCount() {																// Increments the play count
 	playCount++;
 }	
 bool Song::operator==(const Song& other) const {

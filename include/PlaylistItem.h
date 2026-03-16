@@ -14,8 +14,9 @@ protected:
 public:
 	PlaylistItem();							// PlayList Item default constructor
 	virtual ~PlaylistItem();				// Playlist Item destructor
-
-	virtual void displayItem() = 0;			// Abstract function for displaying a Playlist Item
-	int getDuration();						// Returns Playlist Item duration
+	const std::string& getItemID() const { return itemID; }
+	const std::string& getTitle() const { return title;  }
+	virtual void displayItem();			// Abstract function for displaying a Playlist Item
+	int getDuration() const { return duration; }						// Returns Playlist Item duration
 
 };

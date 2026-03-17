@@ -1,4 +1,5 @@
 #include "Song.h"
+#include "Playlist.h"
 
 Song::Song() : artist(""), album(""), genre(""), playCount(0) {}								// Default constructor
 
@@ -10,9 +11,6 @@ Song::Song(const std::string& id, const std::string& title, int dur, const std::
 		album(album),
 		genre(genre)
 {}
-
-
-
 
 Song::~Song() {}																				// Destructor
 
@@ -37,4 +35,13 @@ std::ostream& operator<<(std::ostream& os, const Song& song) {
 		<< " | " << song.artist
 		<< " | " << song.duration << "s";
 	return os;
+}
+void Playlist::addSong(const std::shared_ptr<Song>& song) {
+	// if song already exists (checks by the ID)
+	for (const auto& existing : songs) {
+		if (existing->getItemID() == song->getItemID()) {
+			return; // already in playlist
+		}
+	}
+	songs.push_back(song);
 }

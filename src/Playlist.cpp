@@ -35,7 +35,7 @@ void Playlist::addSong(const std::shared_ptr<Song>& song) {                     
     songs.push_back(song);
 }
 
-void Playlist::removeSong(const std::string& songID) {                          // Finds and deletes a song
+void Playlist::removeSong(const std::string& songID) {                              // Finds and deletes a song
     for (auto s = songs.begin(); s != songs.end(); s++) {
         if ((*s)->getItemID() == songID) {
             songs.erase(s);
@@ -43,8 +43,34 @@ void Playlist::removeSong(const std::string& songID) {                          
     }
 }
 
-void Playlist::reorderSong(size_t oldIndex, size_t newIndex) {                  // Reorder song
-    std::shared_ptr<Song> tempSong = songs[oldIndex];
-    songs[oldIndex] = songs[newIndex];
-    songs[newIndex] = tempSong;
+void Playlist::reorderSong(size_t oldIndex, size_t newIndex) {                      // Reorder song
+
+    if (oldIndex == newIndex) { return; }
+
+    // Swap first
+
+    if (oldIndex < newIndex) {
+        int lower = oldIndex;
+        std::shared_ptr<Song> lowerSong = songs[lower];
+        int higher = newIndex;
+        int i = 0;
+
+        for (i = lower; i < higher; i++) {   // Bubbles up
+            songs[i] = songs[i + 1];
+        }
+        songs[i] = lowerSong;
+    }
+    else
+    {
+        int lower = newIndex;
+        int higher = oldIndex;
+        std::shared_ptr<Song> higherSong = songs[higher];
+        int i = 0;
+
+        for (i = higher; i > lower; i--) {   // Bubbles down
+            songs[i] = songs[i - 1];
+        }
+        songs[i] = higherSong;
+    }
+
 }

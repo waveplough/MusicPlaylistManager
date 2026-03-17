@@ -36,12 +36,4 @@ std::ostream& operator<<(std::ostream& os, const Song& song) {
 		<< " | " << song.duration << "s";
 	return os;
 }
-void Playlist::addSong(const std::shared_ptr<Song>& song) {
-	// if song already exists (checks by the ID)
-	for (const auto& existing : songs) {
-		if (existing->getItemID() == song->getItemID()) {
-			return; // already in playlist
-		}
-	}
-	songs.push_back(song);
-}
+

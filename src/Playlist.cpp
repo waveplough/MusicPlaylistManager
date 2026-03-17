@@ -25,7 +25,7 @@ void Playlist::displayPlaylist() const {
     }
 }
 
-void Playlist::addSong(const std::shared_ptr<Song>& song) {
+void Playlist::addSong(const std::shared_ptr<Song>& song) {                     // Adds a song to the playlist
     // if song already exists (checks by the ID)
     for (const auto& existing : songs) {
         if (existing->getItemID() == song->getItemID()) {
@@ -33,4 +33,18 @@ void Playlist::addSong(const std::shared_ptr<Song>& song) {
         }
     }
     songs.push_back(song);
+}
+
+void Playlist::removeSong(const std::string& songID) {                          // Finds and deletes a song
+    for (auto s = songs.begin(); s != songs.end(); s++) {
+        if ((*s)->getItemID() == songID) {
+            songs.erase(s);
+        }
+    }
+}
+
+void Playlist::reorderSong(size_t oldIndex, size_t newIndex) {                  // Reorder song
+    std::shared_ptr<Song> tempSong = songs[oldIndex];
+    songs[oldIndex] = songs[newIndex];
+    songs[newIndex] = tempSong;
 }

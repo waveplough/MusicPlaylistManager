@@ -6,6 +6,8 @@
 #include <memory>
 #include <iostream>
 #include <numeric>
+#include <unordered_map>
+
 class Playlist
 {
 private:

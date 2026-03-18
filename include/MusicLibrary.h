@@ -21,7 +21,7 @@ public:
 
 	//getters
 	const std::vector<std::shared_ptr<Song>>& getSongs() const { return songs; }
-	const std::vector<std::unique_ptr<Playlist>>& getPlaylist() const { return playlists; }
+	const std::vector<std::unique_ptr<Playlist>>& getPlaylists() const { return playlists; }
 
 };
 

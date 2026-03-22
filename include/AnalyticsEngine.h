@@ -8,9 +8,15 @@ class AnalyticsEngine
     template<typename T = Song>
     class AnalyticsEngine {
     public:
-        AnalyticsEngine(const std::vector<std::shared_ptr<T>>& songData);
+        // Stores a reference to the song vector
+        AnalyticsEngine(const std::vector<std::shared_ptr<T>>& songData)
+            : songs(songData) {
+        }
 
-        int computeTotalListeningTime() const;
+        int computeTotalListeningTime() const {
+            int totalSeconds = 0;
+        }
+
         std::vector<std::shared_ptr<T>> computeMostPlayedSongs(int limit = 10) const;
         double computeAverageSongDuration() const;
         std::unordered_map<std::string, int> computeSongsByGenre() const;

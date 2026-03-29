@@ -10,7 +10,7 @@ bool PlaylistManager::addSongToPlaylist(const std::string& songID, std::string& 
         }
     }
     Playlist* targetPlaylist = nullptr;
-    for (const auto& p : library.getPlaylist()) {
+    for (const auto& p : library.getPlaylists()) {
         if (p->getPlaylistID() == playlistID) {
             targetPlaylist = p.get();
             break;
@@ -26,7 +26,7 @@ bool PlaylistManager::addSongToPlaylist(const std::string& songID, std::string& 
 }
 
 bool PlaylistManager::removeSongFromPlayList(const std::string& songID, std::string& playlistID) {
-    for (const auto& p : library.getPlaylist()) {
+    for (const auto& p : library.getPlaylists()) {
         if (p->getPlaylistID() == playlistID) {
             p->removeSong(songID);
             return true;

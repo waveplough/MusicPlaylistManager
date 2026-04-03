@@ -8,10 +8,12 @@
 #include <numeric>
 #include <unordered_map>
 
+static int nextId = 0;
+
 class Playlist
 {
 private:
-	static int nextId;
+	
 	std::string playlistID;
 	std::string name;
 	std::vector<std::shared_ptr<Song>> songs;

@@ -2,9 +2,9 @@
 #include "ui_mainwindow.h"
 #include "MediaController.h"
 
-MainWindow::MainWindow(MediaController &_mediaControl, QWidget *parent)
+MainWindow::MainWindow(MediaController &mediaControl, QWidget *parent)
     : QMainWindow(parent)
-    , mediaControl(_mediaControl)
+    , mediaControl(mediaControl)
     , ui(new Ui::MainWindow)
     
 {
@@ -14,7 +14,7 @@ MainWindow::MainWindow(MediaController &_mediaControl, QWidget *parent)
     ui->mainSplitter->setSizes({ 551, 240, 240 });
 
     // Slots and signals manual connections
-    connect(ui->actionNew_Song, &QAction::triggered, this, &MainWindow::on_actionNew_Song_triggered);
+    connect(ui->actionNewSong, &QAction::triggered, this, &MainWindow::onActionNewSongTriggered);
 }
 
 MainWindow::~MainWindow()
@@ -23,6 +23,6 @@ MainWindow::~MainWindow()
 }
 
 // Adding a song through the file menu
-void MainWindow::on_actionNew_Song_triggered() {
+void MainWindow::onActionNewSongTriggered() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));
 }

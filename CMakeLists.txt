@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project("MusicPlaylistManager")
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -23,3 +24,4 @@ add_executable(MusicPlaylistManager
 )
 target_include_directories(MusicPlaylistManager PRIVATE include)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Widgets)
+target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Multimedia)

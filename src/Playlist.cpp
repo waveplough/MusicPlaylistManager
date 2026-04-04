@@ -39,6 +39,7 @@ void Playlist::removeSong(const std::string& songID) {                          
     for (auto s = songs.begin(); s != songs.end(); s++) {
         if ((*s)->getItemID() == songID) {
             songs.erase(s);
+            return;
         }
     }
 }

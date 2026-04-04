@@ -1,13 +1,19 @@
-#include "PlaylistManager.h"
-#include <QtWidgets/QApplication>
-#include <iostream>
+#include "mainwindow.h"
+//#include "MediaController.h"
+
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
 
-    QApplication app(argc, argv);
-    PlaylistManager window;
-    //window.show();
-    return app.exec();
+    QApplication a(argc, argv);
+
+    // Make a media controller object for broad use
+    MediaController mediaControl;
+
+    // Pass to mainwindow
+    MainWindow w(mediaControl);
+    w.show();
+    return QCoreApplication::exec();
 
 }

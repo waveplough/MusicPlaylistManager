@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "MediaController.h"
+//#include "MediaController.h"
 
 #include <QApplication>
 

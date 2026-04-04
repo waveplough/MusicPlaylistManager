@@ -20,6 +20,8 @@ add_executable(MusicPlaylistManager
     "src/Song.cpp"
     "src/mainwindow.cpp"
     "src/mainwindow.ui"
+    "src/MediaController.cpp"
+    "include/MediaController.h"
     "include/mainwindow.h"
 )
 target_include_directories(MusicPlaylistManager PRIVATE include)

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include "MediaController.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

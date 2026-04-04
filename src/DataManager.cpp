@@ -1,119 +1,190 @@
 #include "DataManager.h"
-#include <fstream>
-#include <iostream>
-#include <sstream>
 
-DataManager::DataManager(MusicLibrary& library) : library(library)			// Initialize Reference To Library
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QString>
+
+#include <unordered_map>
+
+DataManager::DataManager(MusicLibrary& library) : library(library)             // Initialize Reference To Library
 {
 }
 
-DataManager::~DataManager()													// Destructor
+DataManager::~DataManager()                                                    // Destructor
 {
 }
 
 bool DataManager::saveData(const std::string& filename) const
 {
-	std::ofstream outFile(filename);										// Open File For Writing
+    QFile outFile(QString::fromStdString(filename));                           // Open File For Writing
 
-	if (!outFile)
-	{
-		std::cerr << "Error: Could not open file for saving.\n";			// Print Error If File Fails
-		return false;
-	}
+    if (!outFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        return false;
+    }
 
-	outFile << "SONGS\n";													// Mark Start Of Songs Section
-	for (const auto& song : library.getSongs())
-	{
-		outFile << song->getItemID() << ","
-			<< song->getTitle() << ","
-			<< song->getDuration() << ","
-			<< song->getArtist() << ","
-			<< song->getAlbum() << ","
-			<< song->getGenre() << ","
-			<< song->getPlayCount() << "\n";								// Write Song Data
-	}
+    QJsonObject rootObject;
+    QJsonArray songsArray;
+    QJsonArray playlistsArray;
 
-	outFile << "PLAYLISTS\n";												// Mark Start Of Playlists Section
-	for (const auto& playlist : library.getPlaylists())
-	{
-		outFile << playlist->getPlaylistID() << ","
-			<< playlist->getName() << "\n";									// Write Playlist Data
-	}
+    // Save Songs
+    for (const auto& song : library.getSongs())
+    {
+        if (!song) continue;
 
-	outFile.close();														// Close File
-	return true;
+        QJsonObject songObject;
+        songObject["id"] = QString::fromStdString(song->getItemID());
+        songObject["title"] = QString::fromStdString(song->getTitle());
+        songObject["duration"] = song->getDuration();
+        songObject["artist"] = QString::fromStdString(song->getArtist());
+        songObject["album"] = QString::fromStdString(song->getAlbum());
+        songObject["genre"] = QString::fromStdString(song->getGenre());
+        songObject["playCount"] = song->getPlayCount();
+
+        songsArray.append(songObject);
+    }
+
+    // Save Playlists
+    for (const auto& playlist : library.getPlaylists())
+    {
+        if (!playlist) continue;
+
+        QJsonObject playlistObject;
+        QJsonArray playlistSongsArray;
+
+        playlistObject["playlistID"] = QString::fromStdString(playlist->getPlaylistID());     // Save Playlist ID For Lookup During Load
+        playlistObject["name"] = QString::fromStdString(playlist->getName());
+
+        for (const auto& song : playlist->getSongs())
+        {
+            if (!song) continue;
+            playlistSongsArray.append(QString::fromStdString(song->getItemID()));
+        }
+
+        playlistObject["songs"] = playlistSongsArray;
+        playlistsArray.append(playlistObject);
+    }
+
+    rootObject["songs"] = songsArray;
+    rootObject["playlists"] = playlistsArray;
+
+    QJsonDocument doc(rootObject);
+    outFile.write(doc.toJson(QJsonDocument::Indented));
+    outFile.close();
+
+    return true;
 }
 
 bool DataManager::loadData(const std::string& filename)
 {
-	std::ifstream inFile(filename);											// Open File For Reading
+    QFile inFile(QString::fromStdString(filename));                            // Open File For Reading
 
-	if (!inFile)
-	{
-		std::cerr << "Error: Could not open file for loading.\n";			// Print Error If File Fails
-		return false;
-	}
+    if (!inFile.open(QIODevice::ReadOnly))
+    {
+        return false;
+    }
 
-	std::string line;
-	bool readingSongs = false;												// Flag For Songs Section
-	bool readingPlaylists = false;											// Flag For Playlists Section
+    QByteArray fileData = inFile.readAll();
+    inFile.close();
 
-	while (std::getline(inFile, line))
-	{
-		if (line == "SONGS")
-		{
-			readingSongs = true;											// Switch To Reading Songs
-			readingPlaylists = false;
-			continue;
-		}
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(fileData, &parseError);      // Parse JSON Data
 
-		if (line == "PLAYLISTS")
-		{
-			readingSongs = false;
-			readingPlaylists = true;										// Switch To Reading Playlists
-			continue;
-		}
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject())
+    {
+        return false;
+    }
 
-		if (readingSongs)
-		{
-			std::stringstream ss(line);										// Create Stream From Line
-			std::string id, title, durationStr, artist, album, genre, playCountStr;
+    QJsonObject rootObject = doc.object();
+    QJsonArray songsArray = rootObject["songs"].toArray();
+    QJsonArray playlistsArray = rootObject["playlists"].toArray();
 
-			std::getline(ss, id, ',');
-			std::getline(ss, title, ',');
-			std::getline(ss, durationStr, ',');
-			std::getline(ss, artist, ',');
-			std::getline(ss, album, ',');
-			std::getline(ss, genre, ',');
-			std::getline(ss, playCountStr, ',');
+    // Build a quick lookup table from the library after songs are added
+    std::unordered_map<std::string, std::shared_ptr<Song>> songMap;
 
-			if (!id.empty() && !title.empty() && !durationStr.empty())
-			{
-				int duration = std::stoi(durationStr);						// Convert Duration To Int
+    // Load Songs
+    for (const QJsonValue& value : songsArray)
+    {
+        if (!value.isObject()) continue;
 
-				std::shared_ptr<Song> song = std::make_shared<Song>(
-					id, title, duration, artist, album, genre
-				);															// Create Song Object
+        QJsonObject songObject = value.toObject();
 
-				library.addSong(song);										// Add Song To Library
-			}
-		}
+        std::string id = songObject["id"].toString().toStdString();
+        std::string title = songObject["title"].toString().toStdString();
+        int duration = songObject["duration"].toInt();
+        std::string artist = songObject["artist"].toString().toStdString();
+        std::string album = songObject["album"].toString().toStdString();
+        std::string genre = songObject["genre"].toString().toStdString();
 
-		if (readingPlaylists)
-		{
-			std::stringstream ss(line);										// Create Stream From Line
-			std::string playlistID, name;
+        if (id.empty() || title.empty())
+        {
+            continue;
+        }
 
-			std::getline(ss, playlistID, ',');
-			std::getline(ss, name, ',');
+        std::shared_ptr<Song> song = std::make_shared<Song>(
+            id, title, duration, artist, album, genre
+        );
 
-			if (!playlistID.empty() && !name.empty())
-			{
-				library.createPlaylist(playlistID, name);					// Create Playlist
-			}
-		}
-	}
+        library.addSong(song);
+    }
 
-	inFile.close();															// Close File
-	return true;
+    // Rebuild song map from the library after addSong()
+    for (const auto& song : library.getSongs())
+    {
+        if (song)
+        {
+            songMap[song->getItemID()] = song;
+        }
+    }
+
+    // Load Playlists
+    for (const QJsonValue& value : playlistsArray)
+    {
+        if (!value.isObject()) continue;
+
+        QJsonObject playlistObject = value.toObject();
+
+        std::string playlistID = playlistObject["playlistID"].toString().toStdString();
+        std::string name = playlistObject["name"].toString().toStdString();
+
+        if (playlistID.empty() || name.empty())
+        {
+            continue;
+        }
+
+        library.createPlaylist(playlistID, name);
+
+        // Find the playlist that was just created
+        Playlist* createdPlaylist = nullptr;
+        for (const auto& playlist : library.getPlaylists())
+        {
+            if (playlist && playlist->getPlaylistID() == playlistID)
+            {
+                createdPlaylist = playlist.get();
+                break;
+            }
+        }
+
+        if (!createdPlaylist)
+        {
+            continue;
+        }
+
+        // Add songs into this playlist using saved song IDs
+        QJsonArray playlistSongsArray = playlistObject["songs"].toArray();
+        for (const QJsonValue& songIdValue : playlistSongsArray)
+        {
+            std::string songID = songIdValue.toString().toStdString();
+
+            auto found = songMap.find(songID);
+            if (found != songMap.end())
+            {
+                createdPlaylist->addSong(found->second);
+            }
+        }
+    }
+
+    return true;
 }

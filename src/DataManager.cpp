@@ -54,7 +54,7 @@ bool DataManager::saveData(const std::string& filename) const
         QJsonObject playlistObject;
         QJsonArray playlistSongsArray;
 
-		playlistObject["playlistID"] = QString::fromStdString(playlist->getPlaylistID());     // Save Playlist ID For Lookup During Load
+        playlistObject["playlistID"] = QString::fromStdString(playlist->getPlaylistID());     // Save Playlist ID For Lookup During Load
         playlistObject["name"] = QString::fromStdString(playlist->getName());
 
         for (const auto& song : playlist->getSongs())
@@ -90,7 +90,7 @@ bool DataManager::loadData(const std::string& filename)
     inFile.close();
 
     QJsonParseError parseError;
-	QJsonDocument doc = QJsonDocument::fromJson(fileData, &parseError);      // Parse JSON Data
+    QJsonDocument doc = QJsonDocument::fromJson(fileData, &parseError);      // Parse JSON Data
 
     if (parseError.error != QJsonParseError::NoError || !doc.isObject())
     {

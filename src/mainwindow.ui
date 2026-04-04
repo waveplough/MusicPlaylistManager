@@ -243,7 +243,7 @@
             </property>
             <layout class="QVBoxLayout" name="LibraryLayout">
              <item>
-              <widget class="QWidget" name="widget_2" native="true">
+              <widget class="QWidget" name="widget2" native="true">
                <layout class="QVBoxLayout" name="verticalLayout">
                 <item>
                  <widget class="QLabel" name="LibraryLabel">
@@ -398,7 +398,7 @@ background-color:rgb(140,140,140);
               <string>Song Title</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="playerPushButton_Volume">
+            <widget class="QPushButton" name="playerVolumeButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -430,7 +430,7 @@ padding:0px;
               </size>
              </property>
             </widget>
-            <widget class="QLabel" name="playerTimeEnd">
+            <widget class="QLabel" name="playerCurrentTime">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -452,7 +452,7 @@ padding:0px;
               <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
             </widget>
-            <widget class="QLabel" name="playerTimeEnd_2">
+            <widget class="QLabel" name="playerTimeEnd">
              <property name="geometry">
               <rect>
                <x>430</x>
@@ -787,7 +787,7 @@ background-color:rgb(140,140,140);
               <height>68</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_plToolbar">
+            <layout class="QHBoxLayout" name="toolsBoxLayout">
              <item>
               <widget class="QLabel" name="toolsLabel">
                <property name="font">
@@ -817,7 +817,7 @@ background-color:rgb(140,140,140);
               </spacer>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
+              <layout class="QVBoxLayout" name="verticalLayout4">
                <item>
                 <widget class="QPushButton" name="moveButton">
                  <property name="styleSheet">
@@ -871,7 +871,7 @@ background-color:rgb(140,140,140);
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <layout class="QVBoxLayout" name="verticalLayout5">
                <item>
                 <widget class="QPushButton" name="reorderButton">
                  <property name="styleSheet">
@@ -925,7 +925,7 @@ background-color:rgb(140,140,140);
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
+              <layout class="QVBoxLayout" name="verticalLayout6">
                <item>
                 <widget class="QPushButton" name="sortButton">
                  <property name="styleSheet">
@@ -979,7 +979,7 @@ background-color:rgb(140,140,140);
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
+              <layout class="QVBoxLayout" name="verticalLayout7">
                <item>
                 <widget class="QPushButton" name="searchButton">
                  <property name="styleSheet">
@@ -1033,7 +1033,7 @@ background-color:rgb(140,140,140);
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_8">
+              <layout class="QVBoxLayout" name="verticalLayout8">
                <item>
                 <widget class="QPushButton" name="addButton">
                  <property name="styleSheet">
@@ -1087,7 +1087,7 @@ background-color:rgb(140,140,140);
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
+              <layout class="QVBoxLayout" name="verticalLayout9">
                <item>
                 <widget class="QPushButton" name="trashButton">
                  <property name="styleSheet">
@@ -1214,7 +1214,7 @@ background-color:rgb(140,140,140);
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QListWidget" name="listWidget_3"/>
+              <widget class="QListWidget" name="playlistSongsList"/>
              </item>
              <item>
               <widget class="QScrollBar" name="verticalScrollBar">
@@ -1446,7 +1446,7 @@ background-color:rgb(140,140,140);
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QWidget" name="widget_3" native="true">
+         <widget class="QWidget" name="widget3" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -1477,7 +1477,7 @@ background-color:rgb(140,140,140);
            <item>
             <layout class="QVBoxLayout" name="songCardLayout">
              <item>
-              <widget class="QWidget" name="widget_5" native="true">
+              <widget class="QWidget" name="widget5" native="true">
                <layout class="QGridLayout" name="gridLayout">
                 <item row="0" column="0">
                  <widget class="QLabel" name="songNameCardLabel">

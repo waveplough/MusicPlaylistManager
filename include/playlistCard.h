@@ -16,12 +16,12 @@ class playlistCard : public QWidget
 	Q_OBJECT
 
 public:
-	playlistCard(std::unique_ptr<Playlist>& playlist, QWidget *parent = nullptr);
+	playlistCard(Playlist* playlist, QWidget *parent = nullptr);
 	~playlistCard();
 
 private:
 	Ui::playlistCardClass *ui;
-	std::unique_ptr<Playlist> playlist;
+	Playlist* playlist;
 	QPixmap Translucency(QImage image);
 };
 

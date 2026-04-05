@@ -4,9 +4,9 @@
 #include <qpainter.h>
 #include "playlistCard.h"
 
-playlistCard::playlistCard(std::unique_ptr<Playlist>& playlist, QWidget *parent)
+playlistCard::playlistCard(Playlist* playlist, QWidget *parent)
 	: QWidget(parent)
-    , playlist(playlist.get())
+    , playlist(playlist)
 	, ui(new Ui::playlistCardClass())
 {
 	ui->setupUi(this);

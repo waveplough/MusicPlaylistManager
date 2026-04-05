@@ -56,6 +56,10 @@ public slots:
     // Analytics Page
     void onAnalyticsExitButtonClicked();
 
+    // Playlist Tab
+    void onAddPlaylistButtonClicked();
+    void onPlaylistEditorExitButtonClicked();
+
 protected:
     void closeEvent(QCloseEvent* event) override;
 

@@ -3,7 +3,7 @@
 #include <QtWidgets>
 #include <qpainter.h>
 #include "songCard.h"
-#include "ui_songCard.h"
+
 
 
 songCard::songCard(QWidget *parent)

@@ -9,7 +9,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/include")
+#set(CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/src")
 
 add_executable(MusicPlaylistManager
     "src/main.cpp"
@@ -23,8 +23,11 @@ add_executable(MusicPlaylistManager
     "src/mainwindow.cpp"
     "src/mainwindow.ui"
     "src/MediaController.cpp"
-    "src/songCard.ui"
+    "include/songCard.ui"
     "src/songCard.cpp"
+    "include/playlistCard.ui"
+    "src/playlistCard.cpp"
+    "include/playlistCard.h"
     "include/songCard.h"
     "include/MediaController.h"
     "include/mainwindow.h"

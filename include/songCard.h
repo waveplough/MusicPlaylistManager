@@ -4,7 +4,7 @@
 #define SONGCARD_H
 
 #include <QWidget>
-//#include "songCard.ui"
+#include "ui_songCard.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class songCard; };

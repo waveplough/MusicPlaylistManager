@@ -1502,7 +1502,11 @@ background-color:rgb(140,140,140);
             </layout>
            </item>
            <item>
-            <widget class="QListWidget" name="playlistCardBox"/>
+            <widget class="QListWidget" name="playlistCardBox">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

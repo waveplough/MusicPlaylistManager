@@ -718,7 +718,7 @@ background-color:rgb(140,140,140);
                    </widget>
                   </item>
                   <item>
-                   <widget class="QListWidget" name="listWidget"/>
+                   <widget class="QListWidget" name="libraryList"/>
                   </item>
                  </layout>
                 </widget>

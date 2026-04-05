@@ -10,9 +10,10 @@ int main(int argc, char *argv[])
 
     // Make a media controller object for broad use
     MediaController mediaControl;
+    MusicLibrary musicLibrary;
 
     // Pass to mainwindow
-    MainWindow w(mediaControl);
+    MainWindow w(mediaControl,musicLibrary);
     w.show();
     return QCoreApplication::exec();
 

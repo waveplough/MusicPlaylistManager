@@ -48,8 +48,7 @@
    <property name="font">
     <font>
      <pointsize>10</pointsize>
-     <bold>false</bold>
-     <kerning>true</kerning>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">

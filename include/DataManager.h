@@ -23,9 +23,8 @@ public:
 	bool loadData(const std::string& filename);             // Load Data From File
 	std::shared_ptr<Song> parseSongData(const QString& filename, QMediaPlayer& player);	// parses the meta data of newly added songs
 	MusicLibrary& getMusicLibrary() { return library; }
+	std::string generateSongID();   // Generates a song ID
 
 private:
 	MusicLibrary& library;                                  // Reference To Music Library
 };
-
-std::string generateID();   // Generates a song ID

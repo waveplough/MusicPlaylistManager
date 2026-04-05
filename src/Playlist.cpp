@@ -1,11 +1,11 @@
 #include "Playlist.h"
 
-Playlist::Playlist() :  playlistID(generateID()),                   // Default constructor
+Playlist::Playlist() :  playlistID(std::to_string(nextId++)),                   // Default constructor
                         name("Default"), 
                         songs{ std::make_shared<Song>() } {}
 
-Playlist::Playlist(const std::string& name)              // Parameterized constructor
-                    :   playlistID(generateID()),   // Generates a song ID), 
+Playlist::Playlist(const std::string& id, const std::string& name)              // Parameterized constructor
+                    :   playlistID(id), 
                         name(name) {}
 
 int Playlist::computeTotalDuration() const {                                    // Sums the total duration

@@ -7,7 +7,8 @@
 #include <iostream>
 #include <numeric>
 #include <unordered_map>
-#include "DataManager.h"
+
+static int nextId = 0;
 
 class Playlist
 {
@@ -20,7 +21,7 @@ private:
 public:
 	// Constructors
 	Playlist();																		// Default constructor
-	Playlist(const std::string& name);						// Parameterized constructor
+	Playlist(const std::string& id, const std::string& name);						// Parameterized constructor
 	~Playlist() {};																	// Destructor
 
 	// Getters

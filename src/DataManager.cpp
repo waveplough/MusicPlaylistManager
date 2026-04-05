@@ -67,7 +67,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
     return newSong;
 }
 
-std::string generateID() {
+std::string DataManager::generateSongID() {
     return QUuid::createUuid().toString().toStdString();
 }
 

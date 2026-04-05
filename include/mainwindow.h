@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include "MediaController.h"
+#include "MusicLibrary.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,7 +17,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(MediaController &mediaControl, QWidget *parent = nullptr);
+    explicit MainWindow(MediaController &mediaControl, MusicLibrary& library, QWidget *parent = nullptr);
     ~MainWindow() override;
 
 public slots:
@@ -24,10 +25,13 @@ public slots:
     // Source - https://stackoverflow.com/a/74510128
     // Posted by GWD, modified by community. See post 'Timeline' for change history
     // Retrieved 2026-04-04, License - CC BY-SA 4.0
+    void addSongCardToLibraryList(std::shared_ptr<Song> song);
 
 private:
     Ui::MainWindow *ui;
-
+    MusicLibrary &musicLibrary;
     MediaController &mediaControl; // What does this do?
 };
 #endif // MAINWINDOW_H
+
+std::string generateSongID();   // Generates a song ID

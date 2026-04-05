@@ -12,6 +12,7 @@ private:
 public:
 	MusicLibrary(); //default constructor
 	~MusicLibrary();
+
 	void addSong(const std::shared_ptr<Song>& song);
 	void editSong(const std::string& songID, const Song& updated);
 	void deleteSong(const std::string& songID);

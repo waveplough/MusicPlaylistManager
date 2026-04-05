@@ -1,11 +1,5 @@
 #include "DataManager.h"
 
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QString>
-
 #include <unordered_map>
 
 DataManager::DataManager(MusicLibrary& library) : library(library)             // Initialize Reference To Library
@@ -15,6 +9,45 @@ DataManager::DataManager(MusicLibrary& library) : library(library)             /
 DataManager::~DataManager()                                                    // Destructor
 {
 }
+
+std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMediaPlayer& player) {
+
+
+    QMediaMetaData metaData = player.metaData();
+
+    // library information
+    std::string title = metaData.stringValue(QMediaMetaData::Title).toStdString();
+    std::string artist = metaData.stringValue(QMediaMetaData::AlbumArtist).toStdString();
+    std::string album = metaData.stringValue(QMediaMetaData::AlbumTitle).toStdString();
+    std::string genre = metaData.stringValue(QMediaMetaData::Genre).toStdString();
+    int duration = player.duration() / 1000;
+
+
+    std::string songId = generateSongID();  // Generate a song ID
+
+    if (artist.empty()) {
+        artist = "Unknown Artist";
+    }
+
+    if (title.empty()) {
+        title = QFileInfo(filename).baseName().toStdString();
+    }
+
+    if (album.empty()) {
+        album = "N/A";
+    }
+
+    std::shared_ptr<Song> newSong = std::make_shared<Song>(Song(songId, title, duration, artist, album, genre));
+
+    getMusicLibrary().addSong(std::shared_ptr<Song>(newSong));  // add song to library song vector
+
+    return newSong;
+}
+
+std::string DataManager::generateSongID() {
+    return QUuid::createUuid().toString().toStdString();
+}
+
 
 bool DataManager::saveData(const std::string& filename) const
 {

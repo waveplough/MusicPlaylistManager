@@ -58,6 +58,8 @@ MainWindow::~MainWindow()
 void MainWindow::onActionNewSongTriggered() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));    // Gives the menu more verbiage.
     mediaControl.usePlayer()->setSource(QUrl(fileName));   
+    QFileInfo fileinfo(fileName); // This is getting file info OUTSIDE of the song library. This is important here. Don't change.
+    ui->playerFilePathLabel->setText(fileinfo.absoluteFilePath());  // Sets the filepath label
     // For those reading:
         // mediaControl is the instantiated MedialController.cpp class.
         // trueMediaPlayer is instantiated within that object as part of its creation.
@@ -67,7 +69,6 @@ void MainWindow::onActionNewSongTriggered() {
 //-(*)- Suleiman, Ria. This is where a song should now get registered in the library.
 
 /* DAVIDS FUNCTION */
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));
 
     if (!fileName.isEmpty()) {
         mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(fileName));
@@ -82,12 +83,13 @@ void MainWindow::onActionNewSongTriggered() {
 
         QMediaMetaData metaData = mediaControl.usePlayer()->metaData();
 
-
+        // library information
         std::string title = metaData.stringValue(QMediaMetaData::Title).toStdString();
         std::string artist = metaData.stringValue(QMediaMetaData::AlbumArtist).toStdString();
         std::string album = metaData.stringValue(QMediaMetaData::AlbumTitle).toStdString();
         std::string genre = metaData.stringValue(QMediaMetaData::Genre).toStdString();
         int duration = mediaControl.usePlayer()->duration() / 1000;
+
 
         std::string songId = generateSongID();  // Generate a song ID
 
@@ -102,6 +104,9 @@ void MainWindow::onActionNewSongTriggered() {
         if (album.empty()) {
             album = "N/A";
         }
+
+        ui->playerTitleLabel->setText(QString::fromStdString(title));
+        ui->playerArtistLabel->setText(QString::fromStdString(artist));
 
         std::shared_ptr<Song> newSong = std::make_shared<Song>(Song(songId, title, duration, artist, album, genre));
 
@@ -128,8 +133,7 @@ std::string generateSongID() {
     return QUuid::createUuid().toString().toStdString();
 /* END DAVIDS FUNCTION */
 
-    QFileInfo fileinfo(fileName); // This is getting file info OUTSIDE of the song library. This is important here. Don't change.
-    ui->playerFilePathLabel->setText(fileinfo.absoluteFilePath());  // Sets the filepath label
+    
 }
 
 /* Music Player Functions */

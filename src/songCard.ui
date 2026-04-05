@@ -1,0 +1,258 @@
+<UI version="4.0" >
+ <class>songCard</class>
+ <widget class="QWidget" name="songCard" >
+  <property name="objectName" >
+   <string notr="true">songCard</string>
+  </property>
+	 <property name="geometry">
+		 <rect>
+			 <x>0</x>
+			 <y>0</y>
+			 <width>240</width>
+			 <height>80</height>
+		 </rect>
+	 </property>
+	 <property name="windowTitle">
+		 <string>Form</string>
+	 </property>
+	 <widget class="QLabel" name="label_sc_Lengthtime">
+		 <property name="geometry">
+			 <rect>
+				 <x>190</x>
+				 <y>50</y>
+				 <width>51</width>
+				 <height>21</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Arial</family>
+				 <pointsize>10</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>00:00:00</string>
+		 </property>
+		 <property name="alignment">
+			 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_artist">
+		 <property name="geometry">
+			 <rect>
+				 <x>60</x>
+				 <y>30</y>
+				 <width>121</width>
+				 <height>16</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <pointsize>10</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>ARTIST NAME</string>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_songName">
+		 <property name="geometry">
+			 <rect>
+				 <x>60</x>
+				 <y>10</y>
+				 <width>121</width>
+				 <height>16</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <pointsize>10</pointsize>
+			 </font>
+		 </property>
+		 <property name="frameShape">
+			 <enum>QFrame::Shape::NoFrame</enum>
+		 </property>
+		 <property name="text">
+			 <string>SONG NAME</string>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_songImage">
+		 <property name="geometry">
+			 <rect>
+				 <x>0</x>
+				 <y>0</y>
+				 <width>91</width>
+				 <height>81</height>
+			 </rect>
+		 </property>
+		 <property name="text">
+			 <string/>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_totalPlays">
+		 <property name="geometry">
+			 <rect>
+				 <x>210</x>
+				 <y>30</y>
+				 <width>31</width>
+				 <height>21</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Arial</family>
+				 <pointsize>10</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>000</string>
+		 </property>
+		 <property name="alignment">
+			 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_upVote">
+		 <property name="geometry">
+			 <rect>
+				 <x>220</x>
+				 <y>10</y>
+				 <width>21</width>
+				 <height>21</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Arial</family>
+				 <pointsize>10</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>00</string>
+		 </property>
+		 <property name="alignment">
+			 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_filePath">
+		 <property name="geometry">
+			 <rect>
+				 <x>10</x>
+				 <y>60</y>
+				 <width>231</width>
+				 <height>16</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <pointsize>6</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>FILEPATH</string>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_genre">
+		 <property name="geometry">
+			 <rect>
+				 <x>60</x>
+				 <y>50</y>
+				 <width>121</width>
+				 <height>16</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <pointsize>10</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>GENRE</string>
+		 </property>
+	 </widget>
+	 <widget class="QLabel" name="label_sc_year">
+		 <property name="geometry">
+			 <rect>
+				 <x>10</x>
+				 <y>0</y>
+				 <width>21</width>
+				 <height>16</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <pointsize>8</pointsize>
+			 </font>
+		 </property>
+		 <property name="text">
+			 <string>YEAR</string>
+		 </property>
+	 </widget>
+	 <widget class="QPushButton" name="pushButton_sc_upvote">
+		 <property name="geometry">
+			 <rect>
+				 <x>200</x>
+				 <y>10</y>
+				 <width>21</width>
+				 <height>21</height>
+			 </rect>
+		 </property>
+		 <property name="styleSheet">
+			 <string notr="true">
+				 QPushButton
+				 {
+				 border:none;
+				 border-radius:10px;
+				 background-color:rgba(255,255,255,0);
+				 color:rgb(52,51,64);
+				 padding:0px;
+				 }
+				 QPushButton:Hover
+				 {
+				 background-color:rgb(140,140,140);
+				 }
+			 </string>
+		 </property>
+		 <property name="text">
+			 <string/>
+		 </property>
+		 <property name="icon">
+			 <iconset theme="QIcon::ThemeIcon::AppointmentNew"/>
+		 </property>
+		 <property name="iconSize">
+			 <size>
+				 <width>15</width>
+				 <height>15</height>
+			 </size>
+		 </property>
+	 </widget>
+	 <zorder>label_sc_songImage</zorder>
+	 <zorder>label_sc_Lengthtime</zorder>
+	 <zorder>label_sc_artist</zorder>
+	 <zorder>label_sc_songName</zorder>
+	 <zorder>label_sc_totalPlays</zorder>
+	 <zorder>label_sc_upVote</zorder>
+	 <zorder>label_sc_filePath</zorder>
+	 <zorder>label_sc_genre</zorder>
+	 <zorder>label_sc_year</zorder>
+	 <zorder>pushButton_sc_upvote</zorder>
+ </widget>
+ <resources/>
+ <connections>
+	 <connection>
+		 <sender>pushButton_sc_upvote</sender>
+		 <signal>clicked()</signal>
+		 <receiver>label_sc_upVote</receiver>
+		 <slot>raise()</slot>
+		 <hints>
+			 <hint type="sourcelabel">
+				 <x>209</x>
+				 <y>23</y>
+			 </hint>
+			 <hint type="destinationlabel">
+				 <x>230</x>
+				 <y>21</y>
+			 </hint>
+		 </hints>
+	 </connection>
+ </connections>
+ </UI>

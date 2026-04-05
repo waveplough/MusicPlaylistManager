@@ -20,14 +20,41 @@ public:
     ~MainWindow() override;
 
 public slots:
+    // Clicking'File' in the main menu bar and selection a 'New Song'.
     void onActionNewSongTriggered();
-    // Source - https://stackoverflow.com/a/74510128
-    // Posted by GWD, modified by community. See post 'Timeline' for change history
-    // Retrieved 2026-04-04, License - CC BY-SA 4.0
+        // Source - https://stackoverflow.com/a/74510128
+        // Posted by GWD, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-04-04, License - CC BY-SA 4.0
+    
+    // Toggles music player volume button press display.
+    void onPlayerVolumeButtonClicked();
+
+    // Toggleable music Player buttons. Ie Play, Pause - normal functionality.
+    void onBackButtonClicked();
+    void onStopButtonClicked();
+    void onPlayButtonClicked();
+    void onPauseButtonClicked();
+    void onForwardButtonClicked();
+
+    // Music Player sliders.
+    void onPlayerPlaybarValueChanged(int value);
+    void onPlayerVolumeSliderValueChanged(int value);
+
+    // Playbar duration
+    void durationChanged(qint64 duration);
+    void updateDuration(qint64 duration);
+    void positionChanged(qint64 progress);
 
 private:
     Ui::MainWindow *ui;
 
-    MediaController &mediaControl; // What does this do?
+    // A reference to the mediaControl object for use here.
+    MediaController &mediaControl;
+
+    // Boolean for music Player Volume toggle.
+    bool isMuted = false;
+
+    // maximum Duration var for Player
+    qint64 mDuration;
 };
 #endif // MAINWINDOW_H

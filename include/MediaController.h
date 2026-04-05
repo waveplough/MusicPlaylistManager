@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QAudioOutput>
 #include <QMediaPlayer>
 
 class MediaController  : public QObject
@@ -15,5 +16,6 @@ public:
 
 private:
 	QMediaPlayer* trueMediaPlayer;
+	QAudioOutput* audioOutput;
 };
 

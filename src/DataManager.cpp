@@ -12,7 +12,6 @@ DataManager::~DataManager()                                                    /
 
 std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMediaPlayer& player) {
 
-
     QMediaMetaData metaData = player.metaData();
 
     // library information
@@ -22,6 +21,16 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
     std::string genre = metaData.stringValue(QMediaMetaData::Genre).toStdString();
     int duration = player.duration() / 1000;
 
+    // Prevent duplicate song import by checking file path
+    std::string selectedFilePath = filename.toStdString();
+
+    for (const auto& existingSong : getMusicLibrary().getSongs())
+    {
+        if (existingSong && existingSong->getFilePath() == selectedFilePath)
+        {
+            return existingSong;   // Song already exists → DO NOT create duplicate
+        }
+    }
 
     std::string songId = generateSongID();  // Generate a song ID
 
@@ -37,9 +46,23 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
         album = "N/A";
     }
 
-    std::shared_ptr<Song> newSong = std::make_shared<Song>(Song(songId, title, duration, artist, album, genre));
+    // Added fallback so empty genre is still saved with a usable value
+    if (genre.empty()) {
+        genre = "Unknown Genre";
+    }
 
-    getMusicLibrary().addSong(std::shared_ptr<Song>(newSong));  // add song to library song vector
+    // Added file path persistence by passing filename into Song constructor
+    std::shared_ptr<Song> newSong = std::make_shared<Song>(
+        songId,
+        title,
+        duration,
+        artist,
+        album,
+        genre,
+        filename.toStdString()
+    );
+
+    getMusicLibrary().addSong(newSong);  // add song to library song vector
 
     return newSong;
 }
@@ -47,7 +70,6 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
 std::string DataManager::generateSongID() {
     return QUuid::createUuid().toString().toStdString();
 }
-
 
 bool DataManager::saveData(const std::string& filename) const
 {
@@ -75,6 +97,7 @@ bool DataManager::saveData(const std::string& filename) const
         songObject["album"] = QString::fromStdString(song->getAlbum());
         songObject["genre"] = QString::fromStdString(song->getGenre());
         songObject["playCount"] = song->getPlayCount();
+        songObject["filePath"] = QString::fromStdString(song->getFilePath());   // Added to save song file path for persistence
 
         songsArray.append(songObject);
     }
@@ -150,15 +173,19 @@ bool DataManager::loadData(const std::string& filename)
         std::string artist = songObject["artist"].toString().toStdString();
         std::string album = songObject["album"].toString().toStdString();
         std::string genre = songObject["genre"].toString().toStdString();
+        int playCount = songObject["playCount"].toInt();                       // Added to restore play count from file
+        std::string filePath = songObject["filePath"].toString().toStdString(); // Added to restore file path from file
 
-        if (id.empty() || title.empty())
+        if (id.empty() || title.empty() || duration <= 0)
         {
             continue;
         }
 
         std::shared_ptr<Song> song = std::make_shared<Song>(
-            id, title, duration, artist, album, genre
+            id, title, duration, artist, album, genre, filePath
         );
+
+        song->setPlayCount(playCount);                                         // Added to restore saved play count
 
         library.addSong(song);
     }

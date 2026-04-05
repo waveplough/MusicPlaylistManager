@@ -20,6 +20,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(MediaController &mediaControl, DataManager& dataManager, QWidget *parent = nullptr);
     ~MainWindow() override;
+
+    void loadLibraryToUI();
     void addSongCardToLibraryList(std::shared_ptr<Song> song);
     void addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileinfo);
 
@@ -58,6 +60,9 @@ public slots:
     void onAddPlaylistButtonClicked();
     void onPlaylistEditorExitButtonClicked();
 
+protected:
+    void closeEvent(QCloseEvent* event) override;
+
 private:
     Ui::MainWindow *ui;
 
@@ -74,6 +79,7 @@ private:
     qint64 mDuration;
     
     int previousPageIndex;
+
 };
 #endif // MAINWINDOW_H
 

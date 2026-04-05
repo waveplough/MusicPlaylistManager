@@ -22,9 +22,16 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     ui->menuAnalytics->setFocusPolicy(Qt::NoFocus);
 
     // Slots and signals manual connections
+
+    // Menu
     connect(ui->actionNewSong, &QAction::triggered, this, &MainWindow::onNewSongButtonClicked);
     connect(ui->actionViewAnalytics, &QAction::triggered, this, &MainWindow::onAnalyticsButtonClicked);
-    
+
+    // Playlist
+    connect(ui->addPlaylistButton, &QPushButton::clicked, this, &MainWindow::onAddPlaylistButtonClicked);
+    connect(ui->exitPlaylistEditor, &QPushButton::clicked, this, &MainWindow::onPlaylistEditorExitButtonClicked);
+
+    // Player
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
     connect(ui->backButton, &QPushButton::clicked, this, &MainWindow::onBackButtonClicked);
     connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::onStopButtonClicked);
@@ -35,6 +42,7 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     connect(ui->playerPlaybar, &QSlider::valueChanged, this, &MainWindow::onPlayerPlaybarValueChanged);
     connect(ui->playerVolumeSlider, &QSlider::valueChanged, this, &MainWindow::onPlayerVolumeSliderValueChanged);
 
+    // Analytics
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::onAnalyticsExitButtonClicked);
 
     /* Object Manipulation */
@@ -232,4 +240,12 @@ void MainWindow::onPlayerVolumeButtonClicked()
     }
 }
 
+/* PLAYLIST FUNCTIONALITY */
+void MainWindow::onAddPlaylistButtonClicked() {
+    previousPageIndex = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
+}
 
+void MainWindow::onPlaylistEditorExitButtonClicked() {
+    ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
+}

@@ -3,6 +3,7 @@
 #include "MediaController.h"
 #include "Song.h"
 #include "LibraryCard.h"
+#include "PlaylistCard.h"
 #include "DataManager.h"
 #include <QMediaMetaData>
 #include <QUuid>
@@ -277,10 +278,24 @@ void MainWindow::closeEvent(QCloseEvent* event)
 }
 
 /* PLAYLIST FUNCTIONALITY */
-void MainWindow::onAddPlaylistButtonClicked() {
-    previousPageIndex = ui->stackedWidget->currentIndex();
-    ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
+
+void MainWindow::addPlaylistCard() {
+    std::unique_ptr<Playlist> newPlaylist = std::make_unique<Playlist>(Playlist());
+    playlistCard* card = new playlistCard(newPlaylist, this);
+    QListWidgetItem* item = new QListWidgetItem();
+    item->setSizeHint(card->sizeHint());
+    ui->playlistCardBox->addItem(item);
+    ui->playlistCardBox->setItemWidget(item, card);
+
 }
+
+void MainWindow::onAddPlaylistButtonClicked() {
+    addPlaylistCard();
+    //previousPageIndex = ui->stackedWidget->currentIndex();
+    //ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
+}
+
 void MainWindow::onPlaylistEditorExitButtonClicked() {
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 }
+

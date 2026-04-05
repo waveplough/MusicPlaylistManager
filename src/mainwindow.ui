@@ -1249,7 +1249,9 @@ background-color:rgb(140,140,140);
     border: none;
     background-color: transparent;
     padding: 0px;
-}</string>
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1498,9 +1500,20 @@ background-color:rgb(140,140,140);
     <addaction name="actionNewSong"/>
    </widget>
    <widget class="QMenu" name="menuAnalytics">
+    <property name="styleSheet">
+     <string notr="true">QPushButton:pressed {
+    background-color: rgba(0, 0, 0, 30);
+}
+QPushButton:focus {
+    border: none;
+    background-color: transparent;
+    outline: none;
+}</string>
+    </property>
     <property name="title">
      <string>Analytics</string>
     </property>
+    <addaction name="actionViewAnalytics"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAnalytics"/>
@@ -1519,6 +1532,11 @@ background-color:rgb(140,140,140);
   <action name="actionNewSong">
    <property name="text">
     <string>New Song</string>
+   </property>
+  </action>
+  <action name="actionViewAnalytics">
+   <property name="text">
+    <string>View Analytics</string>
    </property>
   </action>
  </widget>

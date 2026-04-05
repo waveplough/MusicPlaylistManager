@@ -19,10 +19,11 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
 
     // Forces the main splitter to size. Not doable in create.
     ui->mainSplitter->setSizes({ 551, 240, 240 });
+    ui->menuAnalytics->setFocusPolicy(Qt::NoFocus);
 
     // Slots and signals manual connections
     connect(ui->actionNewSong, &QAction::triggered, this, &MainWindow::onNewSongButtonClicked);
-    connect(ui->menuAnalytics, &QMenu::aboutToShow, this, &MainWindow::onAnalyticsButtonClicked);
+    connect(ui->actionViewAnalytics, &QAction::triggered, this, &MainWindow::onAnalyticsButtonClicked);
     
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
     connect(ui->backButton, &QPushButton::clicked, this, &MainWindow::onBackButtonClicked);

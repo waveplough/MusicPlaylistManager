@@ -32,7 +32,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
         }
     }
 
-    std::string songId = generateSongID();  // Generate a song ID
+    std::string songId = generateID();  // Generate a song ID
 
     if (artist.empty()) {
         artist = "Unknown Artist";
@@ -65,10 +65,6 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
     getMusicLibrary().addSong(newSong);  // add song to library song vector
 
     return newSong;
-}
-
-std::string DataManager::generateSongID() {
-    return QUuid::createUuid().toString().toStdString();
 }
 
 bool DataManager::saveData(const std::string& filename) const

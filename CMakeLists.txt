@@ -33,7 +33,7 @@ add_executable(MusicPlaylistManager
     "include/playlistCard.ui"
     "include/LibraryCard.h"
     "include/songCard.ui"
-    "include/LibraryCard.ui")
+    "include/LibraryCard.ui" "include/Util.h")
 target_include_directories(MusicPlaylistManager PRIVATE include)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Widgets)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Multimedia)

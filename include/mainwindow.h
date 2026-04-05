@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include "MediaController.h"
 #include "MusicLibrary.h"
+#include "DataManager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,8 +18,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(MediaController &mediaControl, MusicLibrary& library, QWidget *parent = nullptr);
+    explicit MainWindow(MediaController &mediaControl, DataManager& dataManager, QWidget *parent = nullptr);
     ~MainWindow() override;
+    void addSongCardToLibraryList(std::shared_ptr<Song> song);
+    void addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileinfo);
 
 public slots:
     // Clicking'File' in the main menu bar and selection a 'New Song'.
@@ -29,7 +32,6 @@ public slots:
     
     // Method to add song cards. But this should be renamed to libraryListItem or something similar.
     // Song card is too similar to the others.
-    void addSongCardToLibraryList(std::shared_ptr<Song> song);
 
     // Toggles music player volume button press display.
     void onPlayerVolumeButtonClicked();
@@ -57,7 +59,7 @@ private:
     MediaController &mediaControl;
 
     // Music Library reference pass?
-    MusicLibrary& musicLibrary;
+    DataManager& dataManager;
 
     // Boolean for music Player Volume toggle.
     bool isMuted = false;
@@ -67,4 +69,3 @@ private:
 };
 #endif // MAINWINDOW_H
 
-std::string generateSongID();   // Generates a song ID

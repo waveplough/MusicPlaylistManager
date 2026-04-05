@@ -3,13 +3,14 @@
 #include "MediaController.h"
 #include "Song.h"
 #include "LibraryCard.h"
+#include "DataManager.h"
 #include <QMediaMetaData>
 #include <QUuid>
 
-MainWindow::MainWindow(MediaController &mediaControl, MusicLibrary& library, QWidget *parent)
+MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, QWidget *parent)
     : QMainWindow(parent)
     , mediaControl(mediaControl)
-    , musicLibrary(library)
+    , dataManager(dataManager)
     , ui(new Ui::MainWindow)
 
     
@@ -55,66 +56,40 @@ MainWindow::~MainWindow()
 
 
 // Major Function : Clicking in the top menu bar 'File' to add a Song to the Library.
-void MainWindow::onActionNewSongTriggered() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));    // Gives the menu more verbiage.
-    mediaControl.usePlayer()->setSource(QUrl(fileName));   
-    QFileInfo fileinfo(fileName); // This is getting file info OUTSIDE of the song library. This is important here. Don't change.
-    ui->playerFilePathLabel->setText(fileinfo.absoluteFilePath());  // Sets the filepath label
     // For those reading:
         // mediaControl is the instantiated MedialController.cpp class.
         // trueMediaPlayer is instantiated within that object as part of its creation.
         // usePlayer() is a function that returns a pointer to that media player.
         // setSource() replaces setMedia() from QT 5. It is what loads the song.
 
-//-(*)- Suleiman, Ria. This is where a song should now get registered in the library.
+    //-(*)- Suleiman, Ria. This is where a song should now get registered in the library.
+void MainWindow::onActionNewSongTriggered() {
 
-/* DAVIDS FUNCTION */
+    QMediaPlayer* player = mediaControl.usePlayer();
 
-    if (!fileName.isEmpty()) {
-        mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(fileName));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));    // Gives the menu more verbiage.
 
-        QEventLoop loop;
-        connect(mediaControl.usePlayer(), &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
-            if (status == QMediaPlayer::LoadedMedia) {
-                loop.quit();
-            }
-            });
-        loop.exec();
+    if (fileName.isEmpty()) return;
 
-        QMediaMetaData metaData = mediaControl.usePlayer()->metaData();
+    player->setSource(QUrl(fileName));
+    QFileInfo fileInfo(fileName); // This is getting file info OUTSIDE of the song library. This is important here. Don't change.
+    
 
-        // library information
-        std::string title = metaData.stringValue(QMediaMetaData::Title).toStdString();
-        std::string artist = metaData.stringValue(QMediaMetaData::AlbumArtist).toStdString();
-        std::string album = metaData.stringValue(QMediaMetaData::AlbumTitle).toStdString();
-        std::string genre = metaData.stringValue(QMediaMetaData::Genre).toStdString();
-        int duration = mediaControl.usePlayer()->duration() / 1000;
-
-
-        std::string songId = generateSongID();  // Generate a song ID
-
-        if (artist.empty()) {
-            artist = "Unknown Artist";
+    // extract metadata
+    QEventLoop loop;
+    connect(player, &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
+        if (status == QMediaPlayer::LoadedMedia) {
+            loop.quit();
         }
+        });
+    loop.exec();
 
-        if (title.empty()) {
-            title = QFileInfo(fileName).baseName().toStdString();
-        }
+    // pass to datamanager to handle said metadata
+    std::shared_ptr<Song> newSong = dataManager.parseSongData(fileName, *player);
 
-        if (album.empty()) {
-            album = "N/A";
-        }
-
-        ui->playerTitleLabel->setText(QString::fromStdString(title));
-        ui->playerArtistLabel->setText(QString::fromStdString(artist));
-
-        std::shared_ptr<Song> newSong = std::make_shared<Song>(Song(songId, title, duration, artist, album, genre));
-
-        musicLibrary.addSong(std::shared_ptr<Song>(newSong));
-        addSongCardToLibraryList(newSong);
-
-    }
-
+    // updated player and library 
+    addPlayerInformation(newSong, fileInfo);
+    addSongCardToLibraryList(newSong);
 
 }
 
@@ -124,16 +99,13 @@ void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
     item->setSizeHint(card->sizeHint());
     ui->libraryList->addItem(item);
     ui->libraryList->setItemWidget(item, card);
+   
 }
 
-
-
-
-std::string generateSongID() {
-    return QUuid::createUuid().toString().toStdString();
-/* END DAVIDS FUNCTION */
-
-    
+void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileInfo) {
+    ui->playerTitleLabel->setText(QString::fromStdString(song->getTitle()));
+    ui->playerArtistLabel->setText(QString::fromStdString(song->getArtist()));
+    ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());  // Sets the filepath label
 }
 
 /* Music Player Functions */

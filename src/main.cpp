@@ -11,9 +11,11 @@ int main(int argc, char *argv[])
     // Make a media controller object for broad use
     MediaController mediaControl;
     MusicLibrary musicLibrary;
+    DataManager dataManager(musicLibrary);
+    
 
     // Pass to mainwindow
-    MainWindow w(mediaControl,musicLibrary);
+    MainWindow w(mediaControl, dataManager);
     w.show();
     return QCoreApplication::exec();
 

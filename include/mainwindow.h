@@ -60,6 +60,7 @@ public slots:
     void addPlaylistCard();
     void onAddPlaylistButtonClicked();
     void onPlaylistEditorExitButtonClicked();
+    void onPlaylistItemClicked();
 
 protected:
     void closeEvent(QCloseEvent* event) override;

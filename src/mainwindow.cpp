@@ -33,6 +33,7 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     // Playlist
     connect(ui->addPlaylistButton, &QPushButton::clicked, this, &MainWindow::onAddPlaylistButtonClicked);
     connect(ui->exitPlaylistEditor, &QPushButton::clicked, this, &MainWindow::onPlaylistEditorExitButtonClicked);
+    connect(ui->playlistCardBox, &QListWidget::itemClicked, this, &MainWindow::onPlaylistItemClicked);
 
     // Player
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
@@ -300,8 +301,11 @@ void MainWindow::addPlaylistCard() {
 
 void MainWindow::onAddPlaylistButtonClicked() {
     addPlaylistCard();
-    //previousPageIndex = ui->stackedWidget->currentIndex();
-    //ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
+}
+
+void MainWindow::onPlaylistItemClicked() {
+    previousPageIndex = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
 }
 
 void MainWindow::onPlaylistEditorExitButtonClicked() {

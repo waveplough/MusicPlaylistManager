@@ -24,11 +24,10 @@ public:
     void addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileinfo);
 
 public slots:
-    // Clicking'File' in the main menu bar and selection a 'New Song'.
-    void onNewSongButtonClicked();
-        // Source - https://stackoverflow.com/a/74510128
-        // Posted by GWD, modified by community. See post 'Timeline' for change history
-        // Retrieved 2026-04-04, License - CC BY-SA 4.0
+    
+    // Menu Items
+    void onNewSongButtonClicked();  // Clicking'File' in the main menu bar and selection a 'New Song'.
+    void onAnalyticsButtonClicked();
     
     // Method to add song cards. But this should be renamed to libraryListItem or something similar.
     // Song card is too similar to the others.
@@ -52,6 +51,9 @@ public slots:
     void updateDuration(qint64 duration);
     void positionChanged(qint64 progress);
 
+    // Analytics Page
+    void onAnalyticsExitButtonClicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -66,6 +68,14 @@ private:
 
     // maximum Duration var for Player
     qint64 mDuration;
+
+    int previousPageIndex;
 };
 #endif // MAINWINDOW_H
 
+/* Sources:
+ Button action listeners:
+ Source - https://stackoverflow.com/a/74510128
+ Posted by GWD, modified by community. See post 'Timeline' for change history
+ Retrieved 2026-04-04, License - CC BY-SA 4.0
+*/

@@ -1218,72 +1218,118 @@ background-color:rgb(140,140,140);
            </widget>
           </widget>
           <widget class="QWidget" name="AnalyticsPage">
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="0">
-             <layout class="QFormLayout" name="analyticsForm">
-              <item row="0" column="0">
-               <widget class="QLabel" name="analyticsLabel">
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Analytics</string>
-                </property>
-               </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <layout class="QVBoxLayout" name="AnalyticsButtonVLayout">
+              <item>
+               <layout class="QHBoxLayout" name="exitButtonHLayout">
+                <item>
+                 <spacer name="exitButtonSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="exitButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="totalListeningTimeFixed">
-                <property name="font">
-                 <font>
-                  <pointsize>13</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Total Listening Time:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="timeLabel">
-                <property name="font">
-                 <font>
-                  <pointsize>13</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>0:00</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="averageSongDurationFixed">
-                <property name="font">
-                 <font>
-                  <pointsize>13</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Average Song Duration:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="songDurationLabel">
-                <property name="font">
-                 <font>
-                  <pointsize>13</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>0:00</string>
-                </property>
-               </widget>
+              <item>
+               <layout class="QFormLayout" name="analyticsForm">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="analyticsLabel">
+                  <property name="font">
+                   <font>
+                    <pointsize>15</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Analytics</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="totalListeningTimeFixed">
+                  <property name="font">
+                   <font>
+                    <pointsize>13</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Total Listening Time:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="timeLabel">
+                  <property name="font">
+                   <font>
+                    <pointsize>13</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>0:00</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="averageSongDurationFixed">
+                  <property name="font">
+                   <font>
+                    <pointsize>13</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Average Song Duration:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLabel" name="songDurationLabel">
+                  <property name="font">
+                   <font>
+                    <pointsize>13</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>0:00</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>
-            <item row="1" column="0">
+            <item>
              <widget class="QLabel" name="mostPlayedSongsLabel">
               <property name="font">
                <font>
@@ -1295,10 +1341,10 @@ background-color:rgb(140,140,140);
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item>
              <widget class="QTableWidget" name="playCountTable"/>
             </item>
-            <item row="3" column="0">
+            <item>
              <widget class="QLabel" name="songsPerGenreLabel">
               <property name="font">
                <font>
@@ -1310,7 +1356,7 @@ background-color:rgb(140,140,140);
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item>
              <widget class="QTableView" name="genreTable"/>
             </item>
            </layout>
@@ -1454,9 +1500,20 @@ background-color:rgb(140,140,140);
     <addaction name="actionNewSong"/>
    </widget>
    <widget class="QMenu" name="menuAnalytics">
+    <property name="styleSheet">
+     <string notr="true">QPushButton:pressed {
+    background-color: rgba(0, 0, 0, 30);
+}
+QPushButton:focus {
+    border: none;
+    background-color: transparent;
+    outline: none;
+}</string>
+    </property>
     <property name="title">
      <string>Analytics</string>
     </property>
+    <addaction name="actionViewAnalytics"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAnalytics"/>
@@ -1475,6 +1532,11 @@ background-color:rgb(140,140,140);
   <action name="actionNewSong">
    <property name="text">
     <string>New Song</string>
+   </property>
+  </action>
+  <action name="actionViewAnalytics">
+   <property name="text">
+    <string>View Analytics</string>
    </property>
   </action>
  </widget>

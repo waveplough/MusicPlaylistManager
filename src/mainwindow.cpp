@@ -22,6 +22,7 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
 
     // Slots and signals manual connections
     connect(ui->actionNewSong, &QAction::triggered, this, &MainWindow::onNewSongButtonClicked);
+    connect(ui->menuAnalytics, &QMenu::aboutToShow, this, &MainWindow::onAnalyticsButtonClicked);
     
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
     connect(ui->backButton, &QPushButton::clicked, this, &MainWindow::onBackButtonClicked);
@@ -32,6 +33,8 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     
     connect(ui->playerPlaybar, &QSlider::valueChanged, this, &MainWindow::onPlayerPlaybarValueChanged);
     connect(ui->playerVolumeSlider, &QSlider::valueChanged, this, &MainWindow::onPlayerVolumeSliderValueChanged);
+
+    connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::onAnalyticsExitButtonClicked);
 
     /* Object Manipulation */
 
@@ -54,6 +57,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Menu Item Listeners
 
 // Major Function : Clicking in the top menu bar 'File' to add a Song to the Library.
     // For those reading:
@@ -91,6 +95,16 @@ void MainWindow::onNewSongButtonClicked() {
     addPlayerInformation(newSong, fileInfo);
     addSongCardToLibraryList(newSong);
 
+}
+
+void MainWindow::onAnalyticsButtonClicked() {
+    previousPageIndex = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
+}
+
+// Analytics Page
+void MainWindow::onAnalyticsExitButtonClicked() {
+    ui->stackedWidget->setCurrentIndex(previousPageIndex);
 }
 
 void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
@@ -216,3 +230,5 @@ void MainWindow::onPlayerVolumeButtonClicked()
         isMuted = false;
     }
 }
+
+

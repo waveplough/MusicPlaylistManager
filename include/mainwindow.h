@@ -25,7 +25,7 @@ public:
 
 public slots:
     // Clicking'File' in the main menu bar and selection a 'New Song'.
-    void onActionNewSongTriggered();
+    void onNewSongButtonClicked();
         // Source - https://stackoverflow.com/a/74510128
         // Posted by GWD, modified by community. See post 'Timeline' for change history
         // Retrieved 2026-04-04, License - CC BY-SA 4.0

@@ -9,6 +9,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+#set(CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/src")
+
 add_executable(MusicPlaylistManager
     "src/main.cpp"
     "src/PlaylistManager.cpp"
@@ -21,9 +23,15 @@ add_executable(MusicPlaylistManager
     "src/mainwindow.cpp"
     "src/mainwindow.ui"
     "src/MediaController.cpp"
+    "include/songCard.ui"
+    "src/songCard.cpp"
+    "include/playlistCard.ui"
+    "src/playlistCard.cpp"
+    "include/playlistCard.h"
+    "include/songCard.h"
     "include/MediaController.h"
     "include/mainwindow.h"
-)
+ "include/LibraryCard.h")
 target_include_directories(MusicPlaylistManager PRIVATE include)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Widgets)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Multimedia)

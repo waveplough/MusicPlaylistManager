@@ -5,6 +5,7 @@
 #include "songCard.h"
 
 
+
 songCard::songCard(QWidget *parent)
 	: QWidget(parent)
 	, ui(new Ui::songCard())

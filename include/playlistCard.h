@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include "ui_playlistCard.h"
+#include "Playlist.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class playlistCardClass; };
@@ -15,7 +16,7 @@ class playlistCard : public QWidget
 	Q_OBJECT
 
 public:
-	playlistCard(QWidget *parent = nullptr);
+	playlistCard(std::unique_ptr<Playlist> playlist, QWidget *parent = nullptr);
 	~playlistCard();
 
 private:

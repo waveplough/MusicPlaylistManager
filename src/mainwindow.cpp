@@ -6,6 +6,8 @@
 #include "DataManager.h"
 #include <QMediaMetaData>
 #include <QUuid>
+#include <QCloseEvent>
+#include <QMessageBox>
 
 MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, QWidget *parent)
     : QMainWindow(parent)
@@ -49,7 +51,7 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     ui->playerVolumeSlider->setMinimum(1);
     ui->playerVolumeSlider->setMaximum(100);
     ui->playerVolumeSlider->setValue(30);
-    mediaControl.usePlayer()->audioOutput()->setVolume(ui->playerVolumeSlider->value());     // Sets slider volume. May be unneccessary.
+    mediaControl.usePlayer()->audioOutput()->setVolume(ui->playerVolumeSlider->value() / 100.0);     // Sets slider volume. May be unneccessary.
 
 }
 
@@ -121,6 +123,27 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
     ui->playerTitleLabel->setText(QString::fromStdString(song->getTitle()));
     ui->playerArtistLabel->setText(QString::fromStdString(song->getArtist()));
     ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());  // Sets the filepath label
+}
+
+// Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
+void MainWindow::loadLibraryToUI() {
+    ui->libraryList->clear();
+
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+
+    for (const auto& song : songs) {
+        if (song) {
+            addSongCardToLibraryList(song);
+        }
+    }
+
+    if (!songs.empty() && songs.front()) {
+        QString savedPath = QString::fromStdString(songs.front()->getFilePath());
+        QFileInfo fileInfo(savedPath);
+
+        mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
+        addPlayerInformation(songs.front(), fileInfo);
+    }
 }
 
 /* Music Player Functions */
@@ -231,5 +254,19 @@ void MainWindow::onPlayerVolumeButtonClicked()
         isMuted = false;
     }
 }
+
+// Temporary: Auto-save data when closing the application
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    qDebug() << "Songs in library before save:" << dataManager.getMusicLibrary().getSongs().size();
+
+    if (!dataManager.saveData("data/music_library.json"))
+    {
+        QMessageBox::warning(this, "Save Error", "Could not save music library data.");
+    }
+
+    QMainWindow::closeEvent(event);
+}
+
 
 

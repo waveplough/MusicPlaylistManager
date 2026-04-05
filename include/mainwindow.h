@@ -57,6 +57,7 @@ public slots:
     void onAnalyticsExitButtonClicked();
 
     // Playlist Tab
+    void addPlaylistCard();
     void onAddPlaylistButtonClicked();
     void onPlaylistEditorExitButtonClicked();
 

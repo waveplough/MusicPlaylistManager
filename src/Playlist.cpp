@@ -1,6 +1,6 @@
 #include "Playlist.h"
 
-Playlist::Playlist() :  playlistID(std::to_string(nextId++)),                   // Default constructor
+Playlist::Playlist() :  playlistID(generateID()),                               // Default constructor
                         name("Default"), 
                         songs{ std::make_shared<Song>() } {}
 

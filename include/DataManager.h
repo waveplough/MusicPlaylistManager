@@ -12,6 +12,7 @@
 #include <QMediaPlayer>
 #include <QUuid>
 #include <QFileDialog>
+#include "Util.h"
 
 class DataManager
 {
@@ -23,7 +24,6 @@ public:
 	bool loadData(const std::string& filename);             // Load Data From File
 	std::shared_ptr<Song> parseSongData(const QString& filename, QMediaPlayer& player);	// parses the meta data of newly added songs
 	MusicLibrary& getMusicLibrary() { return library; }
-	std::string generateSongID();   // Generates a song ID
 
 private:
 	MusicLibrary& library;                                  // Reference To Music Library

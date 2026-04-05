@@ -1,14 +1,13 @@
 #pragma once
 #include "Song.h"
 #include "PlaylistItem.h"
+#include "Util.h"
 #include <string>
 #include <vector>
 #include <memory>
 #include <iostream>
 #include <numeric>
 #include <unordered_map>
-
-static int nextId = 0;
 
 class Playlist
 {

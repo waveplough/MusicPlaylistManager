@@ -1,5 +1,8 @@
 #include "DataManager.h"
 
+#include <QDir>
+#include <QFileInfo>
+
 #include <unordered_map>
 
 DataManager::DataManager(MusicLibrary& library) : library(library)             // Initialize Reference To Library
@@ -69,6 +72,15 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
 
 bool DataManager::saveData(const std::string& filename) const
 {
+    QFileInfo fileInfo(QString::fromStdString(filename));
+    QDir dir = fileInfo.dir();
+
+    // Create directory if it does not exist
+    if (!dir.exists())
+    {
+        dir.mkpath(".");
+    }
+
     QFile outFile(QString::fromStdString(filename));                           // Open File For Writing
 
     if (!outFile.open(QIODevice::WriteOnly | QIODevice::Truncate))

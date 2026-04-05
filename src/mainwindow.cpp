@@ -280,7 +280,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
 /* PLAYLIST FUNCTIONALITY */
 
 void MainWindow::addPlaylistCard() {
-    std::unique_ptr<Playlist> newPlaylist = std::make_unique<Playlist>(Playlist());
+    std::string id = generateID();
+    dataManager.getMusicLibrary().createPlaylist(id, "Name");
+    
+    Playlist* newPlaylist = nullptr;
+    for (const auto& p : dataManager.getMusicLibrary().getPlaylists()) {
+        if (p->getPlaylistID() == id) {
+            newPlaylist = p.get();
+            break;
+        }
+    }
     playlistCard* card = new playlistCard(newPlaylist, this);
     QListWidgetItem* item = new QListWidgetItem();
     item->setSizeHint(card->sizeHint());

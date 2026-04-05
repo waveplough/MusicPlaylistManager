@@ -39,7 +39,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
 
     std::shared_ptr<Song> newSong = std::make_shared<Song>(Song(songId, title, duration, artist, album, genre));
 
-    getMusicLibrary().addSong(std::shared_ptr<Song>(newSong));
+    getMusicLibrary().addSong(std::shared_ptr<Song>(newSong));  // add song to library song vector
 
     return newSong;
 }

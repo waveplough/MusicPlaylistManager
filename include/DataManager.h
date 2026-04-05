@@ -9,7 +9,6 @@
 #include <QJsonObject>
 #include <QString>
 #include <QMediaMetaData>
-#include <QEventLoop>
 #include <QMediaPlayer>
 #include <QUuid>
 #include <QFileDialog>

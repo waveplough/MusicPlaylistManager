@@ -18,13 +18,28 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="componentVLayout">
-     <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
+     </property>
+     <property name="verticalSpacing">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
       <widget class="QLabel" name="playlistNameLabel">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
-         <family>Yu Gothic</family>
-         <pointsize>15</pointsize>
+         <family>Segoe UI</family>
+         <pointsize>11</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -39,18 +54,24 @@
        </property>
       </widget>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="GenDurLayout">
+     <item row="1" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="playlistGenreLabel">
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <bold>true</bold>
+           <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>GENRE</string>
+          <string>Genre</string>
          </property>
         </widget>
        </item>
@@ -73,7 +94,7 @@
           <font>
            <family>Arial</family>
            <pointsize>10</pointsize>
-           <bold>true</bold>
+           <bold>false</bold>
           </font>
          </property>
          <property name="text">

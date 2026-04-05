@@ -68,7 +68,7 @@ private:
 
     // maximum Duration var for Player
     qint64 mDuration;
-
+    // test
     int previousPageIndex;
 };
 #endif // MAINWINDOW_H

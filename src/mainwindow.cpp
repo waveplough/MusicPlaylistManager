@@ -181,11 +181,22 @@ void MainWindow::updateDuration(qint64 duration)
     QString timestr;
     if (duration || mDuration)
     {
-        QTime currentTime((duration / 3600) % 60, (duration / 60) % 60, duration % 60, (duration * 1000) % 1000);
-        // This function comes straight from the tutorial. It manipulates minute and second math to display the current time.
-        QTime totalTime((mDuration / 3600) % 60, (mDuration / 60) % 60, mDuration % 60, (mDuration * 1000) % 1000);
+        // subdivide in hours, minutes, seconds and millises
+        QTime currentTime(
+            (duration / 3600000) % 24,
+            (duration / 60000) % 60,         
+            (duration / 1000) % 60,          
+            duration % 1000                  
+        );
+        QTime totalTime(
+            (mDuration / 3600000) % 24,
+            (mDuration / 60000) % 60,
+            (mDuration / 1000) % 60,
+            mDuration % 1000
+        );
+
         QString format = "mm:ss";
-        if (mDuration > 3600) {
+        if (mDuration > 3600000) {  
             format = "hh:mm:ss";
         }
         ui->playerCurrentTime->setText(currentTime.toString(format));
@@ -196,8 +207,8 @@ void MainWindow::updateDuration(qint64 duration)
 // Music Player : Playbar duration sync
 void MainWindow::durationChanged(qint64 duration)
 {
-    mDuration = duration / 1000;
-    ui->playerPlaybar->setMaximum(mDuration);
+    mDuration = duration; 
+    ui->playerPlaybar->setMaximum(mDuration / 1000); 
 }
 
 // Music Player : Playbar position change

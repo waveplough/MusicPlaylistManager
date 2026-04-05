@@ -54,6 +54,10 @@ public slots:
     // Analytics Page
     void onAnalyticsExitButtonClicked();
 
+    // Playlist Tab
+    void onAddPlaylistButtonClicked();
+    void onPlaylistEditorExitButtonClicked();
+
 private:
     Ui::MainWindow *ui;
 

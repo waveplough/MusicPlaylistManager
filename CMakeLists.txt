@@ -23,15 +23,17 @@ add_executable(MusicPlaylistManager
     "src/mainwindow.cpp"
     "src/mainwindow.ui"
     "src/MediaController.cpp"
-    "include/songCard.ui"
     "src/songCard.cpp"
-    "include/playlistCard.ui"
     "src/playlistCard.cpp"
+    "src/LibraryCard.cpp"
     "include/playlistCard.h"
     "include/songCard.h"
     "include/MediaController.h"
     "include/mainwindow.h"
- "include/LibraryCard.h")
+    "include/playlistCard.ui"
+    "include/LibraryCard.h"
+    "include/songCard.ui"
+    "include/LibraryCard.ui")
 target_include_directories(MusicPlaylistManager PRIVATE include)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Widgets)
 target_link_libraries(MusicPlaylistManager PRIVATE Qt6::Multimedia)

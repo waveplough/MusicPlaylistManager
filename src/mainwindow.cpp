@@ -33,7 +33,13 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     // Playlist
     connect(ui->addPlaylistButton, &QPushButton::clicked, this, &MainWindow::onAddPlaylistButtonClicked);
     connect(ui->exitPlaylistEditor, &QPushButton::clicked, this, &MainWindow::onPlaylistEditorExitButtonClicked);
-    connect(ui->playlistCardBox, &QListWidget::itemClicked, this, &MainWindow::onPlaylistItemClicked);
+    connect(ui->playlistCardBox, &QListWidget::itemClicked, this, [this](QListWidgetItem* item) {                   //  This is for when a user selects a playlist from the playlist selection list.
+        onPlaylistSelected(ui->playlistCardBox->row(item));
+        });    
+
+    connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddCurrentSongToPlaylistClicked);    //  This is for when a user clicks the "Add Current Song to Playlist" button. 
+    connect(ui->libraryList, &QListWidget::currentRowChanged, this, &MainWindow::onMusicLibrarySongSelected);    // This is for when a user clicks on a song in the music library.
+
 
     // Player
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
@@ -303,12 +309,81 @@ void MainWindow::onAddPlaylistButtonClicked() {
     addPlaylistCard();
 }
 
-void MainWindow::onPlaylistItemClicked() {
+void MainWindow::onPlaylistSelected(int row) {
+    currentPlaylistIndex = row;
+    loadCurrentPlaylistToUI();
     previousPageIndex = ui->stackedWidget->currentIndex();
     ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
 }
 
 void MainWindow::onPlaylistEditorExitButtonClicked() {
+    currentPlaylistIndex = -1;
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
+}
+
+
+// This function loads the songs of the currently selected playlist into the playlist editor UI. 
+// It is called whenever a new playlist is selected or when changes are made to the current playlist.
+void MainWindow::loadCurrentPlaylistToUI() {
+    ui->SongList->clear();
+
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) return;
+
+    for (const auto& song : currentPlaylist->getSongs()) {
+        if (song) {
+            QListWidgetItem* item = new QListWidgetItem(
+                QString::fromStdString(song->getTitle())
+            );
+            ui->SongList->addItem(item);
+        }
+    }
+}
+
+void MainWindow::onAddCurrentSongToPlaylistClicked() {
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    if (currentSongIndex < 0 || currentSongIndex >= static_cast<int>(songs.size())) {
+        QMessageBox::warning(this, "No Song Selected", "Please select a song first.");
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    std::shared_ptr<Song> currentSong = songs[currentSongIndex];
+
+    if (!currentPlaylist || !currentSong) {
+        return;
+    }
+
+    currentPlaylist->addSong(currentSong);
+
+    ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
+    loadCurrentPlaylistToUI();
+}
+
+// This function is for when a user clicks on a song in the music library. 
+// Current Song to Playlist, it adds the correct song.
+void MainWindow::onMusicLibrarySongSelected(int row)
+{
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+
+    if (row < 0 || row >= static_cast<int>(songs.size()))
+    {
+        return;
+    }
+
+    currentSongIndex = row;
 }
 

@@ -18,7 +18,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="topHorizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="playlistNameLabel">
        <property name="minimumSize">
@@ -85,6 +85,43 @@
        </property>
        <property name="icon">
         <iconset theme="QIcon::ThemeIcon::FormatJustifyLeft"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deletePlaylistButton">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>21</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>Delete Playlist</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+
+QPushButton:hover {
+    border: 1px solid rgba(140, 140, 140, 50);
+    border-radius: 16px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="QIcon::ThemeIcon::EditDelete"/>
        </property>
       </widget>
      </item>

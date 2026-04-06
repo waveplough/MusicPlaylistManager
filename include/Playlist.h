@@ -28,6 +28,9 @@ public:
 	const std::string& getName() const { return name;  }
 	const std::vector<std::shared_ptr<Song>>& getSongs() const{ return songs;  }
 
+	// Setters
+	void setName(const std::string& newName) { name = newName; }
+
 	// Utility
 	void addSong(const std::shared_ptr<Song>& song);
 	void removeSong(const std::string& songID);

@@ -1194,45 +1194,47 @@ QPushButton {
            </layout>
           </widget>
           <widget class="QWidget" name="AnalyticsPage">
-           <layout class="QVBoxLayout" name="verticalLayout_9">
+           <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QLabel" name="analyticsLabel">
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Analytics</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="exitButtonSpacer">
-                <property name="orientation">
-                 <enum>Qt::Orientation::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QPushButton" name="exitButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>41</width>
-                  <height>41</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">QPushButton
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QLabel" name="analyticsLabel">
+                  <property name="font">
+                   <font>
+                    <pointsize>15</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Analytics</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="exitButtonSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="exitButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>41</width>
+                    <height>41</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton
 {
 border:none;
 border-radius:15px;
@@ -1256,31 +1258,20 @@ QPushButton {
     outline: none;
 }
 </string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
-                </property>
-               </widget>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QFormLayout" name="analyticsForm">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="analyticsLabel">
-                  <property name="font">
-                   <font>
-                    <pointsize>15</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Analytics</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
                  <widget class="QLabel" name="totalListeningTimeFixed">
                   <property name="font">
                    <font>
@@ -1293,7 +1284,7 @@ QPushButton {
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="0" column="1">
                  <widget class="QLabel" name="timeLabel">
                   <property name="font">
                    <font>
@@ -1305,7 +1296,7 @@ QPushButton {
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="averageSongDurationFixed">
                   <property name="font">
                    <font>
@@ -1318,7 +1309,7 @@ QPushButton {
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="1" column="1">
                  <widget class="QLabel" name="songDurationLabel">
                   <property name="font">
                    <font>

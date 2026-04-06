@@ -20,7 +20,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_5">
     <item>
      <widget class="QSplitter" name="mainSplitter">
       <property name="sizePolicy">
@@ -61,7 +61,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="songPlayerPage">
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -702,132 +702,9 @@ background-color:rgb(140,140,140);
           <widget class="QWidget" name="editPlaylistPage">
            <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <layout class="QVBoxLayout" name="pEditorLabelVLayout">
+             <layout class="QHBoxLayout" name="PlaylistEditorTitleLayout">
               <item>
-               <layout class="QHBoxLayout" name="PlaylistEditorTitleLayout">
-                <item>
-                 <widget class="QLabel" name="playlistEditorViewLabel">
-                  <property name="font">
-                   <font>
-                    <family>Segoe UI</family>
-                    <pointsize>15</pointsize>
-                    <bold>true</bold>
-                    <underline>false</underline>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Playlist Editor View:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_4">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="exitPlaylistEditor">
-                  <property name="minimumSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    padding: 0px;
-    outline: none;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="savePlaylistChanges">
-                  <property name="minimumSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    padding: 0px;
-    outline: none;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::DocumentPageSetup"/>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>16</width>
-                    <height>16</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="NameAndGenreHLayout">
-                <item>
-                 <layout class="QVBoxLayout" name="PlaylistNameVLayout">
-                  <item>
-                   <widget class="QLabel" name="playlistNameLabel">
-                    <property name="font">
-                     <font>
-                      <family>Segoe UI</family>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Playlist Name:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="playlistNameLineEdit"/>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="Line" name="labelSeperator">
-                <property name="orientation">
-                 <enum>Qt::Orientation::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="toolsBoxLayout">
-              <item>
-               <widget class="QLabel" name="toolsLabel">
+               <widget class="QLabel" name="playlistEditorViewLabel">
                 <property name="font">
                  <font>
                   <family>Segoe UI</family>
@@ -837,7 +714,211 @@ background-color:rgb(140,140,140);
                  </font>
                 </property>
                 <property name="text">
-                 <string>Tools:</string>
+                 <string>Playlist Editor View</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="exitPlaylistEditor">
+                <property name="minimumSize">
+                 <size>
+                  <width>41</width>
+                  <height>41</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="savePlaylistChanges">
+                <property name="minimumSize">
+                 <size>
+                  <width>41</width>
+                  <height>41</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::DocumentPageSetup"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="playlistNameLabel">
+              <property name="font">
+               <font>
+                <family>Segoe UI</family>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Playlist Name</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QPushButton" name="searchSymbol">
+                <property name="minimumSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::EditFind"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="playlistNameLineEdit"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="Line" name="labelSeperator">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QPushButton" name="moveButton_2">
+                <property name="toolTip">
+                 <string>Move</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::AudioCard"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
                 </property>
                </widget>
               </item>
@@ -858,6 +939,9 @@ background-color:rgb(140,140,140);
                <layout class="QVBoxLayout" name="verticalLayout4">
                 <item>
                  <widget class="QPushButton" name="moveButton">
+                  <property name="toolTip">
+                   <string>Move</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton
 {
@@ -874,7 +958,15 @@ padding:0px;
 QPushButton:Hover
 {
 background-color:rgb(140,140,140);
-}</string>
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -890,28 +982,15 @@ background-color:rgb(140,140,140);
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QLabel" name="moveLabel">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Move</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout5">
                 <item>
                  <widget class="QPushButton" name="reorderButton">
+                  <property name="toolTip">
+                   <string>Reorder</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton
 {
@@ -928,7 +1007,15 @@ padding:0px;
 QPushButton:Hover
 {
 background-color:rgb(140,140,140);
-}</string>
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -944,28 +1031,15 @@ background-color:rgb(140,140,140);
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QLabel" name="reorderLabel">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Reorder</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout6">
                 <item>
                  <widget class="QPushButton" name="sortButton">
+                  <property name="toolTip">
+                   <string>Sort</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton
 {
@@ -982,7 +1056,15 @@ padding:0px;
 QPushButton:Hover
 {
 background-color:rgb(140,140,140);
-}</string>
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -998,82 +1080,15 @@ background-color:rgb(140,140,140);
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QLabel" name="sortLabel">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Sort</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout7">
-                <item>
-                 <widget class="QPushButton" name="searchButton">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton
-{
-border:none;
-border-radius:15px;
-background-color:rgb(255,255,255);
-color:rgb(52,51,64);
-min-width:41px;
-max-width:41px;
-min-height:41px;
-max-height:41px;
-padding:0px;
-}
-QPushButton:Hover
-{
-background-color:rgb(140,140,140);
-}</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::SystemSearch"/>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="searchLabel">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Search</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout8">
                 <item>
                  <widget class="QPushButton" name="addButton">
+                  <property name="toolTip">
+                   <string>Add</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton
 {
@@ -1090,7 +1105,15 @@ padding:0px;
 QPushButton:Hover
 {
 background-color:rgb(140,140,140);
-}</string>
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1106,28 +1129,15 @@ background-color:rgb(140,140,140);
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QLabel" name="addLabel">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Add</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout9">
                 <item>
                  <widget class="QPushButton" name="trashButton">
+                  <property name="toolTip">
+                   <string>Delete</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton
 {
@@ -1144,7 +1154,15 @@ padding:0px;
 QPushButton:Hover
 {
 background-color:rgb(140,140,140);
-}</string>
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1157,22 +1175,6 @@ background-color:rgb(140,140,140);
                     <width>20</width>
                     <height>20</height>
                    </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="trashLabel">
-                  <property name="font">
-                   <font>
-                    <family>Arial</family>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Trash</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -1192,50 +1194,76 @@ background-color:rgb(140,140,140);
            </layout>
           </widget>
           <widget class="QWidget" name="AnalyticsPage">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <layout class="QVBoxLayout" name="AnalyticsButtonVLayout">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
-               <layout class="QHBoxLayout" name="exitButtonHLayout">
-                <item>
-                 <spacer name="exitButtonSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="exitButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton {
+               <widget class="QLabel" name="analyticsLabel">
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Analytics</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="exitButtonSpacer">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="exitButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>41</width>
+                  <height>41</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
     border: none;
     background-color: transparent;
     padding: 0px;
     outline: none;
 }
 </string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+                </property>
+               </widget>
               </item>
               <item>
                <layout class="QFormLayout" name="analyticsForm">
@@ -1466,8 +1494,8 @@ background-color:rgb(140,140,140);
                 <widget class="QPushButton" name="addPlaylistButton">
                  <property name="minimumSize">
                   <size>
-                   <width>20</width>
-                   <height>20</height>
+                   <width>30</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1476,7 +1504,23 @@ background-color:rgb(140,140,140);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">QPushButton {
+                  <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:30px;
+max-width:30px;
+min-height:25px;
+max-height:25px;
+padding:0px;
+}
+QPushButton:hover {
+    background-color: rgb(215, 215, 215);
+}
+
+QPushButton {
     border: none;
     background-color: transparent;
     padding: 0px;

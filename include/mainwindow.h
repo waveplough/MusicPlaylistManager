@@ -65,6 +65,7 @@ public slots:
     // Playlist Editor Buttons
     void onAddCurrentSongToPlaylistClicked();
     void loadCurrentPlaylistToUI();
+    void loadPlaylistEditorSongsToUI();
 
     // Music Library
     void onMusicLibrarySongSelected(int row);

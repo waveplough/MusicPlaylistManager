@@ -20,6 +20,7 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     
 {
     ui->setupUi(this);
+    ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 
     // Forces the main splitter to size. Not doable in create.
     ui->mainSplitter->setSizes({ 551, 240, 240 });
@@ -323,6 +324,7 @@ void MainWindow::onAddPlaylistButtonClicked() {
 void MainWindow::onPlaylistSelected(int row) {
     currentPlaylistIndex = row;
     loadCurrentPlaylistToUI();
+    loadPlaylistEditorSongsToUI();
     previousPageIndex = ui->stackedWidget->currentIndex();
     ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
 }
@@ -384,6 +386,7 @@ void MainWindow::onAddCurrentSongToPlaylistClicked() {
 
     ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
     loadCurrentPlaylistToUI();
+    loadPlaylistEditorSongsToUI();
 }
 
 // This function is for when a user clicks on a song in the music library. 
@@ -398,5 +401,31 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     }
 
     currentSongIndex = row;
+}
+
+// This function loads the list of songs from the music library into the playlist editor UI.
+void MainWindow::loadPlaylistEditorSongsToUI() {
+    ui->playlistSongsList->clear();
+
+
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) return;
+
+    for (const auto& song : currentPlaylist->getSongs()) {
+        if (song) {
+            songCard* card = new songCard(song, this);      // gets shared pointer reference of its own
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setSizeHint(card->sizeHint());
+            ui->playlistSongsList->addItem(item);
+            ui->playlistSongsList->setItemWidget(item, card);
+
+        }
+    }
 }
 

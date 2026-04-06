@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>240</width>
-    <height>80</height>
+    <height>76</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,13 +73,6 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_sc_songImage">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="artistNameLabel">
@@ -125,11 +118,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>layoutWidget</zorder>
-  <zorder>label_sc_songImage</zorder>
-  <zorder>musicSymbol</zorder>
-  <zorder>horizontalSpacer</zorder>
-  <zorder>horizontalSpacer_2</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -140,6 +140,7 @@ void MainWindow::onNewSongButtonClicked() {
 
     // pass to datamanager to handle said metadata
     std::shared_ptr<Song> newSong = dataManager.parseSongData(fileName, *player);
+    mediaControl.setCurrentSong(newSong);   // track the current song
 
     // updated player and library 
     addPlayerInformation(newSong, fileInfo);
@@ -200,6 +201,7 @@ void MainWindow::loadLibraryToUI() {
         mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
         addPlayerInformation(songs.front(), fileInfo);
         addSongEditorInformation(songs.front());
+        mediaControl.setCurrentSong(songs.front());
     }
 
     for (const auto& p : playlists) {
@@ -490,6 +492,7 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     }
 
     currentSongIndex = row;
+    mediaControl.setCurrentSong(playlistManager.getMusicLibrary()->getSongs()[row]);
 }
 
 // This function loads the list of songs from the music library into the playlist editor UI.
@@ -523,6 +526,7 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
 // A function to play a song from a double clicked song card
 void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song) 
 {
+    mediaControl.setCurrentSong(song);
     // Set media in the player
     mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(QString::fromStdString(song->getFilePath())));
         // Takes the filepath from the song object.
@@ -784,5 +788,28 @@ void MainWindow::onReorderClicked()
 //__________________________________________________________________________________________________________________________________ //
 
 void MainWindow::onSongEditorSubmitButtonClicked() {
-    //mediaControl.usePlayer()
+    std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
+    
+
+    if (currentSong) {
+        QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
+        currentSong->setTitle(ui->lineEditSongName->text().toStdString());
+        currentSong->setArtist(ui->lineEditArtist->text().toStdString());
+        currentSong->setAlbum(ui->lineEditAlbum->text().toStdString());
+        currentSong->setGenre(ui->lineEditGenre->text().toStdString());
+        
+        addPlayerInformation(currentSong, fileInfo);
+        addSongEditorInformation(currentSong);
+        
+
+        ui->libraryList->clear();
+
+        const auto& songs = playlistManager.getMusicLibrary()->getSongs();
+
+        for (const auto& song : songs) {
+            if (song) {
+                addSongCardToLibraryList(song);
+            }
+        }
+    }
 }

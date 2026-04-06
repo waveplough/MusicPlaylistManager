@@ -151,11 +151,6 @@ void MainWindow::onNewSongButtonClicked() {
 
 }
 
-void MainWindow::onAnalyticsButtonClicked() {
-    previousPageIndex = ui->stackedWidget->currentIndex();
-    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
-}
-
 // Analytics Page
 void MainWindow::onAnalyticsExitButtonClicked() {
     ui->stackedWidget->setCurrentIndex(previousPageIndex);
@@ -894,7 +889,6 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
 }
 
 
-
 void MainWindow::onAnalyticsButtonClicked() {
     // Get all songs from the library
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
@@ -905,56 +899,10 @@ void MainWindow::onAnalyticsButtonClicked() {
     // Format into Minutes and Seconds for the label
     int mins = totalSeconds / 60;
     int secs = totalSeconds % 60;
-    ui->timeLabel->setText(QString("Total Time: %1m %2s").arg(mins).arg(secs));
+    ui->timeLabel->setText(QString("%1m %2s").arg(mins).arg(secs));
 
     double avgSeconds = engine.computeAverageSongDuration();
-    ui->songDurationLabel->setText(QString("Avg Duration: %1s").arg(avgSeconds, 0, 'f', 2));
-
-    previousPageIndex = ui->stackedWidget->currentIndex();
-    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
-}
-
-void MainWindow::loadCurrentPlaylistToUI() {
-    ui->SongList->clear();
-    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
-    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
-        return;
-    }
-    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
-    for (const auto& song : currentPlaylist->getSongs()) {
-        if (song) {
-            ui->SongList->addItem(QString::fromStdString(song->getTitle()));
-        }
-    }
-}
-
-void MainWindow::loadLibraryToUI() {
-    ui->playlistCardBox->clear();
-
-    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
-    for (const auto& p : playlists) {
-        if (p) {
-            QString playlistName = QString::fromStdString(p->getName());
-            ui->playlistCardBox->addItem(playlistName);
-        }
-    }
-}
-
-
-void MainWindow::onAnalyticsButtonClicked() {
-    // Get all songs from the library
-    const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
-    AnalyticsEngine<Song> engine(allSongs);
-
-    int totalSeconds = engine.computeTotalListeningTime();
-
-    // Format into Minutes and Seconds for the label
-    int mins = totalSeconds / 60;
-    int secs = totalSeconds % 60;
-    ui->timeLabel->setText(QString("Total Time: %1m %2s").arg(mins).arg(secs));
-
-    double avgSeconds = engine.computeAverageSongDuration();
-    ui->songDurationLabel->setText(QString("Avg Duration: %1s").arg(avgSeconds, 0, 'f', 2));
+    ui->songDurationLabel->setText(QString("%1s").arg(avgSeconds, 0, 'f', 2));
 
     previousPageIndex = ui->stackedWidget->currentIndex();
     ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);

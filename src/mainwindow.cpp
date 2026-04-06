@@ -46,18 +46,31 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     // Player
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
     connect(ui->backButton, &QPushButton::clicked, this, &MainWindow::onBackButtonClicked);
+    //connect(ui->backButton, &QPushButton::pressed, this, &MainWindow::onBackButtonPressed);       // UNUSED
     connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::onStopButtonClicked);
     connect(ui->playButton, &QPushButton::clicked, this, &MainWindow::onPlayButtonClicked);
     connect(ui->pauseButton, &QPushButton::clicked, this, &MainWindow::onPauseButtonClicked);
     connect(ui->forwardButton, &QPushButton::clicked, this, &MainWindow::onForwardButtonClicked);
+    //connect(ui->forwardButton, &QPushButton::pressed, this, &MainWindow::onForwardButtonPressed); // UNUSED
     
     connect(ui->playerPlaybar, &QSlider::valueChanged, this, &MainWindow::onPlayerPlaybarValueChanged);
+    connect(ui->playerPlaybar, &QSlider::sliderMoved, this, &MainWindow::onPlayerPlaybarMoved);
     connect(ui->playerVolumeSlider, &QSlider::valueChanged, this, &MainWindow::onPlayerVolumeSliderValueChanged);
 
     // Analytics
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::onAnalyticsExitButtonClicked);
 
     /* Object Manipulation */
+
+    // Player Forward Button
+    ui->forwardButton->setAutoRepeat(true);         // Must set auto repeat to happen on a press button
+    ui->forwardButton->setAutoRepeatDelay(100);     // Set the delay for the functionality to start.
+    ui->forwardButton->setAutoRepeatInterval(100);  // Set the autorepeat interval of increase.
+
+    // Player Backward Button
+    ui->backButton->setAutoRepeat(true);            // Must set auto repeat to happen on a press button
+    ui->backButton->setAutoRepeatDelay(100);        // Set the delay for the functionality to start.
+    ui->backButton->setAutoRepeatInterval(100);     // Set the autorepeat interval of increase.
 
     // Playbar Slider
     connect(mediaControl.usePlayer(), &QMediaPlayer::durationChanged, this, &MainWindow::durationChanged);  // Sets maximum slider count.
@@ -176,11 +189,24 @@ void MainWindow::loadLibraryToUI() {
 
 /* Music Player Functions */
 
-// Music Player : Scroll back button functionality.
+// Music Player : Scroll back button functionality. One-time click.
 void MainWindow::onBackButtonClicked() 
 {
-
+    ui->playerPlaybar->setValue(ui->playerPlaybar->value() - 2);
+        // Jumps backward by 30 seconds + the current playerbar value.
+    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
+        // Sets the actual song to that position.
 }
+
+// UNUSED
+// Music Player : Scroll back button functionality. Held down scrolling.
+//void MainWindow::onBackButtonPressed()
+//{
+//    ui->playerPlaybar->setValue(ui->playerPlaybar->value() - 0.01);
+//    // Jumps backward by 0.01 second + the current playerbar value.
+//    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
+//    // Sets the actual song to that position.
+//}
 
 // Music Player : Stop button functionality.
 void MainWindow::onStopButtonClicked() 
@@ -200,21 +226,45 @@ void MainWindow::onPauseButtonClicked()
     mediaControl.usePlayer()->pause();
 }
 
-// Music Player : Scroll forward button functionality.
+// Music Player : Scroll forward button functionality - one-time click.
 void MainWindow::onForwardButtonClicked() 
 {
-
+    ui->playerPlaybar->setValue(ui->playerPlaybar->value() + 3);
+        // Jumps forward by 30 seconds + the current playerbar value.
+    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
+        // Sets the actual song to that position.
 }
+
+// UNUSED
+// Music Player : Scroll forward button functionality - held down scrolling.
+//void MainWindow::onForwardButtonPressed()
+//{
+//    ui->playerPlaybar->setValue(ui->playerPlaybar->value() + 0.01);
+//    // Jumps forward by 0.01 seconds + the current playerbar value.
+//    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
+//    // Sets the actual song to that position.
+//}
 
     // Playbar related //
-// Music Player : Playbar (slider) manipulation.
+// Music Player : Playbar (slider) value adjustment.
 void MainWindow::onPlayerPlaybarValueChanged(int value)
 {
-
+    if (ui->playerPlaybar->isSliderDown()) 
+    {
+        mediaControl.usePlayer()->setPosition(value * 1000);
+    }
 }
+
+// Music Player : Playbar (slider) clicked the slider to move it.
+void MainWindow::onPlayerPlaybarMoved(int value)
+{
+    mediaControl.usePlayer()->setPosition(value * 1000);
+}
+
 
 // Music Player : Playbar duration sync
 void MainWindow::updateDuration(qint64 duration)
+    // Note: QT is weird and often works in Miliseconds.
 {
     QString timestr;
     if (duration || mDuration)
@@ -266,7 +316,7 @@ void MainWindow::onPlayerVolumeSliderValueChanged(int value)
         // QT 6 uses volume levels from 0 - 1. Not 100 like previously.
 }
 
-// Adds toggled Mute / Active functionality for the Player's Volume (mute) button.
+// Music Player: Adds toggled Mute / Active functionality for the Player's Volume (mute) button.
 void MainWindow::onPlayerVolumeButtonClicked()
 {
     if (isMuted == false)
@@ -282,6 +332,8 @@ void MainWindow::onPlayerVolumeButtonClicked()
         isMuted = false;
     }
 }
+
+/* PERSISTENCE FUNCTIONS */
 
 // Temporary: Auto-save data when closing the application
 void MainWindow::closeEvent(QCloseEvent* event)

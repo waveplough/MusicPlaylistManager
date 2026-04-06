@@ -39,13 +39,16 @@ public slots:
 
     // Toggleable music Player buttons. Ie Play, Pause - normal functionality.
     void onBackButtonClicked();
+    //void onBackButtonPressed();       // UNUSED
     void onStopButtonClicked();
     void onPlayButtonClicked();
     void onPauseButtonClicked();
     void onForwardButtonClicked();
+    //void onForwardButtonPressed();    // UNUSED
 
     // Music Player sliders.
     void onPlayerPlaybarValueChanged(int value);
+    void onPlayerPlaybarMoved(int value);
     void onPlayerVolumeSliderValueChanged(int value);
 
     // Playbar duration

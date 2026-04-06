@@ -97,6 +97,9 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     ui->playerVolumeSlider->setValue(30);
     mediaControl.usePlayer()->audioOutput()->setVolume(ui->playerVolumeSlider->value() / 100.0);     // Sets slider volume. May be unneccessary.
 
+
+    // Song Editor
+    connect(ui->submitButton, &QPushButton::clicked, this, &MainWindow::onSongEditorSubmitButtonClicked);
 }
 
 MainWindow::~MainWindow()
@@ -171,10 +174,10 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
 }
 
 void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
-    ui->lineEditSongName->setText(QString::fromStdString(song->getTitle()));
-    ui->lineEditGenre->setText(QString::fromStdString(song->getGenre()));
-    ui->lineEditArtist->setText(QString::fromStdString(song->getArtist()));
-    ui->lineEditAlbum->setText(QString::fromStdString(song->getAlbum()));
+    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(song->getTitle()));
+    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(song->getGenre()));
+    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(song->getArtist()));
+    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(song->getAlbum()));
 }
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {
@@ -744,4 +747,42 @@ void MainWindow::onReorderClicked()
     );
 
     refreshPlaylistViewsAndKeepSelection(newRow);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//___________________________________________________________________________________________________________________________________//
+//________________________________________________________________SONG EDITOR FUNCTION______________________________________________//
+//__________________________________________________________________________________________________________________________________ //
+
+void MainWindow::onSongEditorSubmitButtonClicked() {
+    //mediaControl.usePlayer()
 }

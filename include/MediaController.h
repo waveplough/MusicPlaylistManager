@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QAudioOutput>
 #include <QMediaPlayer>
+#include "Song.h"
 
 class MediaController  : public QObject
 {

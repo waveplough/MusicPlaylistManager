@@ -84,6 +84,7 @@ public slots:
     // Song Editor
 
     void addSongEditorInformation(std::shared_ptr<Song> song);
+    void onSongEditorSubmitButtonClicked();
 
 protected:
     void closeEvent(QCloseEvent* event) override;

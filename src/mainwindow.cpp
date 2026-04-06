@@ -92,6 +92,9 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     ui->playerVolumeSlider->setValue(30);
     mediaControl.usePlayer()->audioOutput()->setVolume(ui->playerVolumeSlider->value() / 100.0);     // Sets slider volume. May be unneccessary.
 
+
+    // Song Editor
+    connect(ui->submitButton, &QPushButton::clicked, this, &MainWindow::onSongEditorSubmitButtonClicked);
 }
 
 MainWindow::~MainWindow()
@@ -692,4 +695,42 @@ void MainWindow::onReorderClicked()
     );
 
     refreshPlaylistViewsAndKeepSelection(newRow);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//___________________________________________________________________________________________________________________________________//
+//________________________________________________________________SONG EDITOR FUNCTION______________________________________________//
+//__________________________________________________________________________________________________________________________________ //
+
+void MainWindow::onSongEditorSubmitButtonClicked() {
+    //mediaControl.usePlayer()
 }

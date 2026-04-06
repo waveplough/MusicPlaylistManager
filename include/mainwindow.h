@@ -77,6 +77,10 @@ public slots:
     // Music Library
     void onMusicLibrarySongSelected(int row);
 
+    // Song Editor
+
+    void addSongEditorInformation(std::shared_ptr<Song> song);
+
 protected:
     void closeEvent(QCloseEvent* event) override;
 

@@ -61,7 +61,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="songPlayerPage">
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -613,6 +613,17 @@ background-color:rgb(140,140,140);
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLineEdit {
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 4px 10px;
+    background-color: white;
+}
+QLineEdit:focus {
+    border: 1px solid #888888;
+}</string>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -635,6 +646,17 @@ background-color:rgb(140,140,140);
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLineEdit {
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 4px 10px;
+    background-color: white;
+}
+QLineEdit:focus {
+    border: 1px solid #888888;
+}</string>
                     </property>
                    </widget>
                   </item>
@@ -663,6 +685,17 @@ background-color:rgb(140,140,140);
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLineEdit {
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 4px 10px;
+    background-color: white;
+}
+QLineEdit:focus {
+    border: 1px solid #888888;
+}</string>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -688,6 +721,17 @@ background-color:rgb(140,140,140);
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QLineEdit {
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 4px 10px;
+    background-color: white;
+}
+QLineEdit:focus {
+    border: 1px solid #888888;
+}</string>
                     </property>
                    </widget>
                   </item>

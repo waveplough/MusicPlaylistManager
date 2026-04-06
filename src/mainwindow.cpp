@@ -131,6 +131,7 @@ void MainWindow::onNewSongButtonClicked() {
     // updated player and library 
     addPlayerInformation(newSong, fileInfo);
     addSongCardToLibraryList(newSong);
+    addSongEditorInformation(newSong);
 
 }
 
@@ -159,6 +160,12 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
     ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());  // Sets the filepath label
 }
 
+void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
+    ui->lineEditSongName->setText(QString::fromStdString(song->getTitle()));
+    ui->lineEditGenre->setText(QString::fromStdString(song->getGenre()));
+    ui->lineEditArtist->setText(QString::fromStdString(song->getArtist()));
+    ui->lineEditAlbum->setText(QString::fromStdString(song->getAlbum()));
+}
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
@@ -178,6 +185,7 @@ void MainWindow::loadLibraryToUI() {
 
         mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
         addPlayerInformation(songs.front(), fileInfo);
+        addSongEditorInformation(songs.front());
     }
 
     for (const auto& p : playlists) {

@@ -16,6 +16,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QLineEdit>
+#include <AnalyticsEngine.h>
 
 
 MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
@@ -148,11 +149,6 @@ void MainWindow::onNewSongButtonClicked() {
     addSongCardToLibraryList(newSong);
     addSongEditorInformation(newSong);
 
-}
-
-void MainWindow::onAnalyticsButtonClicked() {
-    previousPageIndex = ui->stackedWidget->currentIndex();
-    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
 }
 
 // Analytics Page
@@ -890,5 +886,25 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
     loadLibraryToUI();
     loadCurrentPlaylistToUI();
 
+}
+
+
+void MainWindow::onAnalyticsButtonClicked() {
+    // Get all songs from the library
+    const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
+    AnalyticsEngine<Song> engine(allSongs);
+
+    int totalSeconds = engine.computeTotalListeningTime();
+
+    // Format into Minutes and Seconds for the label
+    int mins = totalSeconds / 60;
+    int secs = totalSeconds % 60;
+    ui->timeLabel->setText(QString("%1m %2s").arg(mins).arg(secs));
+
+    double avgSeconds = engine.computeAverageSongDuration();
+    ui->songDurationLabel->setText(QString("%1s").arg(avgSeconds, 0, 'f', 2));
+
+    previousPageIndex = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
 }
 

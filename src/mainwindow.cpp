@@ -510,6 +510,7 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
     QFileInfo fileInfo(QString::fromStdString(song->getFilePath()));
         // Has to turn the filepath from the song into a QFileInfo object. Complicated but necessary.
     addPlayerInformation(song, fileInfo);
+    addSongEditorInformation(song);
         // Calls the player info update method
 
     // Activate the song page

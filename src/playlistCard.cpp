@@ -23,7 +23,7 @@ playlistCard::playlistCard(Playlist* playlist, QWidget *parent)
 {
 	ui->setupUi(this);
     if (playlist) {
-        ui->playlistNoticeLabel->setText(QString::fromStdString(playlist->getName()));
+        ui->playlistNameLabel->setText(QString::fromStdString(playlist->getName()));
         ui->totalPlaylistTime->setText(formatDuration(playlist->computeTotalDuration()));
     }
 }

@@ -73,6 +73,10 @@ public slots:
     void onAddCurrentSongToPlaylistClicked();
     void loadCurrentPlaylistToUI();
     void loadPlaylistEditorSongsToUI();
+    void onPlaylistEditorSongSelected(int row);
+    void onMoveUpClicked();
+    void onMoveDownClicked();
+    void onReorderClicked();
 
     // Music Library
     void onMusicLibrarySongSelected(int row);
@@ -100,6 +104,9 @@ private:
     // current song index for playlist functionality. - 1 means no song is currently selected.
     int currentSongIndex = -1;
 
+	//` current song index for playlist editor functionality. -1 means no song is currently selected.
+    int currentPlaylistSongIndex = -1;
+
     // Boolean for music Player Volume toggle.
     bool isMuted = false;
 
@@ -108,6 +115,7 @@ private:
     
     int previousPageIndex;
 
+	void refreshPlaylistViewsAndKeepSelection(int row); //  A helper function to refresh the playlist views while keeping the current selection.
 };
 #endif // MAINWINDOW_H
 

@@ -13,6 +13,9 @@
 #include <QMessageBox>
 #include <QSignalBlocker>       // For blocking signals when updating the playbar position programmatically.
 #include <QInputDialog>
+#include <QEvent>
+#include <QMouseEvent>
+#include <QLineEdit>
 
 
 MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
@@ -26,6 +29,8 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 {
 
     ui->setupUi(this);
+    ui->playlistNameLabel->installEventFilter(this);
+    ui->playlistNameLabel->setCursor(Qt::PointingHandCursor);
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 
     // Forces the main splitter to size. Not doable in create.
@@ -393,6 +398,10 @@ void MainWindow::onAddPlaylistButtonClicked() {
 void MainWindow::onPlaylistSelected(int row) {
     currentPlaylistIndex = row;
 	currentPlaylistSongIndex = -1;      //  Resets the current song index in the playlist editor when a new playlist is selected.
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+    if (row >= 0 && row < static_cast<int>(playlists.size()) && playlists[row]) {
+        ui->playlistNameLabel->setText(QString::fromStdString(playlists[row]->getName()));
+    }
     loadCurrentPlaylistToUI();
     loadPlaylistEditorSongsToUI();
     previousPageIndex = ui->stackedWidget->currentIndex();
@@ -533,6 +542,49 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
     {
         mediaControl.usePlayer()->play(); 
     }
+}
+
+
+//  This function allows the user to click on the playlist name label in the playlist editor to rename the playlist. 
+// It uses an input dialog to get the new name and updates the playlist and UI accordingly.
+bool MainWindow::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == ui->playlistNameLabel && event->type() == QEvent::MouseButtonPress)
+    {
+        const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+        if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+            return true;
+        }
+
+        Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+        if (!currentPlaylist) return true;
+
+        bool ok = false;
+        QString newName = QInputDialog::getText(
+            this,
+            "Rename Playlist",
+            "Enter playlist name:",
+            QLineEdit::Normal,
+            QString::fromStdString(currentPlaylist->getName()),
+            &ok
+        );
+
+        if (ok && !newName.trimmed().isEmpty()) {
+            currentPlaylist->setName(newName.toStdString());
+
+            ui->playlistNameLabel->setText(newName);
+
+            loadLibraryToUI();
+            ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
+            loadCurrentPlaylistToUI();
+            loadPlaylistEditorSongsToUI();
+        }
+
+        return true;
+    }
+
+    return QMainWindow::eventFilter(watched, event);
 }
 
 

@@ -166,10 +166,10 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
 }
 
 void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
-    ui->lineEditSongName->setText(QString::fromStdString(song->getTitle()));
-    ui->lineEditGenre->setText(QString::fromStdString(song->getGenre()));
-    ui->lineEditArtist->setText(QString::fromStdString(song->getArtist()));
-    ui->lineEditAlbum->setText(QString::fromStdString(song->getAlbum()));
+    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(song->getTitle()));
+    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(song->getGenre()));
+    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(song->getArtist()));
+    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(song->getAlbum()));
 }
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {

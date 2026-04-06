@@ -6,6 +6,7 @@
 #include "MediaController.h"
 #include "MusicLibrary.h"
 #include "DataManager.h"
+#include "Playlist.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,6 +23,7 @@ public:
     ~MainWindow() override;
 
     void loadLibraryToUI();
+    void loadPlaylistsToUI();
     void addSongCardToLibraryList(std::shared_ptr<Song> song);
     void addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileinfo);
 
@@ -60,6 +62,14 @@ public slots:
     void onAddPlaylistButtonClicked();
     void onPlaylistEditorExitButtonClicked();
 
+	// This is for both creating a new playlist and saving changes to an existing playlist, 
+    // since the same button is used for both.
+    void onSavePlaylistButtonClicked();
+    void onPlaylistSelected(int row);
+	void onAddCurrentSongToPlaylistClicked();
+    void onPlaylistEditorSongSelected(int row);
+    void onPlaylistSongSelected(int row);
+
 protected:
     void closeEvent(QCloseEvent* event) override;
 
@@ -76,9 +86,20 @@ private:
     bool isMuted = false;
 
     // maximum Duration var for Player
-    qint64 mDuration;
+    qint64 mDuration = 0;
     
-    int previousPageIndex;
+    int previousPageIndex = 0;
+
+	// current song index for playlist functionality. -1 means no song is currently selected.
+    int currentSongIndex = -1;
+
+	// current playlist index for playlist functionality. -1 means no playlist is currently selected.
+    int currentPlaylistIndex = -1;
+
+
+	// Helper functions for UI manipulation
+    void loadCurrentPlaylistToUI();
+    void loadPlaylistEditorSongsToUI();
 
 };
 #endif // MAINWINDOW_H

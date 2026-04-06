@@ -32,6 +32,11 @@ MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, 
     // Playlist
     connect(ui->addPlaylistButton, &QPushButton::clicked, this, &MainWindow::onAddPlaylistButtonClicked);
     connect(ui->exitPlaylistEditor, &QPushButton::clicked, this, &MainWindow::onPlaylistEditorExitButtonClicked);
+    connect(ui->savePlaylistChanges, &QPushButton::clicked, this, &MainWindow::onSavePlaylistButtonClicked);
+	connect(ui->playlistCardBox, &QListWidget::currentRowChanged, this, &MainWindow::onPlaylistSelected);   //  This is for when a user selects a playlist from the playlist selection list. 
+    connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddCurrentSongToPlaylistClicked);    //  This is for when a user clicks the "Add Current Song to Playlist" button. 
+	connect(ui->playlistSongsList, &QListWidget::currentRowChanged, this, &MainWindow::onPlaylistEditorSongSelected);    // This is for when a user clicks on a song in the playlist editor. 
+	connect(ui->SongList, &QListWidget::currentRowChanged, this, &MainWindow::onPlaylistSongSelected);       //  This is for when a user clicks on a song in the playlist view (the list of songs in the currently selected playlist).
 
     // Player
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
@@ -82,13 +87,12 @@ void MainWindow::onNewSongButtonClicked() {
 
     QMediaPlayer* player = mediaControl.usePlayer();
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));    // Gives the menu more verbiage.
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP3 Files (*.mp3) *.wav *.flac *.aac *.ogg);;All Files (*)"));    // Gives the menu more verbiage.
 
     if (fileName.isEmpty()) return;
 
-    player->setSource(QUrl(fileName));
+    player->setSource(QUrl::fromLocalFile(fileName));
     QFileInfo fileInfo(fileName); // This is getting file info OUTSIDE of the song library. This is important here. Don't change.
-    
 
     // extract metadata
     QEventLoop loop;
@@ -102,10 +106,20 @@ void MainWindow::onNewSongButtonClicked() {
     // pass to datamanager to handle said metadata
     std::shared_ptr<Song> newSong = dataManager.parseSongData(fileName, *player);
 
-    // updated player and library 
+    // updated player and library
     addPlayerInformation(newSong, fileInfo);
     addSongCardToLibraryList(newSong);
 
+    // Track the current song index for next/previous navigation
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+    for (int i = 0; i < static_cast<int>(songs.size()); i++)
+    {
+        if (songs[i] == newSong)
+        {
+            currentSongIndex = i;
+            break;
+        }
+    }
 }
 
 void MainWindow::onAnalyticsButtonClicked() {
@@ -149,6 +163,8 @@ void MainWindow::loadLibraryToUI() {
         QString savedPath = QString::fromStdString(songs.front()->getFilePath());
         QFileInfo fileInfo(savedPath);
 
+		currentSongIndex = 0;                   // Set the current song index to the first song in the library
+
         mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
         addPlayerInformation(songs.front(), fileInfo);
     }
@@ -157,9 +173,34 @@ void MainWindow::loadLibraryToUI() {
 /* Music Player Functions */
 
 // Music Player : Scroll back button functionality.
-void MainWindow::onBackButtonClicked() 
+void MainWindow::onBackButtonClicked()
 {
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
 
+    if (songs.empty())
+    {
+        return;
+    }
+
+    if (currentSongIndex <= 0)
+    {
+        return;
+    }
+
+    currentSongIndex--;
+
+    std::shared_ptr<Song> prevSong = songs[currentSongIndex];
+    if (!prevSong)
+    {
+        return;
+    }
+
+    QString savedPath = QString::fromStdString(prevSong->getFilePath());
+    QFileInfo fileInfo(savedPath);
+
+    mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
+    addPlayerInformation(prevSong, fileInfo);
+    mediaControl.usePlayer()->play();
 }
 
 // Music Player : Stop button functionality.
@@ -181,9 +222,34 @@ void MainWindow::onPauseButtonClicked()
 }
 
 // Music Player : Scroll forward button functionality.
-void MainWindow::onForwardButtonClicked() 
+void MainWindow::onForwardButtonClicked()
 {
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
 
+    if (songs.empty())
+    {
+        return;
+    }
+
+    if (currentSongIndex < 0 || currentSongIndex >= static_cast<int>(songs.size()) - 1)
+    {
+        return;
+    }
+
+    currentSongIndex++;
+
+    std::shared_ptr<Song> nextSong = songs[currentSongIndex];
+    if (!nextSong)
+    {
+        return;
+    }
+
+    QString savedPath = QString::fromStdString(nextSong->getFilePath());
+    QFileInfo fileInfo(savedPath);
+
+    mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
+    addPlayerInformation(nextSong, fileInfo);
+    mediaControl.usePlayer()->play();
 }
 
     // Playbar related //
@@ -263,7 +329,7 @@ void MainWindow::onPlayerVolumeButtonClicked()
     }
 }
 
-// Temporary: Auto-save data when closing the application
+// Auto-save data when closing the application
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     qDebug() << "Songs in library before save:" << dataManager.getMusicLibrary().getSongs().size();
@@ -279,8 +345,206 @@ void MainWindow::closeEvent(QCloseEvent* event)
 /* PLAYLIST FUNCTIONALITY */
 void MainWindow::onAddPlaylistButtonClicked() {
     previousPageIndex = ui->stackedWidget->currentIndex();
+
+	loadPlaylistEditorSongsToUI(); // Load songs into the playlist editor before showing it
+
     ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
 }
 void MainWindow::onPlaylistEditorExitButtonClicked() {
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 }
+
+
+
+
+
+
+
+
+
+//________________________________________________________________________//
+//---------------- NOTE: The PLAYLIST FUNCTIONALITY-----------------------//
+//________________________________________________________________________//
+
+
+// This function loads the list of playlists from the music library into the playlist selection UI. 
+// It is called whenever the playlist data changes, 
+// such as when a new playlist is created or an existing playlist is deleted.
+void MainWindow::loadPlaylistsToUI() {
+    ui->playlistCardBox->clear();
+
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+
+    for (const auto& playlist : playlists) {
+        if (playlist) {
+            QListWidgetItem* item = new QListWidgetItem(
+                QString::fromStdString(playlist->getName())
+            );
+            ui->playlistCardBox->addItem(item);
+        }
+    }
+
+    if (!playlists.empty()) {
+        currentPlaylistIndex = 0;
+        loadCurrentPlaylistToUI();
+    }
+}
+
+// This function loads the songs of the currently selected playlist into the playlist editor UI. 
+// It is called whenever a new playlist is selected or when changes are made to the current playlist.
+void MainWindow::loadCurrentPlaylistToUI() {
+    ui->SongList->clear();
+
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) return;
+
+    for (const auto& song : currentPlaylist->getSongs()) {
+        if (song) {
+            QListWidgetItem* item = new QListWidgetItem(
+                QString::fromStdString(song->getTitle())
+            );
+            ui->SongList->addItem(item);
+        }
+    }
+}
+
+// This function is for when a user clicks the "Save Playlist" button. 
+// It either creates a new playlist or saves changes to an existing playlist, 
+// depending on the context. Currently, 
+// it only creates new playlists, but it can be expanded to handle both cases.
+void MainWindow::onSavePlaylistButtonClicked() {
+    QString playlistName = ui->playlistNameLineEdit->text().trimmed();
+
+    if (playlistName.isEmpty()) {
+        QMessageBox::warning(this, "Invalid Playlist", "Playlist name cannot be empty.");
+        return;
+    }
+
+    std::string playlistID = QUuid::createUuid().toString().toStdString();
+
+    dataManager.getMusicLibrary().createPlaylist(playlistID, playlistName.toStdString());
+
+    loadPlaylistsToUI();
+
+    ui->playlistNameLineEdit->clear();
+    ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
+}
+
+void MainWindow::onPlaylistSelected(int row) {
+    currentPlaylistIndex = row;
+    loadCurrentPlaylistToUI();
+}
+
+// This function is for when a user clicks the "Add Current Song to Playlist" button. 
+// It adds the currently selected song in the library to the currently selected playlist.
+void MainWindow::onAddCurrentSongToPlaylistClicked() {
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    if (currentSongIndex < 0 || currentSongIndex >= static_cast<int>(songs.size())) {
+        QMessageBox::warning(this, "No Song Selected", "Please select a song first.");
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    std::shared_ptr<Song> currentSong = songs[currentSongIndex];
+
+    if (!currentPlaylist || !currentSong) {
+        return;
+    }
+
+    currentPlaylist->addSong(currentSong);
+
+    ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
+    loadCurrentPlaylistToUI();
+}
+
+// This function is for when a user clicks on a song in the playlist editor. 
+// Current Song to Playlist, it adds the correct song.
+void MainWindow::onPlaylistEditorSongSelected(int row)
+{
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+
+    if (row < 0 || row >= static_cast<int>(songs.size()))
+    {
+        return;
+    }
+
+    currentSongIndex = row;
+}
+
+// This function is for when a user clicks on a song in the playlist editor.
+void MainWindow::onPlaylistSongSelected(int row)
+{
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size()))
+    {
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist)
+    {
+        return;
+    }
+
+    const auto& playlistSongs = currentPlaylist->getSongs();
+
+    if (row < 0 || row >= static_cast<int>(playlistSongs.size()))
+    {
+        return;
+    }
+
+    std::shared_ptr<Song> selectedSong = playlistSongs[row];
+    if (!selectedSong)
+    {
+        return;
+    }
+
+    const auto& librarySongs = dataManager.getMusicLibrary().getSongs();
+    for (int i = 0; i < static_cast<int>(librarySongs.size()); i++)
+    {
+        if (librarySongs[i] == selectedSong)
+        {
+            currentSongIndex = i;
+            break;
+        }
+    }
+
+    QString savedPath = QString::fromStdString(selectedSong->getFilePath());
+    QFileInfo fileInfo(savedPath);
+
+    mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
+    addPlayerInformation(selectedSong, fileInfo);
+    mediaControl.usePlayer()->play();
+}
+
+// This function loads the list of songs from the music library into the playlist editor UI.
+void MainWindow::loadPlaylistEditorSongsToUI() {
+    ui->playlistSongsList->clear();
+
+    const auto& songs = dataManager.getMusicLibrary().getSongs();
+
+    for (const auto& song : songs) {
+        if (song) {
+            QListWidgetItem* item = new QListWidgetItem(
+                QString::fromStdString(song->getTitle())
+            );
+            ui->playlistSongsList->addItem(item);
+        }
+    }
+}
+
+

@@ -813,30 +813,6 @@ background-color:rgb(140,140,140);
                   </item>
                  </layout>
                 </item>
-                <item>
-                 <layout class="QVBoxLayout" name="PlaylistGenreVLayout">
-                  <item>
-                   <widget class="QLabel" name="genreLabel">
-                    <property name="font">
-                     <font>
-                      <family>Segoe UI</family>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Genre:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="genreLineEdit">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
                </layout>
               </item>
               <item>

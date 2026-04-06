@@ -1244,6 +1244,7 @@ background-color:rgb(140,140,140);
                   <property name="font">
                    <font>
                     <pointsize>15</pointsize>
+                    <bold>true</bold>
                    </font>
                   </property>
                   <property name="text">
@@ -1256,6 +1257,7 @@ background-color:rgb(140,140,140);
                   <property name="font">
                    <font>
                     <pointsize>13</pointsize>
+                    <underline>false</underline>
                    </font>
                   </property>
                   <property name="text">
@@ -1280,6 +1282,7 @@ background-color:rgb(140,140,140);
                   <property name="font">
                    <font>
                     <pointsize>13</pointsize>
+                    <underline>false</underline>
                    </font>
                   </property>
                   <property name="text">
@@ -1304,6 +1307,13 @@ background-color:rgb(140,140,140);
              </layout>
             </item>
             <item>
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="mostPlayedSongsLabel">
               <property name="font">
                <font>
@@ -1317,6 +1327,13 @@ background-color:rgb(140,140,140);
             </item>
             <item>
              <widget class="QTableWidget" name="playCountTable"/>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="songsPerGenreLabel">

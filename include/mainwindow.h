@@ -60,7 +60,14 @@ public slots:
     void addPlaylistCard();
     void onAddPlaylistButtonClicked();
     void onPlaylistEditorExitButtonClicked();
-    void onPlaylistItemClicked();
+    void onPlaylistSelected(int row);
+
+    // Playlist Editor Buttons
+    void onAddCurrentSongToPlaylistClicked();
+    void loadCurrentPlaylistToUI();
+
+    // Music Library
+    void onMusicLibrarySongSelected(int row);
 
 protected:
     void closeEvent(QCloseEvent* event) override;
@@ -73,6 +80,12 @@ private:
 
     // Music Library reference pass?
     DataManager& dataManager;
+
+    // current playlist index for playlist functionality. -1 means no playlist is currently selected.
+    int currentPlaylistIndex = -1;
+
+    // current song index for playlist functionality. - 1 means no song is currently selected.
+    int currentSongIndex = -1;
 
     // Boolean for music Player Volume toggle.
     bool isMuted = false;

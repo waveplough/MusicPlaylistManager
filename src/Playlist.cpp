@@ -10,10 +10,10 @@ Playlist::Playlist(const std::string& id, const std::string& name)              
                         name(name) {}
 
 int Playlist::computeTotalDuration() const {                                    // Sums the total duration
-    return std::accumulate(songs.begin(), songs.end(), 0,
-        [](int total, const std::shared_ptr<Song>& song) {
-            return total + song->getDuration();
-        });
+        return std::accumulate(songs.begin(), songs.end(), 0,
+            [](int total, const std::shared_ptr<Song>& song) {
+                return song ? total + song->getDuration() : total;
+            });
 }
 
 void Playlist::displayPlaylist() const {

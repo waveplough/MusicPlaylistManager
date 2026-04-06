@@ -1,7 +1,7 @@
 #include "PlaylistManager.h"
 #include "Playlist.h"
 
-PlaylistManager::PlaylistManager(MusicLibrary& lib)
+PlaylistManager::PlaylistManager(std::shared_ptr<MusicLibrary>& lib)
     : library(lib)
 {
 }
@@ -9,17 +9,17 @@ PlaylistManager::PlaylistManager(MusicLibrary& lib)
 PlaylistManager::~PlaylistManager() {
 }
 
-bool PlaylistManager::addSongToPlaylist(const std::string& songID, std::string& playlistID) {
+bool PlaylistManager::addSongToPlaylist(const std::string& songID,const std::string& playlistID) {
     std::shared_ptr<Song> targetedSong = nullptr;
 
-    for (const auto& s : library.getSongs()) {
+    for (const auto& s : library->getSongs()) {
         if (s->getItemID() == songID) {
             targetedSong = s;
             break;
         }
     }
     Playlist* targetPlaylist = nullptr;
-    for (const auto& p : library.getPlaylists()) {
+    for (const auto& p : library->getPlaylists()) {
         if (p->getPlaylistID() == playlistID) {
             targetPlaylist = p.get();
             break;
@@ -34,8 +34,8 @@ bool PlaylistManager::addSongToPlaylist(const std::string& songID, std::string& 
     return false;
 }
 
-bool PlaylistManager::removeSongFromPlayList(const std::string& songID, std::string& playlistID) {
-    for (const auto& p : library.getPlaylists()) {
+bool PlaylistManager::removeSongFromPlayList(const std::string& songID,const std::string& playlistID) {
+    for (const auto& p : library->getPlaylists()) {
         if (p->getPlaylistID() == playlistID) {
             p->removeSong(songID);
             return true;
@@ -45,7 +45,7 @@ bool PlaylistManager::removeSongFromPlayList(const std::string& songID, std::str
 }
 
 void PlaylistManager::getSongStats(const std::string& songID) const {
-    for (const auto& s : library.getSongs()) {
+    for (const auto& s : library->getSongs()) {
         if (s->getItemID() == songID) {
             std::cout << "Song found: " << s->getTitle() << std::endl;
             return;

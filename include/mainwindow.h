@@ -6,6 +6,7 @@
 #include "MediaController.h"
 #include "MusicLibrary.h"
 #include "DataManager.h"
+#include "PlaylistManager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,7 +19,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(MediaController &mediaControl, DataManager& dataManager, QWidget *parent = nullptr);
+    explicit MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent = nullptr);
     ~MainWindow() override;
 
     void loadLibraryToUI();
@@ -80,6 +81,7 @@ private:
     MediaController &mediaControl;
 
     // Music Library reference pass?
+    PlaylistManager& playlistManager;
     DataManager& dataManager;
 
     // current playlist index for playlist functionality. -1 means no playlist is currently selected.

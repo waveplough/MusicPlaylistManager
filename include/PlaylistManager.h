@@ -5,12 +5,14 @@
 class PlaylistManager
 {
 public:
-	PlaylistManager(MusicLibrary& lib);
+	PlaylistManager(std::shared_ptr<MusicLibrary>& lib);
 	~PlaylistManager();
-	bool addSongToPlaylist(const std::string& songID, std::string& playlistID);
-	bool removeSongFromPlayList(const std::string& songID, std::string& playlistID);
+	bool addSongToPlaylist(const std::string& songID, const std::string& playlistID);
+	bool removeSongFromPlayList(const std::string& songID,const std::string& playlistID);
 	void getSongStats(const std::string& songID) const;
+	std::shared_ptr<MusicLibrary> getMusicLibrary() { return library; }
+
 private:
-	MusicLibrary& library;
+	std::shared_ptr<MusicLibrary> library;
 };
 

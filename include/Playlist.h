@@ -1,14 +1,13 @@
 #pragma once
 #include "Song.h"
 #include "PlaylistItem.h"
+#include "Util.h"
 #include <string>
 #include <vector>
 #include <memory>
 #include <iostream>
 #include <numeric>
 #include <unordered_map>
-
-static int nextId = 0;
 
 class Playlist
 {
@@ -28,6 +27,9 @@ public:
 	const std::string& getPlaylistID() const { return playlistID; }
 	const std::string& getName() const { return name;  }
 	const std::vector<std::shared_ptr<Song>>& getSongs() const{ return songs;  }
+
+	// Setters
+	void setName(const std::string& newName) { name = newName; }
 
 	// Utility
 	void addSong(const std::shared_ptr<Song>& song);

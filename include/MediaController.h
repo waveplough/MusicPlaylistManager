@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QObject>
+#include <QAudioOutput>
 #include <QMediaPlayer>
+#include "Song.h"
 
 class MediaController  : public QObject
 {
@@ -12,8 +14,12 @@ public:
 	~MediaController();
 
 	QMediaPlayer* usePlayer() const { return trueMediaPlayer; } // Const prevents manipulation
+	void setCurrentSong(std::shared_ptr<Song> song) { this->currentSong = song; }
+	std::shared_ptr<Song> getCurrentSong() { return currentSong;  }
 
 private:
 	QMediaPlayer* trueMediaPlayer;
+	QAudioOutput* audioOutput;
+	std::shared_ptr<Song> currentSong;
 };
 

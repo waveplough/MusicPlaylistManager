@@ -1,18 +1,19 @@
 #include "Playlist.h"
+#include <algorithm>
 
-Playlist::Playlist() :  playlistID(std::to_string(nextId++)),                   // Default constructor
+Playlist::Playlist() :  playlistID(generateID()),                               // Default constructor
                         name("Default"), 
-                        songs{ std::make_shared<Song>() } {}
+                        songs{} {}
 
 Playlist::Playlist(const std::string& id, const std::string& name)              // Parameterized constructor
                     :   playlistID(id), 
                         name(name) {}
 
 int Playlist::computeTotalDuration() const {                                    // Sums the total duration
-    return std::accumulate(songs.begin(), songs.end(), 0,
-        [](int total, const std::shared_ptr<Song>& song) {
-            return total + song->getDuration();
-        });
+        return std::accumulate(songs.begin(), songs.end(), 0,
+            [](int total, const std::shared_ptr<Song>& song) {
+                return song ? total + song->getDuration() : total;
+            });
 }
 
 void Playlist::displayPlaylist() const {
@@ -44,34 +45,40 @@ void Playlist::removeSong(const std::string& songID) {                          
     }
 }
 
-void Playlist::reorderSong(size_t oldIndex, size_t newIndex) {                      // Reorder song
+// This function moves a song from one index to another, shifting the other songs accordingly.
+void Playlist::reorderSong(size_t oldIndex, size_t newIndex)                       // Moves a song from one index to another, shifting the other songs accordingly
+{
+    if (oldIndex >= songs.size() || newIndex >= songs.size()) {
+        return;
+    }
 
-    if (oldIndex == newIndex) { return; }
-
-    // Swap first
+    if (oldIndex == newIndex) {
+        return;
+    }
 
     if (oldIndex < newIndex) {
-        int lower = oldIndex;
+        size_t lower = oldIndex;
         std::shared_ptr<Song> lowerSong = songs[lower];
-        int higher = newIndex;
-        int i = 0;
+        size_t higher = newIndex;
+        size_t i = 0;
 
-        for (i = lower; i < higher; i++) {   // Bubbles up
+        for (i = lower; i < higher; i++) {
             songs[i] = songs[i + 1];
         }
         songs[i] = lowerSong;
     }
-    else
-    {
-        int lower = newIndex;
-        int higher = oldIndex;
+    else {
+        size_t lower = newIndex;
+        size_t higher = oldIndex;
         std::shared_ptr<Song> higherSong = songs[higher];
-        int i = 0;
+        size_t i = 0;
 
-        for (i = higher; i > lower; i--) {   // Bubbles down
+        for (i = higher; i > lower; i--) {
             songs[i] = songs[i - 1];
         }
         songs[i] = higherSong;
     }
-
 }
+
+
+

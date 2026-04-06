@@ -11,6 +11,9 @@
 #include <QUuid>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QSignalBlocker>       // For blocking signals when updating the playbar position programmatically.
+#include <QInputDialog>
+
 
 MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
     : QMainWindow(parent)
@@ -44,8 +47,10 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 
     connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddCurrentSongToPlaylistClicked);    //  This is for when a user clicks the "Add Current Song to Playlist" button. 
     connect(ui->libraryList, &QListWidget::currentRowChanged, this, &MainWindow::onMusicLibrarySongSelected);    // This is for when a user clicks on a song in the music library.
-
-
+    connect(ui->playlistSongsList, &QListWidget::currentRowChanged,this, &MainWindow::onPlaylistEditorSongSelected);
+	connect(ui->moveUpButton, &QPushButton::clicked, this, &MainWindow::onMoveUpClicked);  //   This is for when a user clicks the "Move Up" button in the playlist editor.
+	connect(ui->moveDownButton, &QPushButton::clicked, this, &MainWindow::onMoveDownClicked);//   This is for when a user clicks the "Move Down" button in the playlist editor.
+	connect(ui->reorderButton, &QPushButton::clicked, this, &MainWindow::onReorderClicked); //   This is for when a user clicks the "Reorder Playlist" button in the playlist editor.
     // Player
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
     connect(ui->backButton, &QPushButton::clicked, this, &MainWindow::onBackButtonClicked);
@@ -169,6 +174,7 @@ void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
+    ui->playlistCardBox->clear();
 
     const auto& songs = playlistManager.getMusicLibrary()->getSongs();
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -386,6 +392,7 @@ void MainWindow::onAddPlaylistButtonClicked() {
 
 void MainWindow::onPlaylistSelected(int row) {
     currentPlaylistIndex = row;
+	currentPlaylistSongIndex = -1;      //  Resets the current song index in the playlist editor when a new playlist is selected.
     loadCurrentPlaylistToUI();
     loadPlaylistEditorSongsToUI();
     previousPageIndex = ui->stackedWidget->currentIndex();
@@ -394,6 +401,7 @@ void MainWindow::onPlaylistSelected(int row) {
 
 void MainWindow::onPlaylistEditorExitButtonClicked() {
     currentPlaylistIndex = -1;
+	currentPlaylistSongIndex = -1;
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 }
 
@@ -465,6 +473,7 @@ void MainWindow::onMusicLibrarySongSelected(int row)
 
     if (row < 0 || row >= static_cast<int>(songs.size()))
     {
+		currentSongIndex = -1;
         return;
     }
 
@@ -526,3 +535,161 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
     }
 }
 
+
+//___________________________________________________________________________________________________________________________________//
+//____________________________Data Manipulation Functions for Playlist Editor Song List______________________________________________//
+//__________________________________________________________________________________________________________________________________ //
+
+
+// This function refreshes the playlist editor song list UI while keeping the current selection highlighted.
+void MainWindow::refreshPlaylistViewsAndKeepSelection(int row)
+{
+    {
+        QSignalBlocker blocker(ui->playlistSongsList);
+        loadCurrentPlaylistToUI();
+        loadPlaylistEditorSongsToUI();
+    }
+
+    currentPlaylistSongIndex = row;
+
+    if (row >= 0 && row < ui->playlistSongsList->count()) {
+        ui->playlistSongsList->setCurrentRow(row);
+    }
+    else {
+        currentPlaylistSongIndex = -1;
+    }
+}
+
+// This function is for when a user clicks on a song in the playlist editor's song list.
+void MainWindow::onPlaylistEditorSongSelected(int row)
+{
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        currentPlaylistSongIndex = -1;
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) {
+        currentPlaylistSongIndex = -1;
+        return;
+    }
+
+    const auto& songs = currentPlaylist->getSongs();
+
+    if (row < 0 || row >= static_cast<int>(songs.size())) {
+        currentPlaylistSongIndex = -1;
+        return;
+    }
+
+    currentPlaylistSongIndex = row;
+}
+
+// This function is for when a user clicks the "Move Up" button in the playlist editor. 
+// It moves the selected song up in the playlist order.
+void MainWindow::onMoveUpClicked()
+{
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    if (currentPlaylistSongIndex <= 0) {
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) {
+        return;
+    }
+
+    int newRow = currentPlaylistSongIndex - 1;
+
+    currentPlaylist->reorderSong(
+        static_cast<size_t>(currentPlaylistSongIndex),
+        static_cast<size_t>(newRow)
+    );
+
+    refreshPlaylistViewsAndKeepSelection(newRow);
+}
+
+// This function is for when a user clicks the "Move Down" button in the playlist editor.
+void MainWindow::onMoveDownClicked()
+{
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) {
+        return;
+    }
+
+    const auto& songs = currentPlaylist->getSongs();
+
+    if (currentPlaylistSongIndex < 0 || currentPlaylistSongIndex >= static_cast<int>(songs.size()) - 1) {
+        return;
+    }
+
+    int newRow = currentPlaylistSongIndex + 1;
+
+    currentPlaylist->reorderSong(
+        static_cast<size_t>(currentPlaylistSongIndex),
+        static_cast<size_t>(newRow)
+    );
+
+    refreshPlaylistViewsAndKeepSelection(newRow);
+}
+
+// This function is for when a user clicks the "Reorder Playlist" button in the playlist editor.
+void MainWindow::onReorderClicked()
+{
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) return;
+
+    const auto& songs = currentPlaylist->getSongs();
+
+    if (currentPlaylistSongIndex < 0 || currentPlaylistSongIndex >= static_cast<int>(songs.size())) {
+        QMessageBox::warning(this, "No Song Selected", "Please select a song first.");
+        return;
+    }
+
+    bool ok = false;
+
+    int newPosition = QInputDialog::getInt(
+        this,
+        "Reorder Song",
+        "Enter new position:",
+        currentPlaylistSongIndex + 1,     // default position
+        1,
+        static_cast<int>(songs.size()),
+        1,
+        &ok
+    );
+
+    if (!ok) return;
+
+    int newRow = newPosition - 1;
+
+    if (newRow == currentPlaylistSongIndex) return;
+
+    currentPlaylist->reorderSong(
+        static_cast<size_t>(currentPlaylistSongIndex),
+        static_cast<size_t>(newRow)
+    );
+
+    refreshPlaylistViewsAndKeepSelection(newRow);
+}

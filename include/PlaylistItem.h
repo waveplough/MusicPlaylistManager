@@ -23,6 +23,11 @@ public:
 	const std::string& getTitle() const { return title;  }
 	int getDuration() const { return duration; }										// Returns Playlist Item duration
 
+	// Setters
+	void setItemID(const std::string& id) { itemID = id; }
+	void setTitle(const std::string& t) { title = t; }
+	void setDuration(int dur) { duration = dur; }
+
 	virtual void displayItem() = 0;														// Abstract function for displaying a Playlist Item
 	
 

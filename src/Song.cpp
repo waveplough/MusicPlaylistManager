@@ -31,18 +31,6 @@ void Song::incrementPlayCount() {																// Increments the play count
 	playCount++;
 }	
 
-// Setters
-void Song::setPlayCount(int count) {
-	if (count >= 0) {
-		playCount = count;
-	}
-}
-
-// Set the file path for the song
-void Song::setFilePath(const std::string& path) {
-	filePath = path;
-}
-
 bool Song::operator==(const Song& other) const {
 	return itemID == other.itemID;  // Compare by unique ID
 }

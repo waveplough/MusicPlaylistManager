@@ -140,6 +140,7 @@ void MainWindow::onNewSongButtonClicked() {
 
     // pass to datamanager to handle said metadata
     std::shared_ptr<Song> newSong = dataManager.parseSongData(fileName, *player);
+    mediaControl.setCurrentSong(newSong);   // track the current song
 
     // updated player and library 
     addPlayerInformation(newSong, fileInfo);
@@ -168,16 +169,57 @@ void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
 }
 
 void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileInfo) {
-    ui->playerTitleLabel->setText(QString::fromStdString(song->getTitle()));
-    ui->playerArtistLabel->setText(QString::fromStdString(song->getArtist()));
-    ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());  // Sets the filepath label
+    if (!song) {
+        ui->playerTitleLabel->setText("No Title");
+        ui->playerArtistLabel->setText("Unknown Artist");
+        ui->playerFilePathLabel->setText("No file selected");
+        return;
+    }
+
+    // Title
+    std::string title = song->getTitle();
+    ui->playerTitleLabel->setText(QString::fromStdString(title.empty() ? "No Title" : title));
+
+    // Artist
+    std::string artist = song->getArtist();
+    ui->playerArtistLabel->setText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+
+    // File path
+    if (fileInfo.exists() && !fileInfo.absoluteFilePath().isEmpty()) {
+        ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());
+    }
+    else {
+        ui->playerFilePathLabel->setText("File not found");
+    }
 }
 
 void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
-    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(song->getTitle()));
-    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(song->getGenre()));
-    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(song->getArtist()));
-    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(song->getAlbum()));
+    if (!song) {
+        // Set placeholder hints to defaults if song is null
+        ui->lineEditSongName->setPlaceholderText("No Title");
+        ui->lineEditGenre->setPlaceholderText("Unknown");
+        ui->lineEditArtist->setPlaceholderText("Unknown Artist");
+        ui->lineEditAlbum->setPlaceholderText("N/A");
+        return;
+    }
+
+    // Title
+    std::string title = song->getTitle();
+    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(title.empty() ? "No Title" : title));
+
+    // Genre
+    std::string genre = song->getGenre();
+    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(genre.empty() ? "Unknown" : genre));
+
+    // Artist
+    std::string artist = song->getArtist();
+    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+
+    // Album
+    std::string album = song->getAlbum();
+    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(album.empty() ? "N/A" : album));
+
+
 }
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {
@@ -200,6 +242,7 @@ void MainWindow::loadLibraryToUI() {
         mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
         addPlayerInformation(songs.front(), fileInfo);
         addSongEditorInformation(songs.front());
+        mediaControl.setCurrentSong(songs.front());
     }
 
     for (const auto& p : playlists) {
@@ -490,6 +533,7 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     }
 
     currentSongIndex = row;
+    mediaControl.setCurrentSong(playlistManager.getMusicLibrary()->getSongs()[row]);
 }
 
 // This function loads the list of songs from the music library into the playlist editor UI.
@@ -523,6 +567,7 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
 // A function to play a song from a double clicked song card
 void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song) 
 {
+    mediaControl.setCurrentSong(song);
     // Set media in the player
     mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(QString::fromStdString(song->getFilePath())));
         // Takes the filepath from the song object.
@@ -784,5 +829,28 @@ void MainWindow::onReorderClicked()
 //__________________________________________________________________________________________________________________________________ //
 
 void MainWindow::onSongEditorSubmitButtonClicked() {
-    //mediaControl.usePlayer()
+    std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
+    
+
+    if (currentSong) {
+        QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
+        currentSong->setTitle(ui->lineEditSongName->text().toStdString());
+        currentSong->setArtist(ui->lineEditArtist->text().toStdString());
+        currentSong->setAlbum(ui->lineEditAlbum->text().toStdString());
+        currentSong->setGenre(ui->lineEditGenre->text().toStdString());
+        
+        addPlayerInformation(currentSong, fileInfo);
+        addSongEditorInformation(currentSong);
+        
+
+        ui->libraryList->clear();
+
+        const auto& songs = playlistManager.getMusicLibrary()->getSongs();
+
+        for (const auto& song : songs) {
+            if (song) {
+                addSongCardToLibraryList(song);
+            }
+        }
+    }
 }

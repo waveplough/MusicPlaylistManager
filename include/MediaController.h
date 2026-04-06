@@ -15,6 +15,7 @@ public:
 
 	QMediaPlayer* usePlayer() const { return trueMediaPlayer; } // Const prevents manipulation
 	void setCurrentSong(std::shared_ptr<Song> song) { this->currentSong = song; }
+	std::shared_ptr<Song> getCurrentSong() { return currentSong;  }
 
 private:
 	QMediaPlayer* trueMediaPlayer;

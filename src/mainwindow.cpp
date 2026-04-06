@@ -5,6 +5,7 @@
 #include "LibraryCard.h"
 #include "PlaylistCard.h"
 #include "DataManager.h"
+#include "SongCard.h"
 #include <QMediaMetaData>
 #include <QUuid>
 #include <QCloseEvent>
@@ -146,6 +147,7 @@ void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
 
     const auto& songs = dataManager.getMusicLibrary().getSongs();
+    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
 
     for (const auto& song : songs) {
         if (song) {
@@ -160,6 +162,15 @@ void MainWindow::loadLibraryToUI() {
         mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
         addPlayerInformation(songs.front(), fileInfo);
     }
+
+    for (const auto& p : playlists) {
+        playlistCard* card = new playlistCard(p.get(), this);
+        QListWidgetItem* item = new QListWidgetItem();
+        item->setSizeHint(card->sizeHint());
+        ui->playlistCardBox->addItem(item);
+        ui->playlistCardBox->setItemWidget(item, card);
+    }
+   
 }
 
 /* Music Player Functions */
@@ -338,10 +349,12 @@ void MainWindow::loadCurrentPlaylistToUI() {
 
     for (const auto& song : currentPlaylist->getSongs()) {
         if (song) {
-            QListWidgetItem* item = new QListWidgetItem(
-                QString::fromStdString(song->getTitle())
-            );
+            songCard* card = new songCard(song, this);      // gets shared pointer reference of its own
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setSizeHint(card->sizeHint());
             ui->SongList->addItem(item);
+            ui->SongList->setItemWidget(item, card);
+            
         }
     }
 }

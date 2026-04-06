@@ -169,16 +169,57 @@ void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
 }
 
 void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileInfo) {
-    ui->playerTitleLabel->setText(QString::fromStdString(song->getTitle()));
-    ui->playerArtistLabel->setText(QString::fromStdString(song->getArtist()));
-    ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());  // Sets the filepath label
+    if (!song) {
+        ui->playerTitleLabel->setText("No Title");
+        ui->playerArtistLabel->setText("Unknown Artist");
+        ui->playerFilePathLabel->setText("No file selected");
+        return;
+    }
+
+    // Title
+    std::string title = song->getTitle();
+    ui->playerTitleLabel->setText(QString::fromStdString(title.empty() ? "No Title" : title));
+
+    // Artist
+    std::string artist = song->getArtist();
+    ui->playerArtistLabel->setText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+
+    // File path
+    if (fileInfo.exists() && !fileInfo.absoluteFilePath().isEmpty()) {
+        ui->playerFilePathLabel->setText(fileInfo.absoluteFilePath());
+    }
+    else {
+        ui->playerFilePathLabel->setText("File not found");
+    }
 }
 
 void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
-    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(song->getTitle()));
-    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(song->getGenre()));
-    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(song->getArtist()));
-    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(song->getAlbum()));
+    if (!song) {
+        // Set placeholder hints to defaults if song is null
+        ui->lineEditSongName->setPlaceholderText("No Title");
+        ui->lineEditGenre->setPlaceholderText("Unknown");
+        ui->lineEditArtist->setPlaceholderText("Unknown Artist");
+        ui->lineEditAlbum->setPlaceholderText("N/A");
+        return;
+    }
+
+    // Title
+    std::string title = song->getTitle();
+    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(title.empty() ? "No Title" : title));
+
+    // Genre
+    std::string genre = song->getGenre();
+    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(genre.empty() ? "Unknown" : genre));
+
+    // Artist
+    std::string artist = song->getArtist();
+    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+
+    // Album
+    std::string album = song->getAlbum();
+    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(album.empty() ? "N/A" : album));
+
+
 }
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {

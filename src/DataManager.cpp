@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-DataManager::DataManager(MusicLibrary& library) : library(library)             // Initialize Reference To Library
+DataManager::DataManager(std::shared_ptr<MusicLibrary>& library) : musicLibrary(library)             // Initialize Reference To Library
 {
 }
 
@@ -27,7 +27,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
     // Prevent duplicate song import by checking file path
     std::string selectedFilePath = filename.toStdString();
 
-    for (const auto& existingSong : getMusicLibrary().getSongs())
+    for (const auto& existingSong : musicLibrary->getSongs())
     {
         if (existingSong && existingSong->getFilePath() == selectedFilePath)
         {
@@ -65,7 +65,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
         filename.toStdString()
     );
 
-    getMusicLibrary().addSong(newSong);  // add song to library song vector
+    musicLibrary->addSong(newSong);  // add song to library song vector
 
     return newSong;
 }
@@ -93,7 +93,7 @@ bool DataManager::saveData(const std::string& filename) const
     QJsonArray playlistsArray;
 
     // Save Songs
-    for (const auto& song : library.getSongs())
+    for (const auto& song : musicLibrary->getSongs())
     {
         if (!song) continue;
 
@@ -111,7 +111,7 @@ bool DataManager::saveData(const std::string& filename) const
     }
 
     // Save Playlists
-    for (const auto& playlist : library.getPlaylists())
+    for (const auto& playlist : musicLibrary->getPlaylists())
     {
         if (!playlist) continue;
 
@@ -195,11 +195,11 @@ bool DataManager::loadData(const std::string& filename)
 
         song->setPlayCount(playCount);                                         // Added to restore saved play count
 
-        library.addSong(song);
+        musicLibrary->addSong(song);
     }
 
     // Rebuild song map from the library after addSong()
-    for (const auto& song : library.getSongs())
+    for (const auto& song : musicLibrary->getSongs())
     {
         if (song)
         {
@@ -222,11 +222,11 @@ bool DataManager::loadData(const std::string& filename)
             continue;
         }
 
-        library.createPlaylist(playlistID, name);
+        musicLibrary->createPlaylist(playlistID, name);
 
         // Find the playlist that was just created
         Playlist* createdPlaylist = nullptr;
-        for (const auto& playlist : library.getPlaylists())
+        for (const auto& playlist : musicLibrary->getPlaylists())
         {
             if (playlist && playlist->getPlaylistID() == playlistID)
             {

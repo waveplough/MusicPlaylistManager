@@ -3,6 +3,7 @@
 #include "MediaController.h"
 #include "Song.h"
 #include "LibraryCard.h"
+#include "PlaylistManager.h"
 #include "PlaylistCard.h"
 #include "DataManager.h"
 #include "SongCard.h"
@@ -11,14 +12,16 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 
-MainWindow::MainWindow(MediaController &mediaControl, DataManager& dataManager, QWidget *parent)
+MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
     : QMainWindow(parent)
     , mediaControl(mediaControl)
     , dataManager(dataManager)
+    , playlistManager(playlistManager)
     , ui(new Ui::MainWindow)
 
     
 {
+
     ui->setupUi(this);
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 
@@ -147,8 +150,8 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
 void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
 
-    const auto& songs = dataManager.getMusicLibrary().getSongs();
-    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+    const auto& songs = playlistManager.getMusicLibrary()->getSongs();
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
 
     for (const auto& song : songs) {
         if (song) {
@@ -286,7 +289,7 @@ void MainWindow::onPlayerVolumeButtonClicked()
 // Temporary: Auto-save data when closing the application
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    qDebug() << "Songs in library before save:" << dataManager.getMusicLibrary().getSongs().size();
+    qDebug() << "Songs in library before save:" << playlistManager.getMusicLibrary()->getSongs().size();
 
     if (!dataManager.saveData("data/music_library.json"))
     {
@@ -300,10 +303,10 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::addPlaylistCard() {
     std::string id = generateID();
-    dataManager.getMusicLibrary().createPlaylist(id, "Name");
+    playlistManager.getMusicLibrary()->createPlaylist(id, "Name");
     
     Playlist* newPlaylist = nullptr;
-    for (const auto& p : dataManager.getMusicLibrary().getPlaylists()) {
+    for (const auto& p : playlistManager.getMusicLibrary()->getPlaylists()) {
         if (p->getPlaylistID() == id) {
             newPlaylist = p.get();
             break;
@@ -340,7 +343,7 @@ void MainWindow::onPlaylistEditorExitButtonClicked() {
 void MainWindow::loadCurrentPlaylistToUI() {
     ui->SongList->clear();
 
-    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
 
     if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
         return;
@@ -362,8 +365,8 @@ void MainWindow::loadCurrentPlaylistToUI() {
 }
 
 void MainWindow::onAddCurrentSongToPlaylistClicked() {
-    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
-    const auto& songs = dataManager.getMusicLibrary().getSongs();
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+    const auto& songs = playlistManager.getMusicLibrary()->getSongs();
 
     if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
         QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
@@ -378,11 +381,14 @@ void MainWindow::onAddCurrentSongToPlaylistClicked() {
     Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
     std::shared_ptr<Song> currentSong = songs[currentSongIndex];
 
+    const std::string& playlistId = currentPlaylist->getPlaylistID(); // get their id's
+    const std::string& songId = currentSong->getItemID();
+
     if (!currentPlaylist || !currentSong) {
         return;
     }
 
-    currentPlaylist->addSong(currentSong);
+    playlistManager.addSongToPlaylist(songId, playlistId);
 
     ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
     loadCurrentPlaylistToUI();
@@ -393,7 +399,7 @@ void MainWindow::onAddCurrentSongToPlaylistClicked() {
 // Current Song to Playlist, it adds the correct song.
 void MainWindow::onMusicLibrarySongSelected(int row)
 {
-    const auto& songs = dataManager.getMusicLibrary().getSongs();
+    const auto& songs = playlistManager.getMusicLibrary()->getSongs();
 
     if (row < 0 || row >= static_cast<int>(songs.size()))
     {
@@ -408,7 +414,7 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
     ui->playlistSongsList->clear();
 
 
-    const auto& playlists = dataManager.getMusicLibrary().getPlaylists();
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
 
     if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
         return;

@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include "ui_songCard.h"
+#include "Song.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class songCard; };
@@ -15,12 +16,12 @@ class songCard : public QWidget
 	Q_OBJECT
 
 public:
-	explicit songCard(QWidget *parent = nullptr);
+	explicit songCard(std::shared_ptr<Song> song, QWidget *parent = nullptr);
 	~songCard();
 
 private:
 	Ui::songCard *ui;
-	QPixmap Translucency(QImage image);
+	std::shared_ptr<Song> song;
 };
 
 #endif // SONGCARD_H

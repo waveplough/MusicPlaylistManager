@@ -66,6 +66,9 @@ public slots:
     void onPlaylistEditorExitButtonClicked();
     void onPlaylistSelected(int row);
 
+    // Current Playlist (songs) Tab
+    void onSongCardDoubleClicked(std::shared_ptr<Song> song);
+
     // Playlist Editor Buttons
     void onAddCurrentSongToPlaylistClicked();
     void loadCurrentPlaylistToUI();

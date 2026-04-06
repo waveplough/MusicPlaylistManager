@@ -411,7 +411,9 @@ void MainWindow::loadCurrentPlaylistToUI() {
             item->setSizeHint(card->sizeHint());
             ui->SongList->addItem(item);
             ui->SongList->setItemWidget(item, card);
-            
+
+            // Connect for double click button functionality to activate player.
+            connect(card, &songCard::songCardDoubleClick, this, &MainWindow::onSongCardDoubleClicked);
         }
     }
 }
@@ -483,7 +485,35 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
             ui->playlistSongsList->addItem(item);
             ui->playlistSongsList->setItemWidget(item, card);
 
+            // Connect for double click button functionality to activate player.
+            connect(card, &songCard::songCardDoubleClick, this, &MainWindow::onSongCardDoubleClicked);
         }
+    }
+}
+
+// A function to play a song from a double clicked song card
+void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song) 
+{
+    // Set media in the player
+    mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(QString::fromStdString(song->getFilePath())));
+        // Takes the filepath from the song object.
+
+    // Update the Ui info pane
+    QFileInfo fileInfo(QString::fromStdString(song->getFilePath()));
+        // Has to turn the filepath from the song into a QFileInfo object. Complicated but necessary.
+    addPlayerInformation(song, fileInfo);
+        // Calls the player info update method
+
+    // Activate the song page
+    previousPageIndex = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
+
+    // The player plays the song
+    // Note: The if clause does nothing. Unsure why. Keep for now, but non-functional currently.
+    if (mediaControl.usePlayer()->playbackState() != QMediaPlayer::PlaybackState::PlayingState)
+        // It glitches if it is already playing and tries to play again. QT 6 Syntax is strong here.
+    {
+        mediaControl.usePlayer()->play(); 
     }
 }
 

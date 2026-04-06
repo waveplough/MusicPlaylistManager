@@ -22,6 +22,15 @@ public:
 private:
 	Ui::songCard *ui;
 	std::shared_ptr<Song> song;
+
+protected:
+	void mouseDoubleClickEvent(QMouseEvent* playSong) override;		
+		// The defauly mouseDoubleClick needs to be overridden here to have these arguments allowed.
+
+signals:
+	void songCardDoubleClick(std::shared_ptr<Song> song);
+		// Sends the song object outbound. That's how signals work.
 };
+
 
 #endif // SONGCARD_H

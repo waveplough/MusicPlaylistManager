@@ -31,4 +31,8 @@ songCard::~songCard()
 	delete ui;
 }
 
-
+void songCard::mouseDoubleClickEvent(QMouseEvent *playSong)
+{
+    emit songCardDoubleClick(this->song);
+    QWidget::mouseDoubleClickEvent(playSong);
+}

@@ -100,6 +100,7 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 
     // Song Editor
     connect(ui->submitButton, &QPushButton::clicked, this, &MainWindow::onSongEditorSubmitButtonClicked);
+    connect(ui->deleteButton, &QPushButton::clicked, this, &MainWindow::onSongEditorDeleteButtonClicked);
 }
 
 MainWindow::~MainWindow()
@@ -168,6 +169,15 @@ void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
    
 }
 
+void MainWindow::addSongCardToSongsList(std::shared_ptr<Song> song) {
+    ui->playlistSongsList->clear();
+    songCard* card = new songCard(song, this);      // gets shared pointer reference of its own
+    QListWidgetItem* item = new QListWidgetItem();
+    item->setSizeHint(card->sizeHint());
+    ui->SongList->addItem(item);
+    ui->SongList->setItemWidget(item, card);
+}
+
 void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileInfo) {
     if (!song) {
         ui->playerTitleLabel->setText("No Title");
@@ -232,6 +242,7 @@ void MainWindow::loadLibraryToUI() {
     for (const auto& song : songs) {
         if (song) {
             addSongCardToLibraryList(song);
+
         }
     }
 
@@ -244,6 +255,16 @@ void MainWindow::loadLibraryToUI() {
         addSongEditorInformation(songs.front());
         mediaControl.setCurrentSong(songs.front());
     }
+    else {
+        ui->playerTitleLabel->setText("No Title");
+        ui->playerArtistLabel->setText("Unknown Artist");
+        ui->playerFilePathLabel->setText("Filepath");
+
+        ui->lineEditSongName->setPlaceholderText("No Title");
+        ui->lineEditGenre->setPlaceholderText("Unknown");
+        ui->lineEditArtist->setPlaceholderText("Unknown Artist");
+        ui->lineEditAlbum->setPlaceholderText("N/A");
+    }
 
     for (const auto& p : playlists) {
         playlistCard* card = new playlistCard(p.get(), this);
@@ -251,6 +272,7 @@ void MainWindow::loadLibraryToUI() {
         item->setSizeHint(card->sizeHint());
         ui->playlistCardBox->addItem(item);
         ui->playlistCardBox->setItemWidget(item, card);
+
     }
    
 }
@@ -854,3 +876,19 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         }
     }
 }
+
+void MainWindow::onSongEditorDeleteButtonClicked() {
+    std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
+    const std::string songID = currentSong->getItemID();
+
+    if (currentSong) {
+        playlistManager.getMusicLibrary()->deleteSong(songID);
+    }
+
+    QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
+
+    loadLibraryToUI();
+    loadCurrentPlaylistToUI();
+
+}
+

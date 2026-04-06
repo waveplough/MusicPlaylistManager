@@ -888,12 +888,23 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
 
 }
 
-
 void MainWindow::onAnalyticsButtonClicked() {
-    // Get all songs from the library
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
     AnalyticsEngine<Song> engine(allSongs);
+    auto topSongs = engine.computeMostPlayedSongs(10);
 
+
+    ui->playCountTable->setRowCount(0);
+    ui->playCountTable->setColumnCount(3);
+    ui->playCountTable->setHorizontalHeaderLabels({ "Title", "Artist", "Plays" });
+
+    for (int i = 0; i < topSongs.size(); ++i) {
+        ui->playCountTable->insertRow(i);
+        ui->playCountTable->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(topSongs[i]->getTitle())));
+        ui->playCountTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(topSongs[i]->getArtist())));
+        ui->playCountTable->setItem(i, 2, new QTableWidgetItem(QString::number(topSongs[i]->getPlayCount())));
+    }
+    ui->playCountTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     int totalSeconds = engine.computeTotalListeningTime();
 
 
@@ -921,6 +932,7 @@ void MainWindow::onAnalyticsButtonClicked() {
     ui->songDurationLabel->setText(QString("%1:%2")
         .arg(avgMins)
         .arg(avgSecs, 2, 10, QChar('0')));
+
 
     previousPageIndex = ui->stackedWidget->currentIndex();
     ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);

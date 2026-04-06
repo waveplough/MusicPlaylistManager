@@ -744,7 +744,7 @@ QLineEdit:focus {
            </layout>
           </widget>
           <widget class="QWidget" name="editPlaylistPage">
-           <layout class="QVBoxLayout" name="verticalLayout_12">
+           <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
              <layout class="QHBoxLayout" name="PlaylistEditorTitleLayout">
               <item>
@@ -782,6 +782,9 @@ QLineEdit:focus {
                   <width>41</width>
                   <height>41</height>
                  </size>
+                </property>
+                <property name="toolTip">
+                 <string>Exit</string>
                 </property>
                 <property name="styleSheet">
                  <string notr="true">QPushButton
@@ -939,10 +942,7 @@ min-height:41px;
 max-height:41px;
 padding:0px;
 }
-QPushButton:Hover
-{
-background-color:rgb(140,140,140);
-}
+
 
 QPushButton {
     border: none;
@@ -1160,14 +1160,12 @@ QPushButton {
                </widget>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="moveButtonLayout">
-                <item>
-                 <widget class="QPushButton" name="moveUpButton">
-                  <property name="toolTip">
-                   <string>Move Up</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton:hover {
+               <widget class="QPushButton" name="moveUpButton">
+                <property name="toolTip">
+                 <string>Move Up</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton:hover {
     border: 1px solid rgba(140, 140, 140, 50);
     border-radius: 16px;
 }
@@ -1179,34 +1177,34 @@ QPushButton {
     outline: none;
 }
 </string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::GoUp"/>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="moveDownButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Move Down</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton:hover {
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::GoUp"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="moveDownButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Move Down</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton:hover {
     border: 1px solid rgba(140, 140, 140, 50);
     border-radius: 16px;
 }
@@ -1218,22 +1216,20 @@ QPushButton {
     outline: none;
 }
 </string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::GoDown"/>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::GoDown"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>

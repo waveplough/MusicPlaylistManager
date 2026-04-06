@@ -896,13 +896,31 @@ void MainWindow::onAnalyticsButtonClicked() {
 
     int totalSeconds = engine.computeTotalListeningTime();
 
-    // Format into Minutes and Seconds for the label
-    int mins = totalSeconds / 60;
-    int secs = totalSeconds % 60;
-    ui->timeLabel->setText(QString("%1m %2s").arg(mins).arg(secs));
+
+    int hours = totalSeconds / 3600;                // hours
+    int minutes = (totalSeconds % 3600) / 60;       // minutes
+    int seconds = totalSeconds % 60;                // seconds
+
+    if (hours > 0) {
+        ui->timeLabel->setText(QString("%1:%2:%3")
+            .arg(hours, 2, 10, QChar('0'))
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0')));
+    }
+    else {
+        ui->timeLabel->setText(QString("%1:%2")
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0')));
+    }
 
     double avgSeconds = engine.computeAverageSongDuration();
-    ui->songDurationLabel->setText(QString("%1s").arg(avgSeconds, 0, 'f', 2));
+
+    int avgMins = static_cast<int>(avgSeconds) / 60;
+    int avgSecs = static_cast<int>(avgSeconds) % 60;
+
+    ui->songDurationLabel->setText(QString("%1:%2")
+        .arg(avgMins)
+        .arg(avgSecs, 2, 10, QChar('0')));
 
     previousPageIndex = ui->stackedWidget->currentIndex();
     ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);

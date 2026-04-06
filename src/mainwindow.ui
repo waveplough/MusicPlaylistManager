@@ -61,7 +61,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="songPlayerPage">
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -744,7 +744,7 @@ QLineEdit:focus {
            </layout>
           </widget>
           <widget class="QWidget" name="editPlaylistPage">
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
              <layout class="QHBoxLayout" name="PlaylistEditorTitleLayout">
               <item>
@@ -980,14 +980,12 @@ QPushButton {
                </spacer>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout4">
-                <item>
-                 <widget class="QPushButton" name="moveButton">
-                  <property name="toolTip">
-                   <string>Move</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton
+               <widget class="QPushButton" name="reorderButton">
+                <property name="toolTip">
+                 <string>Reorder</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
 {
 border:none;
 border-radius:15px;
@@ -1011,12 +1009,182 @@ QPushButton {
     outline: none;
 }
 </string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::MediaPlaylistShuffle"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="sortButton">
+                <property name="toolTip">
+                 <string>Sort</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::FormatTextStrikethrough"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="addButton">
+                <property name="toolTip">
+                 <string>Add</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="trashButton">
+                <property name="toolTip">
+                 <string>Delete</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton
+{
+border:none;
+border-radius:15px;
+background-color:rgb(255,255,255);
+color:rgb(52,51,64);
+min-width:41px;
+max-width:41px;
+min-height:41px;
+max-height:41px;
+padding:0px;
+}
+QPushButton:Hover
+{
+background-color:rgb(140,140,140);
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset theme="QIcon::ThemeIcon::EditDelete"/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="moveButtonLayout">
+                <item>
+                 <widget class="QPushButton" name="moveUpButton">
+                  <property name="toolTip">
+                   <string>Move Up</string>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton:hover {
+    border: 1px solid rgba(140, 140, 140, 50);
+    border-radius: 16px;
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    outline: none;
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::ObjectRotateRight"/>
+                   <iconset theme="QIcon::ThemeIcon::GoUp"/>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1026,80 +1194,21 @@ QPushButton {
                   </property>
                  </widget>
                 </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout5">
                 <item>
-                 <widget class="QPushButton" name="reorderButton">
-                  <property name="toolTip">
-                   <string>Reorder</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton
-{
-border:none;
-border-radius:15px;
-background-color:rgb(255,255,255);
-color:rgb(52,51,64);
-min-width:41px;
-max-width:41px;
-min-height:41px;
-max-height:41px;
-padding:0px;
-}
-QPushButton:Hover
-{
-background-color:rgb(140,140,140);
-}
-
-QPushButton {
-    border: none;
-    background-color: transparent;
-    padding: 0px;
-    outline: none;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::MediaPlaylistShuffle"/>
-                  </property>
-                  <property name="iconSize">
+                 <widget class="QPushButton" name="moveDownButton">
+                  <property name="minimumSize">
                    <size>
-                    <width>20</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout6">
-                <item>
-                 <widget class="QPushButton" name="sortButton">
                   <property name="toolTip">
-                   <string>Sort</string>
+                   <string>Move Down</string>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">QPushButton
-{
-border:none;
-border-radius:15px;
-background-color:rgb(255,255,255);
-color:rgb(52,51,64);
-min-width:41px;
-max-width:41px;
-min-height:41px;
-max-height:41px;
-padding:0px;
-}
-QPushButton:Hover
-{
-background-color:rgb(140,140,140);
+                   <string notr="true">QPushButton:hover {
+    border: 1px solid rgba(140, 140, 140, 50);
+    border-radius: 16px;
 }
 
 QPushButton {
@@ -1114,105 +1223,7 @@ QPushButton {
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::FormatTextStrikethrough"/>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout8">
-                <item>
-                 <widget class="QPushButton" name="addButton">
-                  <property name="toolTip">
-                   <string>Add</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton
-{
-border:none;
-border-radius:15px;
-background-color:rgb(255,255,255);
-color:rgb(52,51,64);
-min-width:41px;
-max-width:41px;
-min-height:41px;
-max-height:41px;
-padding:0px;
-}
-QPushButton:Hover
-{
-background-color:rgb(140,140,140);
-}
-
-QPushButton {
-    border: none;
-    background-color: transparent;
-    padding: 0px;
-    outline: none;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::ListAdd"/>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout9">
-                <item>
-                 <widget class="QPushButton" name="trashButton">
-                  <property name="toolTip">
-                   <string>Delete</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton
-{
-border:none;
-border-radius:15px;
-background-color:rgb(255,255,255);
-color:rgb(52,51,64);
-min-width:41px;
-max-width:41px;
-min-height:41px;
-max-height:41px;
-padding:0px;
-}
-QPushButton:Hover
-{
-background-color:rgb(140,140,140);
-}
-
-QPushButton {
-    border: none;
-    background-color: transparent;
-    padding: 0px;
-    outline: none;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::EditDelete"/>
+                   <iconset theme="QIcon::ThemeIcon::GoDown"/>
                   </property>
                   <property name="iconSize">
                    <size>

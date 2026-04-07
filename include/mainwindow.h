@@ -77,6 +77,8 @@ public slots:
     void onMoveUpClicked();
     void onMoveDownClicked();
     void onReorderClicked();
+    void onTrashButtonClicked();
+    
 
     // Music Library
     void onMusicLibrarySongSelected(int row);
@@ -120,6 +122,9 @@ private:
     int previousPageIndex;
 
 	void refreshPlaylistViewsAndKeepSelection(int row); //  A helper function to refresh the playlist views while keeping the current selection.
+
+    void onDeletePlaylistButtonClicked(QString playlistID);
+
 };
 #endif // MAINWINDOW_H
 

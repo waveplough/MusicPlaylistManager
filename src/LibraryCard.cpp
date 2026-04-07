@@ -30,3 +30,15 @@ LibraryCard::~LibraryCard()
     delete ui;
 }
 
+// This function is called when the user double-clicks on the library card. 
+// It emits a signal with the associated song, which can be connected to a slot in the main window to play the song.
+void LibraryCard::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if (song)
+    {
+        emit libraryCardDoubleClick(song);
+    }
+
+    QWidget::mouseDoubleClickEvent(event);
+}
+

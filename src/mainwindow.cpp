@@ -49,7 +49,9 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     connect(ui->exitPlaylistEditor, &QPushButton::clicked, this, &MainWindow::onPlaylistEditorExitButtonClicked);
     connect(ui->playlistCardBox, &QListWidget::itemClicked, this, [this](QListWidgetItem* item) {                   //  This is for when a user selects a playlist from the playlist selection list.
         onPlaylistSelected(ui->playlistCardBox->row(item));
-        });    
+        }); 
+	connect(ui->trashButton, &QPushButton::clicked, this, &MainWindow::onTrashButtonClicked);//  This is for when a user clicks the "Delete a song from Playlist" button in the playlist editor.
+	
 
     connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddCurrentSongToPlaylistClicked);    //  This is for when a user clicks the "Add Current Song to Playlist" button. 
     connect(ui->libraryList, &QListWidget::currentRowChanged, this, &MainWindow::onMusicLibrarySongSelected);    // This is for when a user clicks on a song in the music library.
@@ -162,7 +164,9 @@ void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
     item->setSizeHint(card->sizeHint());
     ui->libraryList->addItem(item);
     ui->libraryList->setItemWidget(item, card);
-   
+
+    connect(card, &LibraryCard::libraryCardDoubleClick,
+        this, &MainWindow::onSongCardDoubleClicked);
 }
 
 void MainWindow::addSongCardToSongsList(std::shared_ptr<Song> song) {
@@ -269,6 +273,8 @@ void MainWindow::loadLibraryToUI() {
         ui->playlistCardBox->addItem(item);
         ui->playlistCardBox->setItemWidget(item, card);
 
+        connect(card, &playlistCard::deletePlaylistRequested,
+            this, &MainWindow::onDeletePlaylistButtonClicked);
     }
    
 }
@@ -439,7 +445,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::addPlaylistCard() {
     std::string id = generateID();
     playlistManager.getMusicLibrary()->createPlaylist(id, "Name");
-    
+
     Playlist* newPlaylist = nullptr;
     for (const auto& p : playlistManager.getMusicLibrary()->getPlaylists()) {
         if (p->getPlaylistID() == id) {
@@ -447,12 +453,15 @@ void MainWindow::addPlaylistCard() {
             break;
         }
     }
+
     playlistCard* card = new playlistCard(newPlaylist, this);
     QListWidgetItem* item = new QListWidgetItem();
     item->setSizeHint(card->sizeHint());
     ui->playlistCardBox->addItem(item);
     ui->playlistCardBox->setItemWidget(item, card);
 
+    connect(card, &playlistCard::deletePlaylistRequested,
+        this, &MainWindow::onDeletePlaylistButtonClicked);
 }
 
 void MainWindow::onAddPlaylistButtonClicked() {
@@ -812,6 +821,53 @@ void MainWindow::onReorderClicked()
     refreshPlaylistViewsAndKeepSelection(newRow);
 }
 
+//  This function is for when a user clicks the "Remove from Playlist" button in the playlist editor.
+void MainWindow::onTrashButtonClicked()
+{
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) {
+        return;
+    }
+
+    const auto& songs = currentPlaylist->getSongs();
+
+    if (currentPlaylistSongIndex < 0 || currentPlaylistSongIndex >= static_cast<int>(songs.size())) {
+        QMessageBox::warning(this, "No Song Selected", "Please select a song from the playlist first.");
+        return;
+    }
+
+    std::shared_ptr<Song> selectedSong = songs[currentPlaylistSongIndex];
+    if (!selectedSong) {
+        return;
+    }
+
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Remove Song",
+        "Remove this song from the playlist?",
+        QMessageBox::Yes | QMessageBox::No
+    );
+
+    if (reply != QMessageBox::Yes) {
+        return;
+    }
+
+    currentPlaylist->removeSong(selectedSong->getItemID());
+
+    currentPlaylistSongIndex = -1;
+
+    loadCurrentPlaylistToUI();
+    loadPlaylistEditorSongsToUI();
+
+    dataManager.saveData("data/music_library.json");
+}
 
 
 
@@ -938,3 +994,33 @@ void MainWindow::onAnalyticsButtonClicked() {
     ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
 }
 
+
+
+
+// This function is for when a user clicks the "Delete Playlist" button in the playlist editor.
+void MainWindow::onDeletePlaylistButtonClicked(QString playlistID)
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Delete Playlist",
+        "Are you sure you want to delete this playlist?",
+        QMessageBox::Yes | QMessageBox::No
+    );
+    
+    if (reply != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    playlistManager.getMusicLibrary()->deletePlaylist(playlistID.toStdString());
+    dataManager.saveData("data/music_library.json");
+
+    currentPlaylistIndex = -1;
+    currentPlaylistSongIndex = -1;
+
+    loadLibraryToUI();
+    ui->SongList->clear();
+    ui->playlistSongsList->clear();
+    ui->playlistNameLabel->setText("Playlist Name");
+    ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
+}

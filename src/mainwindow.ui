@@ -61,7 +61,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="songPlayerPage">
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1348,7 +1348,7 @@ QPushButton {
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="playCountTable"/>
+             <widget class="QTableView" name="playCountTable"/>
             </item>
             <item>
              <widget class="Line" name="line">

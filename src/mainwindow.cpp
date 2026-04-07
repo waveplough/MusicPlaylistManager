@@ -219,28 +219,28 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
 void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
     if (!song) {
         // Set placeholder hints to defaults if song is null
-        ui->lineEditSongName->setPlaceholderText("No Title");
-        ui->lineEditGenre->setPlaceholderText("Unknown");
-        ui->lineEditArtist->setPlaceholderText("Unknown Artist");
-        ui->lineEditAlbum->setPlaceholderText("N/A");
+        ui->lineEditSongName->setText("No Title");
+        ui->lineEditGenre->setText("Unknown");
+        ui->lineEditArtist->setText("Unknown Artist");
+        ui->lineEditAlbum->setText("N/A");
         return;
     }
 
     // Title
     std::string title = song->getTitle();
-    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(title.empty() ? "No Title" : title));
+    ui->lineEditSongName->setText(QString::fromStdString(title.empty() ? "No Title" : title));
 
     // Genre
     std::string genre = song->getGenre();
-    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(genre.empty() ? "Unknown" : genre));
+    ui->lineEditGenre->setText(QString::fromStdString(genre.empty() ? "Unknown" : genre));
 
     // Artist
     std::string artist = song->getArtist();
-    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+    ui->lineEditArtist->setText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
 
     // Album
     std::string album = song->getAlbum();
-    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(album.empty() ? "N/A" : album));
+    ui->lineEditAlbum->setText(QString::fromStdString(album.empty() ? "N/A" : album));
 
 
 }

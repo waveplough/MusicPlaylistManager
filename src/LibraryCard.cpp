@@ -11,13 +11,19 @@ LibraryCard::LibraryCard(std::shared_ptr<Song> song, QWidget* parent)
 {
     ui->setupUi(this);
     
-    ui->titleLabel->setText(QString::fromStdString(song->getTitle()));
-    ui->artistLabel->setText(QString::fromStdString(song->getArtist()));
-    ui->albumLabel->setText(QString::fromStdString(song->getAlbum()));
+    // add fields and check add default text if empty
+    std::string title = song ? song->getTitle() : "";
+    ui->titleLabel->setText(QString::fromStdString(title.empty() ? "No Title" : title));
 
-    // format duration 
-    int minutes = song->getDuration() / 60;
-    int seconds = song->getDuration() % 60;
+    std::string artist = song ? song->getArtist() : "";
+    ui->artistLabel->setText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+
+    std::string album = song ? song->getAlbum() : "";
+    ui->albumLabel->setText(QString::fromStdString(album.empty() ? "N/A" : album));
+
+    int duration = song ? song->getDuration() : 0;
+    int minutes = duration / 60;
+    int seconds = duration % 60;
     QString durationStr = QString("%1:%2")
         .arg(minutes, 2, 10, QChar('0'))
         .arg(seconds, 2, 10, QChar('0'));

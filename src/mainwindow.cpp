@@ -613,9 +613,8 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
     std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
 
     // Only increment play count if it's a different song
-    if (currentSong != song) {
-        song->incrementPlayCount();
-    }
+    song->incrementPlayCount();
+
 
     mediaControl.setCurrentSong(song);
     // Set media in the player

@@ -82,6 +82,7 @@ public slots:
 
     // Music Library
     void onMusicLibrarySongSelected(int row);
+    void onSearchTextChanged(const QString& text);
 
     // Song Editor
 
@@ -124,6 +125,11 @@ private:
 	void refreshPlaylistViewsAndKeepSelection(int row); //  A helper function to refresh the playlist views while keeping the current selection.
 
     void onDeletePlaylistButtonClicked(QString playlistID);
+
+	// This vector holds the current search results for the music library. 
+    // It is used to keep track of which songs are currently being displayed in the library list, 
+    // so that when a user clicks on a song, we can get the correct song object from this vector.
+    std::vector<std::shared_ptr<Song>> currentSearchResults;
 
 };
 #endif // MAINWINDOW_H

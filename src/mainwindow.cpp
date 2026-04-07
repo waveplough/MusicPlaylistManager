@@ -56,6 +56,7 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 	
 
     connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddCurrentSongToPlaylistClicked);    //  This is for when a user clicks the "Add Current Song to Playlist" button. 
+	connect(ui->playlistNameLineEdit, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged);     // This is for when a user searches the song in the library card editor.
     connect(ui->libraryList, &QListWidget::currentRowChanged, this, &MainWindow::onMusicLibrarySongSelected);    // This is for when a user clicks on a song in the music library.
     connect(ui->playlistSongsList, &QListWidget::currentRowChanged,this, &MainWindow::onPlaylistEditorSongSelected);
 	connect(ui->moveUpButton, &QPushButton::clicked, this, &MainWindow::onMoveUpClicked);  //   This is for when a user clicks the "Move Up" button in the playlist editor.
@@ -244,6 +245,7 @@ void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
 
 
 }
+
 // Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
 void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
@@ -251,6 +253,8 @@ void MainWindow::loadLibraryToUI() {
 
     const auto& songs = playlistManager.getMusicLibrary()->getSongs();
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    currentSearchResults = songs;
 
     for (const auto& song : songs) {
         if (song) {
@@ -290,6 +294,36 @@ void MainWindow::loadLibraryToUI() {
             this, &MainWindow::onDeletePlaylistButtonClicked);
     }
    
+}
+
+// Music Library Search Functionality. Connected to the textChanged signal of the search bar in the library section. 
+// Filters the songs in the library based on the search query and updates the displayed list accordingly.
+void MainWindow::onSearchTextChanged(const QString& text)
+{
+    QString trimmedText = text.trimmed();
+
+    ui->libraryList->clear();
+
+    if (trimmedText.isEmpty()) {
+        const auto& songs = playlistManager.getMusicLibrary()->getSongs();
+
+        currentSearchResults = songs;
+
+        for (const auto& song : songs) {
+            if (song) {
+                addSongCardToLibraryList(song);
+            }
+        }
+        return;
+    }
+
+    currentSearchResults = playlistManager.getMusicLibrary()->searchSongs(trimmedText.toStdString());
+
+    for (const auto& song : currentSearchResults) {
+        if (song) {
+            addSongCardToLibraryList(song);
+        }
+    }
 }
 
 /* Music Player Functions */
@@ -565,16 +599,30 @@ void MainWindow::onAddCurrentSongToPlaylistClicked() {
 // Current Song to Playlist, it adds the correct song.
 void MainWindow::onMusicLibrarySongSelected(int row)
 {
-    const auto& songs = playlistManager.getMusicLibrary()->getSongs();
-
-    if (row < 0 || row >= static_cast<int>(songs.size()))
+    if (row < 0 || row >= static_cast<int>(currentSearchResults.size()))
     {
-		currentSongIndex = -1;
+        currentSongIndex = -1;
         return;
     }
 
-    currentSongIndex = row;
-    mediaControl.setCurrentSong(playlistManager.getMusicLibrary()->getSongs()[row]);
+    std::shared_ptr<Song> selectedSong = currentSearchResults[row];
+
+    if (!selectedSong) {
+        currentSongIndex = -1;
+        return;
+    }
+
+    const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
+
+    currentSongIndex = -1;
+
+    for (int i = 0; i < static_cast<int>(allSongs.size()); ++i) {
+        if (allSongs[i] && allSongs[i]->getItemID() == selectedSong->getItemID()) {
+            currentSongIndex = i;
+            break;
+        }
+    }
+    mediaControl.setCurrentSong(selectedSong);
 }
 
 // This function loads the list of songs from the music library into the playlist editor UI.

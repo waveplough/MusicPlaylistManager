@@ -16,16 +16,25 @@ static QString formatDuration(int totalSeconds)
         .arg(seconds, 2, 10, QChar('0'));
 }
 
-playlistCard::playlistCard(Playlist* playlist, QWidget *parent)
-	: QWidget(parent)
+playlistCard::playlistCard(Playlist* playlist, QWidget* parent)
+    : QWidget(parent)
     , playlist(playlist)
-	, ui(new Ui::playlistCardClass())
+    , ui(new Ui::playlistCardClass())
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
+
     if (playlist) {
         ui->playlistNameLabel->setText(QString::fromStdString(playlist->getName()));
         ui->totalPlaylistTime->setText(formatDuration(playlist->computeTotalDuration()));
     }
+
+    connect(ui->deletePlaylistButton, &QPushButton::clicked, this, [this]()
+        {
+            if (this->playlist)
+            {
+                emit deletePlaylistRequested(QString::fromStdString(this->playlist->getPlaylistID()));
+            }
+        });
 }
 
 playlistCard::~playlistCard()

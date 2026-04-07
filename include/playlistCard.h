@@ -19,6 +19,9 @@ public:
 	playlistCard(Playlist* playlist, QWidget *parent = nullptr);
 	~playlistCard();
 
+signals:
+	void deletePlaylistRequested(QString playlistID);
+
 private:
 	Ui::playlistCardClass *ui;
 	Playlist* playlist;

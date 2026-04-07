@@ -17,6 +17,12 @@ public:
 	explicit LibraryCard(std::shared_ptr<Song> song, QWidget* parent = nullptr);
 	~LibraryCard();
 
+signals:
+	void libraryCardDoubleClick(std::shared_ptr<Song> song);
+
+protected:
+	void mouseDoubleClickEvent(QMouseEvent* event) override;
+
 private:
 	Ui::LibraryCard* ui;
 	std::shared_ptr<Song> song;

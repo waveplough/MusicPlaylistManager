@@ -162,8 +162,6 @@ void MainWindow::onNewSongButtonClicked() {
     addSongCardToLibraryList(newSong);
     addSongEditorInformation(newSong);
 
-    mediaControl.usePlayer()->play();
-
 }
 
 // Analytics Page

@@ -17,6 +17,8 @@
 #include <QMouseEvent>
 #include <QLineEdit>
 #include <AnalyticsEngine.h>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 
 MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
@@ -973,35 +975,33 @@ void MainWindow::onAnalyticsButtonClicked() {
     previousPageIndex = ui->stackedWidget->currentIndex();
     ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
 
-    // Then populate the table (now visible)
+    // Get all songs
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
     AnalyticsEngine<Song> engine(allSongs);
-    auto topSongs = engine.computeMostPlayedSongs(10);
 
-    ui->playCountTable->setRowCount(0);
-    ui->playCountTable->setColumnCount(3);
-    ui->playCountTable->setHorizontalHeaderLabels({ "Title", "Artist", "Plays" });
+    // Most Played Songs Table 
+    auto topSongs = engine.computeMostPlayedSongs(10);
+    auto playCountModel = new QStandardItemModel(static_cast<int>(topSongs.size()), 3, this);
+    playCountModel->setHorizontalHeaderLabels({ "Title", "Artist", "Plays" });
 
     for (int i = 0; i < static_cast<int>(topSongs.size()); ++i) {
-        ui->playCountTable->insertRow(i);
-
-        // Handle empty title
         std::string title = topSongs[i]->getTitle();
         QString titleText = title.empty() ? "No Title" : QString::fromStdString(title);
-        ui->playCountTable->setItem(i, 0, new QTableWidgetItem(titleText));
+        playCountModel->setItem(i, 0, new QStandardItem(titleText));
 
-        // Handle empty artist
         std::string artist = topSongs[i]->getArtist();
         QString artistText = artist.empty() ? "Unknown Artist" : QString::fromStdString(artist);
-        ui->playCountTable->setItem(i, 1, new QTableWidgetItem(artistText));
+        playCountModel->setItem(i, 1, new QStandardItem(artistText));
 
-        // Play count (always has value)
-        ui->playCountTable->setItem(i, 2, new QTableWidgetItem(QString::number(topSongs[i]->getPlayCount())));
+        playCountModel->setItem(i, 2, new QStandardItem(QString::number(topSongs[i]->getPlayCount())));
     }
+
+    ui->playCountTable->setModel(playCountModel);
+    ui->playCountTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // read-only
     ui->playCountTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
+    // Total Listening Time
     int totalSeconds = engine.computeTotalListeningTime();
-
     int hours = totalSeconds / 3600;
     int minutes = (totalSeconds % 3600) / 60;
     int seconds = totalSeconds % 60;
@@ -1018,6 +1018,7 @@ void MainWindow::onAnalyticsButtonClicked() {
             .arg(seconds, 2, 10, QChar('0')));
     }
 
+    // Average Song Duration
     double avgSeconds = engine.computeAverageSongDuration();
     int avgMins = static_cast<int>(avgSeconds) / 60;
     int avgSecs = static_cast<int>(avgSeconds) % 60;
@@ -1025,6 +1026,22 @@ void MainWindow::onAnalyticsButtonClicked() {
     ui->songDurationLabel->setText(QString("%1:%2")
         .arg(avgMins)
         .arg(avgSecs, 2, 10, QChar('0')));
+
+    // Populate Genre Table 
+    auto genreCounts = engine.computeSongsByGenre();
+    auto genreModel = new QStandardItemModel(static_cast<int>(genreCounts.size()), 2, this);
+    genreModel->setHorizontalHeaderLabels({ "Genre", "Count" });
+
+    int row = 0;
+    for (const auto& [genre, count] : genreCounts) {
+        genreModel->setItem(row, 0, new QStandardItem(QString::fromStdString(genre)));
+        genreModel->setItem(row, 1, new QStandardItem(QString::number(count)));
+        ++row;
+    }
+
+    ui->genreTable->setModel(genreModel);
+    ui->genreTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // read-only
+    ui->genreTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 

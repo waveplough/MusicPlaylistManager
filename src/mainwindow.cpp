@@ -604,19 +604,30 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
 }
 
 // A function to play a song from a double clicked song card
-void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song) 
+void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
 {
+    qDebug() << "DOUBLE CLICK SLOT CALLED";
+    if (!song) return;
+
+    // Get currently playing song
+    std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
+
+    // Only increment play count if it's a different song
+    if (currentSong != song) {
+        song->incrementPlayCount();
+    }
+
     mediaControl.setCurrentSong(song);
     // Set media in the player
     mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(QString::fromStdString(song->getFilePath())));
-        // Takes the filepath from the song object.
+    // Takes the filepath from the song object.
 
     // Update the Ui info pane
     QFileInfo fileInfo(QString::fromStdString(song->getFilePath()));
-        // Has to turn the filepath from the song into a QFileInfo object. Complicated but necessary.
+    // Has to turn the filepath from the song into a QFileInfo object. Complicated but necessary.
     addPlayerInformation(song, fileInfo);
     addSongEditorInformation(song);
-        // Calls the player info update method
+    // Calls the player info update method
 
     // Activate the song page
     previousPageIndex = ui->stackedWidget->currentIndex();
@@ -627,7 +638,7 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
     if (mediaControl.usePlayer()->playbackState() != QMediaPlayer::PlaybackState::PlayingState)
         // It glitches if it is already playing and tries to play again. QT 6 Syntax is strong here.
     {
-        mediaControl.usePlayer()->play(); 
+        mediaControl.usePlayer()->play();
     }
 }
 
@@ -959,28 +970,42 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
 }
 
 void MainWindow::onAnalyticsButtonClicked() {
+    // First switch to the Analytics page
+    previousPageIndex = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
+
+    // Then populate the table (now visible)
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
     AnalyticsEngine<Song> engine(allSongs);
     auto topSongs = engine.computeMostPlayedSongs(10);
-
 
     ui->playCountTable->setRowCount(0);
     ui->playCountTable->setColumnCount(3);
     ui->playCountTable->setHorizontalHeaderLabels({ "Title", "Artist", "Plays" });
 
-    for (int i = 0; i < topSongs.size(); ++i) {
+    for (int i = 0; i < static_cast<int>(topSongs.size()); ++i) {
         ui->playCountTable->insertRow(i);
-        ui->playCountTable->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(topSongs[i]->getTitle())));
-        ui->playCountTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(topSongs[i]->getArtist())));
+
+        // Handle empty title
+        std::string title = topSongs[i]->getTitle();
+        QString titleText = title.empty() ? "No Title" : QString::fromStdString(title);
+        ui->playCountTable->setItem(i, 0, new QTableWidgetItem(titleText));
+
+        // Handle empty artist
+        std::string artist = topSongs[i]->getArtist();
+        QString artistText = artist.empty() ? "Unknown Artist" : QString::fromStdString(artist);
+        ui->playCountTable->setItem(i, 1, new QTableWidgetItem(artistText));
+
+        // Play count (always has value)
         ui->playCountTable->setItem(i, 2, new QTableWidgetItem(QString::number(topSongs[i]->getPlayCount())));
     }
     ui->playCountTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
     int totalSeconds = engine.computeTotalListeningTime();
 
-
-    int hours = totalSeconds / 3600;                // hours
-    int minutes = (totalSeconds % 3600) / 60;       // minutes
-    int seconds = totalSeconds % 60;                // seconds
+    int hours = totalSeconds / 3600;
+    int minutes = (totalSeconds % 3600) / 60;
+    int seconds = totalSeconds % 60;
 
     if (hours > 0) {
         ui->timeLabel->setText(QString("%1:%2:%3")
@@ -995,19 +1020,13 @@ void MainWindow::onAnalyticsButtonClicked() {
     }
 
     double avgSeconds = engine.computeAverageSongDuration();
-
     int avgMins = static_cast<int>(avgSeconds) / 60;
     int avgSecs = static_cast<int>(avgSeconds) % 60;
 
     ui->songDurationLabel->setText(QString("%1:%2")
         .arg(avgMins)
         .arg(avgSecs, 2, 10, QChar('0')));
-
-
-    previousPageIndex = ui->stackedWidget->currentIndex();
-    ui->stackedWidget->setCurrentWidget(ui->AnalyticsPage);
 }
-
 
 
 

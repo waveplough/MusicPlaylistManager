@@ -31,7 +31,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
     {
         if (existingSong && existingSong->getFilePath() == selectedFilePath)
         {
-            return existingSong;   // Song already exists → DO NOT create duplicate
+            return nullptr;   // Song already exists → DO NOT create duplicate
         }
     }
 

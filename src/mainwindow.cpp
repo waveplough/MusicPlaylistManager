@@ -123,33 +123,46 @@ MainWindow::~MainWindow()
     //-(*)- Suleiman, Ria. This is where a song should now get registered in the library.
 void MainWindow::onNewSongButtonClicked() {
 
-    QMediaPlayer* player = mediaControl.usePlayer();
+    QMediaPlayer tempPlayer;
+    QAudioOutput tempOutput;
+    tempPlayer.setAudioOutput(&tempOutput);
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP# Files (*.mp3)"));    // Gives the menu more verbiage.
-
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Audio File"), "", tr("MP3 Files (*.mp3)"));
     if (fileName.isEmpty()) return;
 
-    player->setSource(QUrl(fileName));
-    QFileInfo fileInfo(fileName); // This is getting file info OUTSIDE of the song library. This is important here. Don't change.
-    
+    tempPlayer.setSource(QUrl::fromLocalFile(fileName));
 
-    // extract metadata
+    // Extract metadata
     QEventLoop loop;
-    connect(player, &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
+    connect(&tempPlayer, &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
         if (status == QMediaPlayer::LoadedMedia) {
             loop.quit();
         }
         });
     loop.exec();
 
-    // pass to datamanager to handle said metadata
-    std::shared_ptr<Song> newSong = dataManager.parseSongData(fileName, *player);
-    mediaControl.setCurrentSong(newSong);   // track the current song
+    std::shared_ptr<Song> newSong = dataManager.parseSongData(fileName, tempPlayer);
 
-    // updated player and library 
+    if (!newSong) {
+        QMessageBox::information(this, "Duplicate", "This song is already in your library.");
+        return;
+    }
+
+    // Stop current playback
+    mediaControl.usePlayer()->stop();
+
+    // Set the new song as current
+    mediaControl.setCurrentSong(newSong);
+
+    // Load the new song into the main player
+    mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(fileName));
+
+    QFileInfo fileInfo(fileName);
     addPlayerInformation(newSong, fileInfo);
     addSongCardToLibraryList(newSong);
     addSongEditorInformation(newSong);
+
+    mediaControl.usePlayer()->play();
 
 }
 

@@ -542,6 +542,7 @@ void MainWindow::onAddCurrentSongToPlaylistClicked() {
 
     playlistManager.addSongToPlaylist(songId, playlistId);
 
+    loadLibraryToUI();
     ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
     loadCurrentPlaylistToUI();
     loadPlaylistEditorSongsToUI();
@@ -860,6 +861,8 @@ void MainWindow::onTrashButtonClicked()
     }
 
     currentPlaylist->removeSong(selectedSong->getItemID());
+
+    loadLibraryToUI();
 
     currentPlaylistSongIndex = -1;
 

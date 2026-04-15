@@ -10,6 +10,7 @@ private:
 	std::string genre;			// Genre name
 	int playCount{ 0 };			// Number of plays
 	std::string filePath;       // Full audio file path
+	int totalListeningTime{ 0 };
 
 public:
 	// Constructors
@@ -23,13 +24,14 @@ public:
 	// Methods
 	virtual void displayItem();																	// Outputs item
 	void incrementPlayCount();																	// Increments the play count
-
+	void addListeningTime(int seconds);
 	// Getters
 	const std::string& getArtist() const { return artist; }
 	const std::string& getAlbum() const { return album;  }
 	const std::string& getGenre() const { return genre;  }
 	int getPlayCount() const { return playCount; }
 	const std::string& getFilePath() const { return filePath; }
+	int getTotalListeningTime() const { return totalListeningTime; }
 
 	// Setters
 	void setArtist(const std::string& a) { artist = a; }
@@ -37,6 +39,7 @@ public:
 	void setGenre(const std::string& g) { genre = g; }
 	void setPlayCount(int count) { playCount = count; }
 	void setFilePath(const std::string& path) { filePath = path; }
+	void setTotalListeningTime(int seconds) { totalListeningTime = seconds; }
 
 	// Friend function + as overloading
 	bool operator==(const Song& other) const;

@@ -106,6 +106,7 @@ bool DataManager::saveData(const std::string& filename) const
         songObject["genre"] = QString::fromStdString(song->getGenre());
         songObject["playCount"] = song->getPlayCount();
         songObject["filePath"] = QString::fromStdString(song->getFilePath());   // Added to save song file path for persistence
+        songObject["totalListeningTime"] = song->getTotalListeningTime();
 
         songsArray.append(songObject);
     }
@@ -194,6 +195,9 @@ bool DataManager::loadData(const std::string& filename)
         );
 
         song->setPlayCount(playCount);                                         // Added to restore saved play count
+
+        int totalListeningTime = songObject["totalListeningTime"].toInt();   
+        song->setTotalListeningTime(totalListeningTime);
 
         musicLibrary->addSong(song);
     }

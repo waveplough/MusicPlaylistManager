@@ -31,6 +31,10 @@ void Song::incrementPlayCount() {																// Increments the play count
 	playCount++;
 }	
 
+void Song::addListeningTime(int seconds) { 
+	totalListeningTime += seconds; 
+}
+
 bool Song::operator==(const Song& other) const {
 	return itemID == other.itemID;  // Compare by unique ID
 }

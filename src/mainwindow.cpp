@@ -78,6 +78,9 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 
     // Analytics
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::onAnalyticsExitButtonClicked);
+    listeningTimer = new QTimer(this);
+    connect(listeningTimer, &QTimer::timeout, this, &MainWindow::updateListeningTime);
+    listeningTimer->start(1000);
 
     /* Object Manipulation */
 
@@ -107,6 +110,8 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     // Song Editor
     connect(ui->submitButton, &QPushButton::clicked, this, &MainWindow::onSongEditorSubmitButtonClicked);
     connect(ui->deleteButton, &QPushButton::clicked, this, &MainWindow::onSongEditorDeleteButtonClicked);
+
+
 }
 
 MainWindow::~MainWindow()
@@ -445,6 +450,7 @@ void MainWindow::positionChanged(qint64 progress)
     {
         ui->playerPlaybar->setValue(progress / 1000);
     }
+
 }
 
     // Volume Bar Related //
@@ -944,34 +950,6 @@ void MainWindow::onTrashButtonClicked()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //___________________________________________________________________________________________________________________________________//
 //___________________________________________________SONG EDITOR FUNCTION______________________________________________//
 //__________________________________________________________________________________________________________________________________ //
@@ -1039,6 +1017,34 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
 
 }
 
+void MainWindow::updateListeningTime() {
+    if (mediaControl.usePlayer()->playbackState() == QMediaPlayer::PlayingState) {
+        totalListeningTimeSeconds++;
+        // Update the analytics page if it is currently open
+        if (ui->stackedWidget->currentWidget() == ui->AnalyticsPage) {
+            updateAnalyticsDisplay();
+        }
+    }
+}
+
+void MainWindow::updateAnalyticsDisplay() {
+    int hours = totalListeningTimeSeconds / 3600;
+    int minutes = (totalListeningTimeSeconds % 3600) / 60;
+    int seconds = totalListeningTimeSeconds % 60;
+
+    if (hours > 0) {
+        ui->timeLabel->setText(QString("%1:%2:%3")
+            .arg(hours, 2, 10, QChar('0'))
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0')));
+    }
+    else {
+        ui->timeLabel->setText(QString("%1:%2")
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0')));
+    }
+}
+
 void MainWindow::onAnalyticsButtonClicked() {
     // First switch to the Analytics page
     previousPageIndex = ui->stackedWidget->currentIndex();
@@ -1069,23 +1075,9 @@ void MainWindow::onAnalyticsButtonClicked() {
     ui->playCountTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // read-only
     ui->playCountTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    // Total Listening Time
-    int totalSeconds = engine.computeTotalListeningTime();
-    int hours = totalSeconds / 3600;
-    int minutes = (totalSeconds % 3600) / 60;
-    int seconds = totalSeconds % 60;
-
-    if (hours > 0) {
-        ui->timeLabel->setText(QString("%1:%2:%3")
-            .arg(hours, 2, 10, QChar('0'))
-            .arg(minutes, 2, 10, QChar('0'))
-            .arg(seconds, 2, 10, QChar('0')));
-    }
-    else {
-        ui->timeLabel->setText(QString("%1:%2")
-            .arg(minutes, 2, 10, QChar('0'))
-            .arg(seconds, 2, 10, QChar('0')));
-    }
+    
+    // Dynamically update the total listening time
+    updateAnalyticsDisplay();
 
     // Average Song Duration
     double avgSeconds = engine.computeAverageSongDuration();
@@ -1111,6 +1103,7 @@ void MainWindow::onAnalyticsButtonClicked() {
     ui->genreTable->setModel(genreModel);
     ui->genreTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // read-only
     ui->genreTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    
 }
 
 

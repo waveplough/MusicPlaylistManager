@@ -228,19 +228,19 @@ void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
 
     // Title
     std::string title = song->getTitle();
-    ui->lineEditSongName->setPlaceholderText(QString::fromStdString(title.empty() ? "No Title" : title));
+    ui->lineEditSongName->setText(QString::fromStdString(title.empty() ? "No Title" : title));
 
     // Genre
     std::string genre = song->getGenre();
-    ui->lineEditGenre->setPlaceholderText(QString::fromStdString(genre.empty() ? "Unknown" : genre));
+    ui->lineEditGenre->setText(QString::fromStdString(genre.empty() ? "Unknown" : genre));
 
     // Artist
     std::string artist = song->getArtist();
-    ui->lineEditArtist->setPlaceholderText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
+    ui->lineEditArtist->setText(QString::fromStdString(artist.empty() ? "Unknown Artist" : artist));
 
     // Album
     std::string album = song->getAlbum();
-    ui->lineEditAlbum->setPlaceholderText(QString::fromStdString(album.empty() ? "N/A" : album));
+    ui->lineEditAlbum->setText(QString::fromStdString(album.empty() ? "N/A" : album));
 
 
 }
@@ -925,48 +925,69 @@ void MainWindow::onTrashButtonClicked()
 
 
 //___________________________________________________________________________________________________________________________________//
-//________________________________________________________________SONG EDITOR FUNCTION______________________________________________//
+//___________________________________________________SONG EDITOR FUNCTION______________________________________________//
 //__________________________________________________________________________________________________________________________________ //
 
 void MainWindow::onSongEditorSubmitButtonClicked() {
     std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
     
+    // Check if the current song is in an invalid state
+    if (!currentSong) {
+        QMessageBox::warning(this, "No Song Selected",
+            "No song is currently selected. Please select a song from the library or playlist first.");
+        return;
+    }
 
-    if (currentSong) {
-        QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
-        currentSong->setTitle(ui->lineEditSongName->text().toStdString());
-        currentSong->setArtist(ui->lineEditArtist->text().toStdString());
-        currentSong->setAlbum(ui->lineEditAlbum->text().toStdString());
-        currentSong->setGenre(ui->lineEditGenre->text().toStdString());
+    // Assign it tothe current song
+    QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
+    currentSong->setTitle(ui->lineEditSongName->text().toStdString());
+    currentSong->setArtist(ui->lineEditArtist->text().toStdString());
+    currentSong->setAlbum(ui->lineEditAlbum->text().toStdString());
+    currentSong->setGenre(ui->lineEditGenre->text().toStdString());
+    
+    // Repaint 
+    addPlayerInformation(currentSong, fileInfo);
+    addSongEditorInformation(currentSong);
         
-        addPlayerInformation(currentSong, fileInfo);
-        addSongEditorInformation(currentSong);
-        
+    ui->libraryList->clear();
 
-        ui->libraryList->clear();
+    const auto& songs = playlistManager.getMusicLibrary()->getSongs();
 
-        const auto& songs = playlistManager.getMusicLibrary()->getSongs();
-
-        for (const auto& song : songs) {
-            if (song) {
-                addSongCardToLibraryList(song);
-            }
+    for (const auto& song : songs) {
+        if (song) {
+            addSongCardToLibraryList(song);
         }
     }
+    
 }
 
 void MainWindow::onSongEditorDeleteButtonClicked() {
     std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
-    const std::string songID = currentSong->getItemID();
 
-    if (currentSong) {
-        playlistManager.getMusicLibrary()->deleteSong(songID);
+    // If no current song is in place, display a warning
+    if (!currentSong) {
+        QMessageBox::warning(this, "No Song Selected",
+            "No song is currently selected. Please select a song first.");
+        return;
     }
 
-    QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
+    const std::string songID = currentSong->getItemID();
 
+    // Use the id to recurively delete every instance of the song
+    playlistManager.getMusicLibrary()->deleteSong(songID);
+    
+    // Set the current song as a nullptr since it was deleted
+    mediaControl.setCurrentSong(nullptr);
+    
+    // Repaint
     loadLibraryToUI();
     loadCurrentPlaylistToUI();
+
+    // Clear the editor 
+    ui->lineEditSongName->clear();
+    ui->lineEditArtist->clear();
+    ui->lineEditAlbum->clear();
+    ui->lineEditGenre->clear();
 
 }
 

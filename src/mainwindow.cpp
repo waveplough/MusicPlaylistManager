@@ -79,6 +79,10 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     // Analytics
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::onAnalyticsExitButtonClicked);
 
+    listeningTimer = new QTimer(this);
+    connect(listeningTimer, &QTimer::timeout, this, &MainWindow::updateListeningTime);
+    listeningTimer->start(1000);
+
     /* Object Manipulation */
 
     // Player Forward Button
@@ -1066,26 +1070,11 @@ void MainWindow::onAnalyticsButtonClicked() {
     }
 
     ui->playCountTable->setModel(playCountModel);
-    ui->playCountTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // read-only
+    ui->playCountTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->playCountTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    // Total Listening Time
-    int totalSeconds = engine.computeTotalListeningTime();
-    int hours = totalSeconds / 3600;
-    int minutes = (totalSeconds % 3600) / 60;
-    int seconds = totalSeconds % 60;
-
-    if (hours > 0) {
-        ui->timeLabel->setText(QString("%1:%2:%3")
-            .arg(hours, 2, 10, QChar('0'))
-            .arg(minutes, 2, 10, QChar('0'))
-            .arg(seconds, 2, 10, QChar('0')));
-    }
-    else {
-        ui->timeLabel->setText(QString("%1:%2")
-            .arg(minutes, 2, 10, QChar('0'))
-            .arg(seconds, 2, 10, QChar('0')));
-    }
+    // Update total listening time display
+    updateAnalyticsDisplay();   
 
     // Average Song Duration
     double avgSeconds = engine.computeAverageSongDuration();
@@ -1109,10 +1098,33 @@ void MainWindow::onAnalyticsButtonClicked() {
     }
 
     ui->genreTable->setModel(genreModel);
-    ui->genreTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // read-only
+    ui->genreTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->genreTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
+void MainWindow::updateAnalyticsDisplay() {
+    // Get all songs
+    const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
+    AnalyticsEngine<Song> engine(allSongs);
+
+    // Format the time
+    int totalSeconds = engine.computeTotalListeningTime();
+    int hours = totalSeconds / 3600;
+    int minutes = (totalSeconds % 3600) / 60;
+    int seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        ui->timeLabel->setText(QString("%1:%2:%3")
+            .arg(hours, 2, 10, QChar('0'))
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0')));
+    }
+    else {
+        ui->timeLabel->setText(QString("%1:%2")
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0')));
+    }
+}
 
 
 // This function is for when a user clicks the "Delete Playlist" button in the playlist editor.
@@ -1141,4 +1153,18 @@ void MainWindow::onDeletePlaylistButtonClicked(QString playlistID)
     ui->playlistSongsList->clear();
     ui->playlistNameLabel->setText("Playlist Name");
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
+}
+
+void MainWindow::updateListeningTime() {
+    if (mediaControl.usePlayer()->playbackState() == QMediaPlayer::PlayingState) {
+        auto currentSong = mediaControl.getCurrentSong();
+        if (currentSong) {
+            currentSong->addListeningTime(1);  // Add 1 second
+        }
+
+        // Update analytics display if currently visible
+        if (ui->stackedWidget->currentWidget() == ui->AnalyticsPage) {
+            updateAnalyticsDisplay();
+        }
+    }
 }

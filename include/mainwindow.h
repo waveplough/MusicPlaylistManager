@@ -59,6 +59,8 @@ public slots:
 
     // Analytics Page
     void onAnalyticsExitButtonClicked();
+    void updateListeningTime();
+    void updateAnalyticsDisplay();
 
     // Playlist Tab
     void addPlaylistCard();
@@ -130,6 +132,8 @@ private:
     // It is used to keep track of which songs are currently being displayed in the library list, 
     // so that when a user clicks on a song, we can get the correct song object from this vector.
     std::vector<std::shared_ptr<Song>> currentSearchResults;
+
+    QTimer* listeningTimer = nullptr;
 
 };
 #endif // MAINWINDOW_H

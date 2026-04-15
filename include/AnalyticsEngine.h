@@ -21,13 +21,13 @@ public:
     }
 
     /**
-     * Sums the duration of all songs multiplied by their play counts.
+     * Sums the listening time of all songs
      * Total listening time's in seconds.
      */
     int computeTotalListeningTime() const {
         return std::accumulate(songs.begin(), songs.end(), 0,
             [](int total, const std::shared_ptr<T>& song) {
-                return total + (song->getDuration() * song->getPlayCount());
+                return total + song->getTotalListeningTime();  
             });
     }
 

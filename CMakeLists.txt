@@ -14,7 +14,7 @@ set(CMAKE_AUTOUIC ON)
 add_executable(MusicPlaylistManager
     "src/main.cpp"
     "src/PlaylistManager.cpp"
-    "src/GUI.cpp"
+    
     "src/DataManager.cpp"
     "src/MusicLibrary.cpp"
     "src/Playlist.cpp"

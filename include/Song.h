@@ -4,7 +4,7 @@
 #include <ostream>
 
 // Sentinel constant for duration
-constexpr int UNKNOWN_DUR = -99;
+constexpr int UNKNOWN_DUR = -1;
 
 // Class
 class Song : public PlaylistItem {

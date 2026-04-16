@@ -180,8 +180,8 @@ void MainWindow::onImportM3UButtonClicked() {
         // Create generic song variables
         std::string title = QFileInfo(absolute).baseName().toStdString();
         std::string artist = "Unknown Artist";
-        std::string album = "N/a";
-        std::string genre = "Unknown Genre";
+        std::string album = "N/A";
+        std::string genre = "Unknown";
         int duration = UNKNOWN_DUR;
 
         // Make a song with default variables

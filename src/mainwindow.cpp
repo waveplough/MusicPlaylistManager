@@ -1122,14 +1122,22 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
     bool hasError = false;
     QString errorMessage;
 
-    // Validate title name
-    if (titleText.length() > 20) {
+    // Validate title name 
+    if (titleText.isEmpty()) {
+        errorMessage += QString("Title cannot be empty\n");
+        hasError = true;
+    }
+    else if (titleText.length() > 20) {
         errorMessage += QString("Title (you entered %1)\n").arg(titleText.length());
         hasError = true;
     }
 
     // Validate artist name
-    if (artistText.length() > 20) {
+    if (artistText.isEmpty()) {
+        errorMessage += QString("Artist cannot be empty\n");
+        hasError = true;
+    }
+    else if (artistText.length() > 20) {
         errorMessage += QString("Artist (you entered %1)\n").arg(artistText.length());
         hasError = true;
     }
@@ -1141,14 +1149,17 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
     }
 
     // Validate genre 
-    if (genreText.length() > 20) {
+    if (genreText.isEmpty()) {
+        genreText = "Unknown";
+    }
+    else if (genreText.length() > 20) {
         errorMessage += QString("Genre (you entered %1)\n").arg(genreText.length());
         hasError = true;
     }
 
     if (hasError) {
         QMessageBox::warning(this, "Invalid Form Submission",
-            QString("The following fields exceed the 20 character limit:\n\n%1\n\Please try again.").arg(errorMessage));
+            QString("The following fields exceed the 20 character limit:\n\n%1\n\nPlease try again.").arg(errorMessage));
         return;
     }
 

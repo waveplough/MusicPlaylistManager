@@ -51,7 +51,7 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
 
     // Added fallback so empty genre is still saved with a usable value
     if (genre.empty()) {
-        genre = "Unknown Genre";
+        genre = "Unknown";
     }
 
     // Added file path persistence by passing filename into Song constructor

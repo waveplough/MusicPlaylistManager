@@ -244,6 +244,8 @@ void MainWindow::onNewSongButtonClicked() {
     // Set the new song as current
     mediaControl.setCurrentSong(newSong);
 
+    playCountedForCurrentSong = false;
+
     // Load the new song into the main player
     mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(fileName));
 
@@ -441,8 +443,18 @@ void MainWindow::onStopButtonClicked()
 }
 
 // Music Player : Play button functionality.
-void MainWindow::onPlayButtonClicked() 
+void MainWindow::onPlayButtonClicked()
 {
+    auto currentSong = mediaControl.getCurrentSong();
+
+    if (currentSong && mediaControl.usePlayer()->playbackState() != QMediaPlayer::PlayingState) {
+        // Only count if not already counted for this song play session
+        if (!playCountedForCurrentSong) {
+            currentSong->incrementPlayCount();
+            playCountedForCurrentSong = true;
+        }
+    }
+
     mediaControl.usePlayer()->play();
 }
 
@@ -743,7 +755,6 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
 // A function to play a song from a double clicked song card
 void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
 {
-    qDebug() << "DOUBLE CLICK SLOT CALLED";
     if (!song) return;
 
     // Get currently playing song
@@ -752,8 +763,10 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
     // Only increment play count if it's a different song
     song->incrementPlayCount();
 
-
     mediaControl.setCurrentSong(song);
+
+    playCountedForCurrentSong = false;
+
     // Set media in the player
     mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(QString::fromStdString(song->getFilePath())));
     // Takes the filepath from the song object.
@@ -795,25 +808,52 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
         if (!currentPlaylist) return true;
 
         bool ok = false;
-        QString newName = QInputDialog::getText(
-            this,
-            "Rename Playlist",
-            "Enter playlist name:",
-            QLineEdit::Normal,
-            QString::fromStdString(currentPlaylist->getName()),
-            &ok
-        );
+        QString newName;
+        bool validName = false;
 
-        if (ok && !newName.trimmed().isEmpty()) {
-            currentPlaylist->setName(newName.toStdString());
+        while (!validName) {
+            newName = QInputDialog::getText(
+                this,
+                "Rename Playlist",
+                "Enter playlist name (max 20 characters):",
+                QLineEdit::Normal,
+                QString::fromStdString(currentPlaylist->getName()),
+                &ok
+            );
 
-            ui->playlistNameLabel->setText(newName);
+            // User cancelled
+            if (!ok) {
+                return true;
+            }
 
-            loadLibraryToUI();
-            ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
-            loadCurrentPlaylistToUI();
-            loadPlaylistEditorSongsToUI();
+            // Check if empty
+            if (newName.trimmed().isEmpty()) {
+                QMessageBox::warning(this, "Invalid Name",
+                    "Playlist name cannot be empty. Please enter a name.");
+                continue;
+            }
+
+            // Check length
+            if (newName.length() > 20) {
+                QMessageBox::warning(this, "Name Too Long",
+                    QString("Playlist name cannot exceed 20 characters.\n"
+                        "You entered %1 characters.\n\n"
+                        "Please enter a shorter name.").arg(newName.length()));
+                continue;
+            }
+
+            // Name is valid
+            validName = true;
         }
+
+        // Apply the new name
+        currentPlaylist->setName(newName.toStdString());
+        ui->playlistNameLabel->setText(newName);
+
+        loadLibraryToUI();
+        ui->playlistCardBox->setCurrentRow(currentPlaylistIndex);
+        loadCurrentPlaylistToUI();
+        loadPlaylistEditorSongsToUI();
 
         return true;
     }
@@ -1106,19 +1146,30 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
         return;
     }
 
+    // Check if the song being deleted is currently playing
+    bool isCurrentlyPlaying = (mediaControl.usePlayer()->playbackState() == QMediaPlayer::PlayingState);
+
+    // Stop playback if this song is playing
+    if (isCurrentlyPlaying) {
+        mediaControl.usePlayer()->stop();
+    }
+
+    // CRITICAL: Clear the player's source so it doesn't keep the deleted file
+    mediaControl.usePlayer()->setSource(QUrl()); 
+
     const std::string songID = currentSong->getItemID();
 
-    // Use the id to recurively delete every instance of the song
+    // Use the id to recursively delete every instance of the song
     playlistManager.getMusicLibrary()->deleteSong(songID);
-    
-    // Set the current song as a nullptr since it was deleted
+
+    // Clear the current song reference in MediaController since it's deleted
     mediaControl.setCurrentSong(nullptr);
-    
-    // Repaint
+
+    // Repaint UI
     loadLibraryToUI();
     loadCurrentPlaylistToUI();
 
-    // Clear the editor 
+    // Clear the editor fields
     ui->lineEditSongName->clear();
     ui->lineEditArtist->clear();
     ui->lineEditAlbum->clear();

@@ -11,8 +11,18 @@ Playlist::Playlist(const std::string& id, const std::string& name)              
 
 int Playlist::computeTotalDuration() const {                                    // Sums the total duration
         return std::accumulate(songs.begin(), songs.end(), 0,
-            [](int total, const std::shared_ptr<Song>& song) {
-                return song ? total + song->getDuration() : total;
+            [](int total, const std::shared_ptr<Song>& song) {                  
+                if (!song) {                                                    // Suleiman, check this logic. Updated for .m3u
+                    return total;
+                }
+                else {
+                    auto d = song->getDuration();
+                    if (d == UNKNOWN_DUR) {
+                        d = 0;
+                    }
+                    return d + total;
+                }
+                // Old Logic // return song ? total + song->getDuration() : total;              
             });
 }
 
@@ -36,7 +46,7 @@ void Playlist::addSong(const std::shared_ptr<Song>& song) {                     
     songs.push_back(song);
 }
 
-void Playlist::removeSong(const std::string& songID) {                              // Finds and deletes a song
+void Playlist::removeSong(const std::string& songID) {                          // Finds and deletes a song
     for (auto s = songs.begin(); s != songs.end(); s++) {
         if ((*s)->getItemID() == songID) {
             songs.erase(s);

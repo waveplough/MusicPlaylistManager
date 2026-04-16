@@ -3,6 +3,10 @@
 #include <string>
 #include <ostream>
 
+// Sentinel constant for duration
+constexpr int UNKNOWN_DUR = -99;
+
+// Class
 class Song : public PlaylistItem {
 private:
 	std::string artist;			// Artist name

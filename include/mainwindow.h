@@ -31,6 +31,7 @@ public slots:
     // Menu Items
     void onNewSongButtonClicked();  // Clicking'File' in the main menu bar and selection a 'New Song'.
     void onAnalyticsButtonClicked();
+    void onImportM3UButtonClicked();
     
     // Method to add song cards. But this should be renamed to libraryListItem or something similar.
     // Song card is too similar to the others.

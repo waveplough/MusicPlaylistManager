@@ -1617,7 +1617,7 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>18</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1626,6 +1626,7 @@ QPushButton {
     </property>
     <addaction name="actionPlaylist"/>
     <addaction name="actionNewSong"/>
+    <addaction name="actionImport_Playlist_m3u"/>
    </widget>
    <widget class="QMenu" name="menuAnalytics">
     <property name="styleSheet">
@@ -1665,6 +1666,11 @@ QPushButton:focus {
   <action name="actionViewAnalytics">
    <property name="text">
     <string>View Analytics</string>
+   </property>
+  </action>
+  <action name="actionImport_Playlist_m3u">
+   <property name="text">
+    <string>Import Playlist (.m3u)</string>
    </property>
   </action>
  </widget>

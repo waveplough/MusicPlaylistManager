@@ -185,7 +185,7 @@ bool DataManager::loadData(const std::string& filename)
         int playCount = songObject["playCount"].toInt();                       // Added to restore play count from file
         std::string filePath = songObject["filePath"].toString().toStdString(); // Added to restore file path from file
 
-        if (id.empty() || title.empty() || duration <= 0)
+        if (id.empty() || title.empty() || (duration <= 0 && duration != UNKNOWN_DUR))  // Suleiman, check this. Added to support .m3u with no duration information.
         {
             continue;
         }

@@ -104,7 +104,7 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     //ui->playerPlaybar->setRange(0, mediaControl.usePlayer()->duration() / 1000);
 
     // Volume Slider
-    ui->playerVolumeSlider->setMinimum(1);
+    ui->playerVolumeSlider->setMinimum(0);
     ui->playerVolumeSlider->setMaximum(100);
     ui->playerVolumeSlider->setValue(30);
     mediaControl.usePlayer()->audioOutput()->setVolume(ui->playerVolumeSlider->value() / 100.0);     // Sets slider volume. May be unneccessary.

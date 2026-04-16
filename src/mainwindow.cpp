@@ -1105,7 +1105,7 @@ void MainWindow::onTrashButtonClicked()
 
 void MainWindow::onSongEditorSubmitButtonClicked() {
     std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
-    
+
     // Check if the current song is in an invalid state
     if (!currentSong) {
         QMessageBox::warning(this, "No Song Selected",
@@ -1113,17 +1113,56 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         return;
     }
 
-    // Assign it tothe current song
+    // Get the text from UI
+    QString titleText = ui->lineEditSongName->text();
+    QString artistText = ui->lineEditArtist->text();
+    QString albumText = ui->lineEditAlbum->text();
+    QString genreText = ui->lineEditGenre->text();
+
+    bool hasError = false;
+    QString errorMessage;
+
+    // Validate title name
+    if (titleText.length() > 20) {
+        errorMessage += QString("Title (you entered %1)\n").arg(titleText.length());
+        hasError = true;
+    }
+
+    // Validate artist name
+    if (artistText.length() > 20) {
+        errorMessage += QString("Artist (you entered %1)\n").arg(artistText.length());
+        hasError = true;
+    }
+
+    // Validate album name 
+    if (albumText.length() > 20) {
+        errorMessage += QString("Album (you entered %1)\n").arg(albumText.length());
+        hasError = true;
+    }
+
+    // Validate genre 
+    if (genreText.length() > 20) {
+        errorMessage += QString("Genre (you entered %1)\n").arg(genreText.length());
+        hasError = true;
+    }
+
+    if (hasError) {
+        QMessageBox::warning(this, "Invalid Form Submission",
+            QString("The following fields exceed the 20 character limit:\n\n%1\n\Please try again.").arg(errorMessage));
+        return;
+    }
+
+    // Assign to the current song
     QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
-    currentSong->setTitle(ui->lineEditSongName->text().toStdString());
-    currentSong->setArtist(ui->lineEditArtist->text().toStdString());
-    currentSong->setAlbum(ui->lineEditAlbum->text().toStdString());
-    currentSong->setGenre(ui->lineEditGenre->text().toStdString());
-    
+    currentSong->setTitle(titleText.toStdString());
+    currentSong->setArtist(artistText.toStdString());
+    currentSong->setAlbum(albumText.toStdString());
+    currentSong->setGenre(genreText.toStdString());
+
     // Repaint 
     addPlayerInformation(currentSong, fileInfo);
     addSongEditorInformation(currentSong);
-        
+
     ui->libraryList->clear();
 
     const auto& songs = playlistManager.getMusicLibrary()->getSongs();
@@ -1133,7 +1172,6 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
             addSongCardToLibraryList(song);
         }
     }
-    
 }
 
 void MainWindow::onSongEditorDeleteButtonClicked() {

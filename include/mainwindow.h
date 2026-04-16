@@ -135,6 +135,7 @@ private:
     std::vector<std::shared_ptr<Song>> currentSearchResults;
 
     QTimer* listeningTimer = nullptr;
+    bool playCountedForCurrentSong = false;
 
 };
 #endif // MAINWINDOW_H

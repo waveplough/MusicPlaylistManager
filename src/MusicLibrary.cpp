@@ -64,6 +64,16 @@ void MusicLibrary::deletePlaylist(const std::string& playlistID) {
     }
 }
 
+// A function to find and return an existing playist.
+Playlist* MusicLibrary::findPlaylist(const std::string& playlistID) {   // Takes in only a playlist ID. Could later be adjusted for name too.
+    for (auto it = playlists.begin(); it != playlists.end(); ++it) {        // Iterator loop
+        if ((*it)->getPlaylistID() == playlistID) {
+            return it->get();                                           // No need to dereference it because its reutrning the pointer
+        }
+    }
+    return nullptr;
+}
+
 // Searches songs by query
 std::vector<std::shared_ptr<Song>> MusicLibrary::searchSongs(const std::string& query) const {
     std::vector<std::shared_ptr<Song>> results;
@@ -97,4 +107,14 @@ std::vector<std::shared_ptr<Song>> MusicLibrary::searchSongs(const std::string& 
     }
 
     return results;
+}
+
+// Finds song by pathname.
+std::shared_ptr<Song> MusicLibrary::findSongByPath(const std::string& path) {
+    for (const auto& songListIt : songs) {            // the prebuilt list
+        if (songListIt && songListIt->getFilePath() == path) {
+            return songListIt;
+        }   // null if no match. Consider boolean.
+    }
+    return nullptr;
 }

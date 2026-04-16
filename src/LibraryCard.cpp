@@ -29,6 +29,17 @@ LibraryCard::LibraryCard(std::shared_ptr<Song> song, QWidget* parent)
         .arg(seconds, 2, 10, QChar('0'));
 
     ui->durationLabel->setText(durationStr);
+
+    // Replace info for a bad file. If the file is bad, the card display will be different.
+    bool exists = QFile::exists(QString::fromStdString(song->getFilePath()));               // QFile::exists is a built in method. This converts path to string and checks if it exists in the filesystem.
+
+    if (!exists) {
+        ui->titleLabel->setStyleSheet("color: #9E9E9E;");                                  // Sets grey label colours.
+        ui->artistLabel->setStyleSheet("color: #9E9E9E;");
+        ui->albumLabel->setStyleSheet("color: #9E9E9E;");
+        ui->durationLabel->setStyleSheet("color: #9E9E9E;");
+        ui->durationLabel->setText("??:??");
+    }
 }
 
 LibraryCard::~LibraryCard()

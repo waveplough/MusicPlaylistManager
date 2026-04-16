@@ -59,7 +59,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="playlistSymbol">
+      <widget class="QToolButton" name="playlistSymbol">
        <property name="minimumSize">
         <size>
          <width>20</width>

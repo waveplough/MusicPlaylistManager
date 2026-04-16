@@ -19,6 +19,7 @@
 #include <AnalyticsEngine.h>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <string>
 
 
 MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
@@ -45,6 +46,7 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     // Menu
     connect(ui->actionNewSong, &QAction::triggered, this, &MainWindow::onNewSongButtonClicked);
     connect(ui->actionViewAnalytics, &QAction::triggered, this, &MainWindow::onAnalyticsButtonClicked);
+    connect(ui->actionImport_Playlist_m3u, &QAction::triggered, this, &MainWindow::onImportM3UButtonClicked);
 
     // Playlist
     connect(ui->addPlaylistButton, &QPushButton::clicked, this, &MainWindow::onAddPlaylistButtonClicked);
@@ -123,6 +125,87 @@ MainWindow::~MainWindow()
         // setSource() replaces setMedia() from QT 5. It is what loads the song.
 
     //-(*)- Suleiman, Ria. This is where a song should now get registered in the library.
+
+void MainWindow::onImportM3UButtonClicked() {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Playlist Import"), "", tr("M3U Files (*.m3u *.m3u8)"));
+
+    QString playlistName = QFileInfo(fileName).baseName();             // Basename gets the non-filepath name
+    
+    std::string id = generateID();                                     // Use playlist create functions
+    playlistManager.getMusicLibrary()->createPlaylist(id, playlistName.toStdString());
+
+    // Have to stop to get a pointer to the playlist
+    Playlist* ourNewPL = playlistManager.getMusicLibrary()->findPlaylist(id);
+    if (!ourNewPL) {
+        QMessageBox::warning(this, "Error", "Failed to create new playlist."); // A popup warning
+        return;
+    }
+
+    QDir dir(QCoreApplication::applicationDirPath());                   // 
+
+    QFile importedPL(fileName);
+    QTextStream infoStream(&importedPL);
+    QString line;
+    Song tempSong;
+    bool found = false;
+
+    importedPL.open(QIODevice::ReadOnly | QIODevice::Text);             // Open the file
+
+    while (infoStream.readLineInto(&line)) {
+
+        line = line.trimmed();                                          // Trim whitespace
+        
+        if (line.startsWith('#') || line.isEmpty()) {                   // If comment, continue.
+            continue;
+        }
+            
+        QString absolute = dir.absoluteFilePath(line);                  // Retrieve absolute path from the line. Could be done other ways, but is safer.
+
+        std::shared_ptr<Song> existing = playlistManager.getMusicLibrary()->findSongByPath(absolute.toStdString()); // Calls find song by path, which I was smart enough to add a return to.
+
+        if (existing) {
+            ourNewPL->addSong(existing);
+            continue;
+        }
+
+        // Else - Make a new song to add                                // Code comes from DataManager
+        
+        std::string songId = generateID();                              // Generate a song ID
+
+        // Create generic song variables
+        std::string title = QFileInfo(absolute).baseName().toStdString();
+        std::string artist = "Unknown Artist";
+        std::string album = "N/a";
+        std::string genre = "Unknown Genre";
+        int duration = UNKNOWN_DUR;
+
+        // Make a song with default variables
+        std::shared_ptr<Song> newSong = std::make_shared<Song>(
+            songId,
+            title,
+            duration,
+            artist,
+            album,
+            genre,
+            absolute.toStdString()                                      // absolute is a QString. They are not compatible.
+        );
+
+        playlistManager.getMusicLibrary()->addSong(newSong);            // add song to library song vector
+
+        ourNewPL->addSong(newSong);                                     // Add to the new playlist.
+
+    }
+
+    loadLibraryToUI();                                                  // Should update the UI
+
+// https://doc.qt.io/qt-6/qtextstream.html
+
+// Source - https://stackoverflow.com/a/17338470
+// Posted by Pavel Strakhov
+// Retrieved 2026-04-07, License - CC BY-SA 3.0
+
+
+}
 void MainWindow::onNewSongButtonClicked() {
 
     QMediaPlayer tempPlayer;

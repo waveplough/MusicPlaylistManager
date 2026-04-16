@@ -18,7 +18,10 @@ public:
 	void deleteSong(const std::string& songID);
 	void createPlaylist(const std::string& playlistID, const std::string& name);
 	void deletePlaylist(const std::string& playlistID);
+	Playlist createReturnedPlaylist(const std::string& playlistID, const std::string& name);
+	Playlist* findPlaylist(const std::string& playlistID);
 	std::vector<std::shared_ptr<Song>> searchSongs(const std::string& query) const;
+	std::shared_ptr<Song> findSongByPath(const std::string& path);	// function name describes purpose.
 
 	//getters
 	const std::vector<std::shared_ptr<Song>>& getSongs() const { return songs; }

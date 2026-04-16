@@ -33,33 +33,42 @@ public:
 
     /**
      * Sorts songs by playCount and returns the top results.
+     * Only includes songs with valid duration.
      */
     std::vector<std::shared_ptr<T>> computeMostPlayedSongs(int limit = 10) const {
-        std::vector<std::shared_ptr<T>> sortedSongs = songs;
+        std::vector<std::shared_ptr<T>> validSongs;
+        for (const auto& song : songs) {
+            if (song->getDuration() > 0) {
+                validSongs.push_back(song);
+            }
+        }
 
-        std::sort(sortedSongs.begin(), sortedSongs.end(),
+        std::sort(validSongs.begin(), validSongs.end(),
             [](const std::shared_ptr<T>& a, const std::shared_ptr<T>& b) {
                 return a->getPlayCount() > b->getPlayCount();
             });
 
-        if (sortedSongs.size() > static_cast<size_t>(limit)) {
-            sortedSongs.resize(limit);
+        if (validSongs.size() > static_cast<size_t>(limit)) {
+            validSongs.resize(limit);
         }
-        return sortedSongs;
+        return validSongs;
     }
 
     /**
      * Calculates the average duration of a song in the library.
      */
     double computeAverageSongDuration() const {
-        if (songs.empty()) return 0.0;
+        double totalDuration = 0.0;
+        int validCount = 0;
 
-        double totalDuration = std::accumulate(songs.begin(), songs.end(), 0.0,
-            [](double total, const std::shared_ptr<T>& song) {
-                return total + song->getDuration();
-            });
+        for (const auto& song : songs) {
+            if (song->getDuration() > 0) {
+                totalDuration += song->getDuration();
+                validCount++;
+            }
+        }
 
-        return totalDuration / songs.size();
+        return validCount > 0 ? totalDuration / validCount : 0.0;
     }
 
     /**

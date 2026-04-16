@@ -32,6 +32,8 @@ public slots:
     void onNewSongButtonClicked();  // Clicking'File' in the main menu bar and selection a 'New Song'.
     void onAnalyticsButtonClicked();
     void onImportM3UButtonClicked();
+
+	void onSortButtonClicked(); // This is for when a user clicks the "Sort Playlist" button in the playlist editor.
     
     // Method to add song cards. But this should be renamed to libraryListItem or something similar.
     // Song card is too similar to the others.

@@ -89,7 +89,41 @@ void Playlist::reorderSong(size_t oldIndex, size_t newIndex)                    
         songs[i] = higherSong;
     }
 }
+//*******************************************************************************************************//
+// Sorting the playlist//
+//*******************************************************************************************************//
+void Playlist::sortByArtist()                                                   // Sort by Artist
+{
+    std::sort(songs.begin(), songs.end(),
+        [](const std::shared_ptr<Song>& a, const std::shared_ptr<Song>& b) {
+            if (!a || !b) {
+                return a != nullptr;
+            }
+            return a->getArtist() < b->getArtist();
+        });
+}
 
+void Playlist::sortByGenre()                                                   // Sort by Genre
+{
+    std::sort(songs.begin(), songs.end(),
+        [](const std::shared_ptr<Song>& a, const std::shared_ptr<Song>& b) {
+            if (!a || !b) {
+                return a != nullptr;
+            }
+            return a->getGenre() < b->getGenre();
+        });
+}
+
+void Playlist::sortByAlbum()                                                   // Sort by Album
+{
+    std::sort(songs.begin(), songs.end(),
+        [](const std::shared_ptr<Song>& a, const std::shared_ptr<Song>& b) {
+            if (!a || !b) {
+                return a != nullptr;
+            }
+            return a->getAlbum() < b->getAlbum();
+        });
+}
 
 
 

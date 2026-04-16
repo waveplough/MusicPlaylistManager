@@ -55,7 +55,7 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
         onPlaylistSelected(ui->playlistCardBox->row(item));
         }); 
 	connect(ui->trashButton, &QPushButton::clicked, this, &MainWindow::onTrashButtonClicked);//  This is for when a user clicks the "Delete a song from Playlist" button in the playlist editor.
-	
+	connect(ui->sortButton, &QPushButton::clicked, this, &MainWindow::onSortButtonClicked); //  This is for when a user clicks the "Sort Playlist" button in the playlist editor.
 
     connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddCurrentSongToPlaylistClicked);    //  This is for when a user clicks the "Add Current Song to Playlist" button. 
 	connect(ui->playlistNameLineEdit, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged);     // This is for when a user searches the song in the library card editor.
@@ -1250,4 +1250,51 @@ void MainWindow::updateListeningTime() {
             updateAnalyticsDisplay();
         }
     }
+}
+
+// Sorting the Playlist by title, artist, or album when the corresponding header is clicked.
+void MainWindow::onSortButtonClicked()
+{
+    const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
+
+    if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
+        QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
+        return;
+    }
+
+    Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
+    if (!currentPlaylist) {
+        return;
+    }
+
+    QStringList sortOptions;
+    sortOptions << "Artist" << "Genre" << "Album";
+
+    bool ok = false;
+    QString choice = QInputDialog::getItem(
+        this,
+        "Sort Playlist",
+        "Sort songs by:",
+        sortOptions,
+        0,
+        false,
+        &ok
+    );
+
+    if (!ok || choice.isEmpty()) {
+        return;
+    }
+
+    if (choice == "Artist") {
+        currentPlaylist->sortByArtist();
+    }
+    else if (choice == "Genre") {
+        currentPlaylist->sortByGenre();
+    }
+    else if (choice == "Album") {
+        currentPlaylist->sortByAlbum();
+    }
+
+    refreshPlaylistViewsAndKeepSelection(-1);
+    dataManager.saveData("data/music_library.json");
 }

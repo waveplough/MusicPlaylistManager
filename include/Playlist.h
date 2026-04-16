@@ -38,5 +38,10 @@ public:
 	int computeTotalDuration() const;
 	void displayPlaylist() const;
 
+	//Sorting
+	void sortByArtist();
+	void sortByGenre();
+	void sortByAlbum();
+
 };
 

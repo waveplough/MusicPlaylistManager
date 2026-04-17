@@ -238,40 +238,9 @@ void MainWindow::onNewSongButtonClicked() {
         return;
     }
 
-    // Stop current playback
-    mediaControl.usePlayer()->stop();
-
-    // Set the new song as current
-    mediaControl.setCurrentSong(newSong);
-    playCountedForCurrentSong = false;
-
-    // Load the new song into the main player
-    mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(fileName));
-
-    QFileInfo fileInfo(fileName);
-    addPlayerInformation(newSong, fileInfo);
-    addSongEditorInformation(newSong);
 
     // Rebuild library view so UI and currentSearchResults stay in sync
     loadLibraryToUI();
-
-    // Restore this new song as selected
-    selectedLibrarySong = newSong;
-
-    const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
-    currentSongIndex = -1;
-
-    for (int i = 0; i < static_cast<int>(allSongs.size()); ++i) {
-        if (allSongs[i] && allSongs[i]->getItemID() == newSong->getItemID()) {
-            currentSongIndex = i;
-            ui->libraryList->setCurrentRow(i);
-            break;
-        }
-    }
-
-    addPlayerInformation(newSong, fileInfo);
-    addSongEditorInformation(newSong);
-    mediaControl.setCurrentSong(newSong);
 }
 
 // Analytics Page
@@ -374,24 +343,22 @@ void MainWindow::loadLibraryToUI() {
         }
     }
 
-    if (!songs.empty() && songs.front()) {
-        QString savedPath = QString::fromStdString(songs.front()->getFilePath());
-        QFileInfo fileInfo(savedPath);
-
-        mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
-        addPlayerInformation(songs.front(), fileInfo);
-        addSongEditorInformation(songs.front());
-        mediaControl.setCurrentSong(songs.front());
-    }
-    else {
+    if (songs.empty()) {
         ui->playerTitleLabel->setText("No Title");
         ui->playerArtistLabel->setText("Unknown Artist");
         ui->playerFilePathLabel->setText("Filepath");
-
         ui->lineEditSongName->setPlaceholderText("No Title");
         ui->lineEditGenre->setPlaceholderText("Unknown");
         ui->lineEditArtist->setPlaceholderText("Unknown Artist");
         ui->lineEditAlbum->setPlaceholderText("N/A");
+    }
+    else if (mediaControl.usePlayer()->source().isEmpty()) {
+        QString savedPath = QString::fromStdString(songs.front()->getFilePath());
+        QFileInfo fileInfo(savedPath);
+        mediaControl.usePlayer()->setSource(QUrl::fromLocalFile(savedPath));
+        addPlayerInformation(songs.front(), fileInfo);
+        addSongEditorInformation(songs.front());
+        mediaControl.setCurrentSong(songs.front());
     }
 
     for (const auto& p : playlists) {

@@ -1124,8 +1124,8 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         errorMessage += QString("Title cannot be empty\n");
         hasError = true;
     }
-    else if (titleText.length() > 20) {
-        errorMessage += QString("Title (you entered %1)\n").arg(titleText.length());
+    else if (titleText.length() > 100) {
+        errorMessage += QString("Title exceeds the 100 character limit (you entered %1)\n").arg(titleText.length());
         hasError = true;
     }
 
@@ -1134,14 +1134,14 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         errorMessage += QString("Artist cannot be empty\n");
         hasError = true;
     }
-    else if (artistText.length() > 20) {
-        errorMessage += QString("Artist (you entered %1)\n").arg(artistText.length());
+    else if (artistText.length() > 100) {
+        errorMessage += QString("Artist exceeds the 100 character limit (you entered %1)\n").arg(artistText.length());
         hasError = true;
     }
 
     // Validate album name 
-    if (albumText.length() > 20) {
-        errorMessage += QString("Album (you entered %1)\n").arg(albumText.length());
+    if (albumText.length() > 100) {
+        errorMessage += QString("Album exceeds the 100 character limit (you entered %1)\n").arg(albumText.length());
         hasError = true;
     }
 
@@ -1149,14 +1149,14 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
     if (genreText.isEmpty()) {
         genreText = "Unknown";
     }
-    else if (genreText.length() > 20) {
-        errorMessage += QString("Genre (you entered %1)\n").arg(genreText.length());
+    else if (genreText.length() > 100) {
+        errorMessage += QString("Genre exceeds the 100 character limit (you entered %1)\n").arg(genreText.length());
         hasError = true;
     }
 
     if (hasError) {
         QMessageBox::warning(this, "Invalid Form Submission",
-            QString("The following fields exceed the 20 character limit:\n\n%1\n\nPlease try again.").arg(errorMessage));
+            QString("Invalid Form:\n\n%1\n\nPlease try again.").arg(errorMessage));
         return;
     }
 

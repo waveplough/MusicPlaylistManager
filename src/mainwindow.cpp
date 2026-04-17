@@ -243,7 +243,6 @@ void MainWindow::onNewSongButtonClicked() {
 
     // Set the new song as current
     mediaControl.setCurrentSong(newSong);
-
     playCountedForCurrentSong = false;
 
     // Load the new song into the main player
@@ -251,9 +250,28 @@ void MainWindow::onNewSongButtonClicked() {
 
     QFileInfo fileInfo(fileName);
     addPlayerInformation(newSong, fileInfo);
-    addSongCardToLibraryList(newSong);
     addSongEditorInformation(newSong);
 
+    // Rebuild library view so UI and currentSearchResults stay in sync
+    loadLibraryToUI();
+
+    // Restore this new song as selected
+    selectedLibrarySong = newSong;
+
+    const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
+    currentSongIndex = -1;
+
+    for (int i = 0; i < static_cast<int>(allSongs.size()); ++i) {
+        if (allSongs[i] && allSongs[i]->getItemID() == newSong->getItemID()) {
+            currentSongIndex = i;
+            ui->libraryList->setCurrentRow(i);
+            break;
+        }
+    }
+
+    addPlayerInformation(newSong, fileInfo);
+    addSongEditorInformation(newSong);
+    mediaControl.setCurrentSong(newSong);
 }
 
 // Analytics Page
@@ -339,6 +357,10 @@ void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
 void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
     ui->playlistCardBox->clear();
+
+    selectedLibrarySong = nullptr;
+    currentSongIndex = -1;
+
 
     const auto& songs = playlistManager.getMusicLibrary()->getSongs();
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -662,29 +684,28 @@ void MainWindow::loadCurrentPlaylistToUI() {
     }
 }
 
-void MainWindow::onAddCurrentSongToPlaylistClicked() {
+// This function is for when a user clicks the "Add Current Song to Playlist" button.
+void MainWindow::onAddCurrentSongToPlaylistClicked()
+{
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
-    const auto& songs = playlistManager.getMusicLibrary()->getSongs();
 
     if (currentPlaylistIndex < 0 || currentPlaylistIndex >= static_cast<int>(playlists.size())) {
         QMessageBox::warning(this, "No Playlist Selected", "Please select a playlist first.");
         return;
     }
 
-    if (currentSongIndex < 0 || currentSongIndex >= static_cast<int>(songs.size())) {
+    if (!selectedLibrarySong) {
         QMessageBox::warning(this, "No Song Selected", "Please select a song first.");
         return;
     }
 
     Playlist* currentPlaylist = playlists[currentPlaylistIndex].get();
-    std::shared_ptr<Song> currentSong = songs[currentSongIndex];
-
-    const std::string& playlistId = currentPlaylist->getPlaylistID(); // get their id's
-    const std::string& songId = currentSong->getItemID();
-
-    if (!currentPlaylist || !currentSong) {
+    if (!currentPlaylist) {
         return;
     }
+
+    const std::string& playlistId = currentPlaylist->getPlaylistID();
+    const std::string& songId = selectedLibrarySong->getItemID();
 
     playlistManager.addSongToPlaylist(songId, playlistId);
 
@@ -701,6 +722,7 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     if (row < 0 || row >= static_cast<int>(currentSearchResults.size()))
     {
         currentSongIndex = -1;
+        selectedLibrarySong = nullptr;
         return;
     }
 
@@ -708,8 +730,12 @@ void MainWindow::onMusicLibrarySongSelected(int row)
 
     if (!selectedSong) {
         currentSongIndex = -1;
+        selectedLibrarySong = nullptr;
         return;
     }
+
+    selectedLibrarySong = selectedSong;
+    mediaControl.setCurrentSong(selectedSong);
 
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
 
@@ -721,7 +747,6 @@ void MainWindow::onMusicLibrarySongSelected(int row)
             break;
         }
     }
-    mediaControl.setCurrentSong(selectedSong);
 }
 
 // This function loads the list of songs from the music library into the playlist editor UI.

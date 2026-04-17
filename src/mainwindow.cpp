@@ -148,13 +148,20 @@ void MainWindow::onImportM3UButtonClicked() {
 
     QDir dir(QCoreApplication::applicationDirPath());                   // 
 
+
     QFile importedPL(fileName);
+
+    if (!importedPL.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Failed to open playlist file.");
+        return;
+    }
+
     QTextStream infoStream(&importedPL);
     QString line;
     Song tempSong;
     bool found = false;
 
-    importedPL.open(QIODevice::ReadOnly | QIODevice::Text);             // Open the file
+    //importedPL.open(QIODevice::ReadOnly | QIODevice::Text);             // Open the file
 
     while (infoStream.readLineInto(&line)) {
 
@@ -175,30 +182,23 @@ void MainWindow::onImportM3UButtonClicked() {
 
         // Else - Make a new song to add                                // Code comes from DataManager
         
-        std::string songId = generateID();                              // Generate a song ID
+        QMediaPlayer tempPlayer;
+        QAudioOutput tempOutput;
+        tempPlayer.setAudioOutput(&tempOutput);
+        tempPlayer.setSource(QUrl::fromLocalFile(absolute));
 
-        // Create generic song variables
-        std::string title = QFileInfo(absolute).baseName().toStdString();
-        std::string artist = "Unknown Artist";
-        std::string album = "N/A";
-        std::string genre = "Unknown";
-        int duration = UNKNOWN_DUR;
+        QEventLoop loop;
+        connect(&tempPlayer, &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
+            if (status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::InvalidMedia) {
+                loop.quit();
+            }
+            });
+        loop.exec();
 
-        // Make a song with default variables
-        std::shared_ptr<Song> newSong = std::make_shared<Song>(
-            songId,
-            title,
-            duration,
-            artist,
-            album,
-            genre,
-            absolute.toStdString()                                      // absolute is a QString. They are not compatible.
-        );
-
-        playlistManager.getMusicLibrary()->addSong(newSong);            // add song to library song vector
-
-        ourNewPL->addSong(newSong);                                     // Add to the new playlist.
-
+        std::shared_ptr<Song> newSong = dataManager.parseSongData(absolute, tempPlayer);
+        if (newSong) {
+            ourNewPL->addSong(newSong);
+        }
     }
 
     loadLibraryToUI();                                                  // Should update the UI

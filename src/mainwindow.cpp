@@ -351,6 +351,11 @@ void MainWindow::loadLibraryToUI() {
         ui->lineEditGenre->setPlaceholderText("Unknown");
         ui->lineEditArtist->setPlaceholderText("Unknown Artist");
         ui->lineEditAlbum->setPlaceholderText("N/A");
+
+        ui->lineEditSongName->clear();
+        ui->lineEditArtist->clear();
+        ui->lineEditAlbum->clear();
+        ui->lineEditGenre->clear();
     }
     else if (mediaControl.usePlayer()->source().isEmpty()) {
         QString savedPath = QString::fromStdString(songs.front()->getFilePath());
@@ -617,7 +622,7 @@ void MainWindow::onPlaylistSelected(int row) {
 }
 
 void MainWindow::onPlaylistEditorExitButtonClicked() {
-    currentPlaylistIndex = -1;
+    //currentPlaylistIndex = -1;
 	currentPlaylistSongIndex = -1;
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 }
@@ -702,7 +707,7 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     }
 
     selectedLibrarySong = selectedSong;
-    mediaControl.setCurrentSong(selectedSong);
+    //mediaControl.setCurrentSong(selectedSong);
 
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
 
@@ -1178,44 +1183,28 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
 }
 
 void MainWindow::onSongEditorDeleteButtonClicked() {
-    std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
-
-    // If no current song is in place, display a warning
-    if (!currentSong) {
+    if (!selectedLibrarySong) {
         QMessageBox::warning(this, "No Song Selected",
             "No song is currently selected. Please select a song first.");
         return;
     }
 
-    // Check if the song being deleted is currently playing
-    bool isCurrentlyPlaying = (mediaControl.usePlayer()->playbackState() == QMediaPlayer::PlayingState);
+    const std::string songID = selectedLibrarySong->getItemID();
+    auto loadedSong = mediaControl.getCurrentSong();
+    bool isDeletingLoadedSong = (loadedSong && loadedSong->getItemID() == songID);
 
-    // Stop playback if this song is playing
-    if (isCurrentlyPlaying) {
-        mediaControl.usePlayer()->stop();
+    if (isDeletingLoadedSong) {
+        if (mediaControl.usePlayer()->playbackState() == QMediaPlayer::PlayingState) {
+            mediaControl.usePlayer()->stop();
+        }
+        mediaControl.usePlayer()->setSource(QUrl());
+        mediaControl.setCurrentSong(nullptr);
     }
 
-    // CRITICAL: Clear the player's source so it doesn't keep the deleted file
-    mediaControl.usePlayer()->setSource(QUrl()); 
-
-    const std::string songID = currentSong->getItemID();
-
-    // Use the id to recursively delete every instance of the song
     playlistManager.getMusicLibrary()->deleteSong(songID);
 
-    // Clear the current song reference in MediaController since it's deleted
-    mediaControl.setCurrentSong(nullptr);
-
-    // Repaint UI
     loadLibraryToUI();
     loadCurrentPlaylistToUI();
-
-    // Clear the editor fields
-    ui->lineEditSongName->clear();
-    ui->lineEditArtist->clear();
-    ui->lineEditAlbum->clear();
-    ui->lineEditGenre->clear();
-
 }
 
 void MainWindow::onAnalyticsButtonClicked() {

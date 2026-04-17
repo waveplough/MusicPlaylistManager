@@ -1617,14 +1617,13 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>33</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionPlaylist"/>
     <addaction name="actionNewSong"/>
     <addaction name="actionImport_Playlist_m3u"/>
    </widget>

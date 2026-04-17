@@ -119,6 +119,9 @@ private:
 	//` current song index for playlist editor functionality. -1 means no song is currently selected.
     int currentPlaylistSongIndex = -1;
 
+    // // currently selected song from the music library list
+    std::shared_ptr<Song> selectedLibrarySong = nullptr;
+
     // Boolean for music Player Volume toggle.
     bool isMuted = false;
 

@@ -21,7 +21,16 @@
 #include <QStandardItem>
 #include <string>
 
-
+/**
+ * Initializes the main application window and all UI components
+ *
+ * @param mediaControl Reference to the MediaController for audio playback
+ * @param dataManager Reference to the DataManager for file persistence
+ * @param playlistManager Reference to the PlaylistManager for playlist operations
+ * @param parent Parent widget
+ *
+ * Sets up the UI, connects signals/slots, configures player controls, and initializes timers
+ */
 MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, PlaylistManager& playlistManager, QWidget *parent)
     : QMainWindow(parent)
     , mediaControl(mediaControl)
@@ -31,24 +40,28 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 
     
 {
-
+    // Initialize UI components from the .ui file
     ui->setupUi(this);
+
+    // Event filter to detect clicks on playlist name label for renaming
     ui->playlistNameLabel->installEventFilter(this);
     ui->playlistNameLabel->setCursor(Qt::PointingHandCursor);
+
+    // Start on the song player page
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 
     // Forces the main splitter to size. Not doable in create.
     ui->mainSplitter->setSizes({ 551, 240, 240 });
     ui->menuAnalytics->setFocusPolicy(Qt::NoFocus);
 
-    // Slots and signals manual connections
+    // ==================== SIGNAL/SLOT CONNECTIONS ====================  //
 
-    // Menu
+    // MENU
     connect(ui->actionNewSong, &QAction::triggered, this, &MainWindow::onNewSongButtonClicked);
     connect(ui->actionViewAnalytics, &QAction::triggered, this, &MainWindow::onAnalyticsButtonClicked);
     connect(ui->actionImport_Playlist_m3u, &QAction::triggered, this, &MainWindow::onImportM3UButtonClicked);
 
-    // Playlist
+    // PLAYLIST
     connect(ui->addPlaylistButton, &QPushButton::clicked, this, &MainWindow::onAddPlaylistButtonClicked);
     connect(ui->exitPlaylistEditor, &QPushButton::clicked, this, &MainWindow::onPlaylistEditorExitButtonClicked);
     connect(ui->playlistCardBox, &QListWidget::itemClicked, this, [this](QListWidgetItem* item) {                   //  This is for when a user selects a playlist from the playlist selection list.
@@ -64,28 +77,29 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
 	connect(ui->moveUpButton, &QPushButton::clicked, this, &MainWindow::onMoveUpClicked);  //   This is for when a user clicks the "Move Up" button in the playlist editor.
 	connect(ui->moveDownButton, &QPushButton::clicked, this, &MainWindow::onMoveDownClicked);//   This is for when a user clicks the "Move Down" button in the playlist editor.
 	connect(ui->reorderButton, &QPushButton::clicked, this, &MainWindow::onReorderClicked); //   This is for when a user clicks the "Reorder Playlist" button in the playlist editor.
-    // Player
+    // PLAYER
     connect(ui->playerVolumeButton, &QPushButton::clicked, this, &MainWindow::onPlayerVolumeButtonClicked);
     connect(ui->backButton, &QPushButton::clicked, this, &MainWindow::onBackButtonClicked);
-    //connect(ui->backButton, &QPushButton::pressed, this, &MainWindow::onBackButtonPressed);       // UNUSED
+
     connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::onStopButtonClicked);
     connect(ui->playButton, &QPushButton::clicked, this, &MainWindow::onPlayButtonClicked);
     connect(ui->pauseButton, &QPushButton::clicked, this, &MainWindow::onPauseButtonClicked);
     connect(ui->forwardButton, &QPushButton::clicked, this, &MainWindow::onForwardButtonClicked);
-    //connect(ui->forwardButton, &QPushButton::pressed, this, &MainWindow::onForwardButtonPressed); // UNUSED
+
     
     connect(ui->playerPlaybar, &QSlider::valueChanged, this, &MainWindow::onPlayerPlaybarValueChanged);
     connect(ui->playerPlaybar, &QSlider::sliderMoved, this, &MainWindow::onPlayerPlaybarMoved);
     connect(ui->playerVolumeSlider, &QSlider::valueChanged, this, &MainWindow::onPlayerVolumeSliderValueChanged);
 
-    // Analytics
+    // ANALYTICS
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::onAnalyticsExitButtonClicked);
 
+    // Timer ticks every second to track listening duration while playing
     listeningTimer = new QTimer(this);
     connect(listeningTimer, &QTimer::timeout, this, &MainWindow::updateListeningTime);
     listeningTimer->start(1000);
 
-    /* Object Manipulation */
+    // ==================== OBJECT MANIPULATION ====================  //
 
     // Player Forward Button
     ui->forwardButton->setAutoRepeat(true);         // Must set auto repeat to happen on a press button
@@ -115,22 +129,17 @@ MainWindow::MainWindow(MediaController &mediaControl,DataManager& dataManager, P
     connect(ui->deleteButton, &QPushButton::clicked, this, &MainWindow::onSongEditorDeleteButtonClicked);
 }
 
+/**
+ * Cleans up UI components
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-// Menu Item Listeners
-
-// Major Function : Clicking in the top menu bar 'File' to add a Song to the Library.
-    // For those reading:
-        // mediaControl is the instantiated MedialController.cpp class.
-        // trueMediaPlayer is instantiated within that object as part of its creation.
-        // usePlayer() is a function that returns a pointer to that media player.
-        // setSource() replaces setMedia() from QT 5. It is what loads the song.
-
-    //-(*)- Suleiman, Ria. This is where a song should now get registered in the library.
-
+/**
+ * Imports an M3U playlist file and creates a new playlist with its contents
+ */
 void MainWindow::onImportM3UButtonClicked() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Select Playlist Import"), "", tr("M3U Files (*.m3u *.m3u8)"));
 
@@ -146,7 +155,7 @@ void MainWindow::onImportM3UButtonClicked() {
         return;
     }
 
-    QDir dir(QCoreApplication::applicationDirPath());                   // 
+    QDir dir(QCoreApplication::applicationDirPath());                   
 
 
     QFile importedPL(fileName);
@@ -160,8 +169,6 @@ void MainWindow::onImportM3UButtonClicked() {
     QString line;
     Song tempSong;
     bool found = false;
-
-    //importedPL.open(QIODevice::ReadOnly | QIODevice::Text);             // Open the file
 
     while (infoStream.readLineInto(&line)) {
 
@@ -209,8 +216,11 @@ void MainWindow::onImportM3UButtonClicked() {
 // Posted by Pavel Strakhov
 // Retrieved 2026-04-07, License - CC BY-SA 3.0
 
-
 }
+
+/**
+ * Handles adding a new song to the library via file dialog
+ */
 void MainWindow::onNewSongButtonClicked() {
 
     QMediaPlayer tempPlayer;
@@ -243,11 +253,18 @@ void MainWindow::onNewSongButtonClicked() {
     loadLibraryToUI();
 }
 
-// Analytics Page
+/**
+ * Exits the analytics page and returns to the previous page
+ */
 void MainWindow::onAnalyticsExitButtonClicked() {
     ui->stackedWidget->setCurrentIndex(previousPageIndex);
 }
 
+/**
+ * Creates a visual card widget for a song and adds it to the library list
+ *
+ * @param song Shared pointer to the Song object to display
+ */
 void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
     LibraryCard* card = new LibraryCard(song, this);
     QListWidgetItem* item = new QListWidgetItem();
@@ -259,6 +276,11 @@ void MainWindow::addSongCardToLibraryList(std::shared_ptr<Song> song) {
         this, &MainWindow::onSongCardDoubleClicked);
 }
 
+/**
+ * Adds a song card to the SongsList widget
+ *
+ * @param song Shared pointer to the Song object to display
+ */
 void MainWindow::addSongCardToSongsList(std::shared_ptr<Song> song) {
     ui->playlistSongsList->clear();
     songCard* card = new songCard(song, this);      // gets shared pointer reference of its own
@@ -268,6 +290,12 @@ void MainWindow::addSongCardToSongsList(std::shared_ptr<Song> song) {
     ui->SongList->setItemWidget(item, card);
 }
 
+/**
+ * Updates the player information panel with current song details
+ *
+ * @param song Shared pointer to the currently playing song
+ * @param fileInfo Object with file system information
+ */
 void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo fileInfo) {
     if (!song) {
         ui->playerTitleLabel->setText("No Title");
@@ -293,6 +321,11 @@ void MainWindow::addPlayerInformation(std::shared_ptr<Song> song, QFileInfo file
     }
 }
 
+/**
+ * Populates the song editor form with the current song's metadata
+ *
+ * @param song Shared pointer to the song being edited
+ */
 void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
     if (!song) {
         // Set placeholder hints to defaults if song is null
@@ -322,7 +355,9 @@ void MainWindow::addSongEditorInformation(std::shared_ptr<Song> song) {
 
 }
 
-// Loads the music library from the data manager into the UI. Called in main.cpp after loading the library from file.
+/**
+ * Loads the entire music library into the UI
+ */
 void MainWindow::loadLibraryToUI() {
     ui->libraryList->clear();
     ui->playlistCardBox->clear();
@@ -379,8 +414,11 @@ void MainWindow::loadLibraryToUI() {
    
 }
 
-// Music Library Search Functionality. Connected to the textChanged signal of the search bar in the library section. 
-// Filters the songs in the library based on the search query and updates the displayed list accordingly.
+/**
+ * Filters the library list based on search text
+ *
+ * @param text The search query entered by the user
+ */
 void MainWindow::onSearchTextChanged(const QString& text)
 {
     QString trimmedText = text.trimmed();
@@ -409,34 +447,31 @@ void MainWindow::onSearchTextChanged(const QString& text)
     }
 }
 
-/* Music Player Functions */
+// ==================== MUSIC PLAYER FUNCTIONS ====================  //
 
-// Music Player : Scroll back button functionality. One-time click.
+/**
+ * Skips backward 30 seconds in the current track
+ */
 void MainWindow::onBackButtonClicked() 
 {
-    ui->playerPlaybar->setValue(ui->playerPlaybar->value() - 2);
-        // Jumps backward by 30 seconds + the current playerbar value.
-    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
-        // Sets the actual song to that position.
+    ui->playerPlaybar->setValue(ui->playerPlaybar->value() - 2);    // Jumps backward by 30 seconds + the current playerbar value.
+        
+    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);   // Sets the actual song to that position.
+        
 }
 
-// UNUSED
-// Music Player : Scroll back button functionality. Held down scrolling.
-//void MainWindow::onBackButtonPressed()
-//{
-//    ui->playerPlaybar->setValue(ui->playerPlaybar->value() - 0.01);
-//    // Jumps backward by 0.01 second + the current playerbar value.
-//    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
-//    // Sets the actual song to that position.
-//}
-
-// Music Player : Stop button functionality.
+/**
+ * Stops the current playback
+ */
 void MainWindow::onStopButtonClicked() 
 {
     mediaControl.usePlayer()->stop();
 }
 
-// Music Player : Play button functionality.
+/**
+ * Plays the current song
+ * Increments play count if this is the first play of the session for this song
+ */
 void MainWindow::onPlayButtonClicked()
 {
     auto currentSong = mediaControl.getCurrentSong();
@@ -452,33 +487,31 @@ void MainWindow::onPlayButtonClicked()
     mediaControl.usePlayer()->play();
 }
 
-// Music Player : Pause button functionality.
+/**
+ * Pauses the current playback
+ */
 void MainWindow::onPauseButtonClicked() 
 {
     mediaControl.usePlayer()->pause();
 }
 
-// Music Player : Scroll forward button functionality - one-time click.
+/**
+ * Skips forward 30 seconds in the current track
+ */
 void MainWindow::onForwardButtonClicked() 
 {
-    ui->playerPlaybar->setValue(ui->playerPlaybar->value() + 3);
-        // Jumps forward by 30 seconds + the current playerbar value.
-    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
-        // Sets the actual song to that position.
+    ui->playerPlaybar->setValue(ui->playerPlaybar->value() + 3);                // Jumps forward by 30 seconds + the current playerbar value.   
+    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);   // Sets the actual song to that position.
+        
 }
 
-// UNUSED
-// Music Player : Scroll forward button functionality - held down scrolling.
-//void MainWindow::onForwardButtonPressed()
-//{
-//    ui->playerPlaybar->setValue(ui->playerPlaybar->value() + 0.01);
-//    // Jumps forward by 0.01 seconds + the current playerbar value.
-//    mediaControl.usePlayer()->setPosition(ui->playerPlaybar->value() * 1000);
-//    // Sets the actual song to that position.
-//}
+/**** PLAYBAR ****/
 
-    // Playbar related //
-// Music Player : Playbar (slider) value adjustment.
+/**
+ * Handles playbar value changes while the user is dragging the slider
+ * 
+ * @param value New slider position (in seconds)
+ */
 void MainWindow::onPlayerPlaybarValueChanged(int value)
 {
     if (ui->playerPlaybar->isSliderDown()) 
@@ -487,14 +520,22 @@ void MainWindow::onPlayerPlaybarValueChanged(int value)
     }
 }
 
-// Music Player : Playbar (slider) clicked the slider to move it.
+/**
+ * Handles playbar movement when user clicks a new position
+ * 
+ * @param value New slider position (in seconds)
+ */
 void MainWindow::onPlayerPlaybarMoved(int value)
 {
     mediaControl.usePlayer()->setPosition(value * 1000);
 }
 
 
-// Music Player : Playbar duration sync
+/**
+ * Updates the time labels during playback
+ * 
+ * @param duration Current playback position in milliseconds
+ */
 void MainWindow::updateDuration(qint64 duration)
     // Note: QT is weird and often works in Miliseconds.
 {
@@ -524,14 +565,22 @@ void MainWindow::updateDuration(qint64 duration)
     }
 }
 
-// Music Player : Playbar duration sync
+/**
+ * Updates the playbar maximum value when a new song is loaded
+ *
+ * @param duration Total duration of the current song in milliseconds
+ */
 void MainWindow::durationChanged(qint64 duration)
 {
     mDuration = duration; 
     ui->playerPlaybar->setMaximum(mDuration / 1000); 
 }
 
-// Music Player : Playbar position change
+/**
+ * Updates the playbar position during playback
+ *
+ * @param progress Current playback position in milliseconds
+ */
 void MainWindow::positionChanged(qint64 progress)
 {
     if (!ui->playerPlaybar->isSliderDown()) 
@@ -540,15 +589,24 @@ void MainWindow::positionChanged(qint64 progress)
     }
 }
 
-    // Volume Bar Related //
-// Music Player : Volume Bar (slider, not button) manipulation.
+/***** VOLUME BAR *****/
+
+/**
+ * Adjusts the audio output volume when the volume slider changes
+ *
+ * @param value Slider position (0-100)
+ */
 void MainWindow::onPlayerVolumeSliderValueChanged(int value)
 {
     mediaControl.usePlayer()->audioOutput()->setVolume(value / 100.00);      // Pay attention to this syntax.
         // QT 6 uses volume levels from 0 - 1. Not 100 like previously.
 }
 
-// Music Player: Adds toggled Mute / Active functionality for the Player's Volume (mute) button.
+/**
+ * Toggles mute/unmute when the volume button is clicked
+ *
+ * Changes icon and updates mute state
+ */
 void MainWindow::onPlayerVolumeButtonClicked()
 {
     if (isMuted == false)
@@ -567,7 +625,11 @@ void MainWindow::onPlayerVolumeButtonClicked()
 
 /* PERSISTENCE FUNCTIONS */
 
-// Temporary: Auto-save data when closing the application
+/**
+ * Handles application close event
+ *
+ * Saves all music library data to JSON before exiting
+ */
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     qDebug() << "Songs in library before save:" << playlistManager.getMusicLibrary()->getSongs().size();
@@ -582,6 +644,9 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 /* PLAYLIST FUNCTIONALITY */
 
+/**
+ * Creates a new playlist card and adds it to the playlist display
+ */
 void MainWindow::addPlaylistCard() {
     std::string id = generateID();
     playlistManager.getMusicLibrary()->createPlaylist(id, "Name");
@@ -604,10 +669,18 @@ void MainWindow::addPlaylistCard() {
         this, &MainWindow::onDeletePlaylistButtonClicked);
 }
 
+/**
+ * Triggers creation of a new playlist card when the add button is clicked
+ */
 void MainWindow::onAddPlaylistButtonClicked() {
     addPlaylistCard();
 }
 
+/**
+ * Handles playlist selection from the playlist card box
+ *
+ * @param row index of the selected playlist
+ */
 void MainWindow::onPlaylistSelected(int row) {
     currentPlaylistIndex = row;
 	currentPlaylistSongIndex = -1;      //  Resets the current song index in the playlist editor when a new playlist is selected.
@@ -621,6 +694,9 @@ void MainWindow::onPlaylistSelected(int row) {
     ui->stackedWidget->setCurrentWidget(ui->editPlaylistPage);
 }
 
+/**
+ * Exits the playlist editor and returns to the player page
+ */
 void MainWindow::onPlaylistEditorExitButtonClicked() {
     //currentPlaylistIndex = -1;
 	currentPlaylistSongIndex = -1;
@@ -628,8 +704,9 @@ void MainWindow::onPlaylistEditorExitButtonClicked() {
 }
 
 
-// This function loads the songs of the currently selected playlist into the playlist editor UI. 
-// It is called whenever a new playlist is selected or when changes are made to the current playlist.
+/**
+ * Loads the songs of the currently selected playlist into the main playlist display
+ */
 void MainWindow::loadCurrentPlaylistToUI() {
     ui->SongList->clear();
 
@@ -656,7 +733,11 @@ void MainWindow::loadCurrentPlaylistToUI() {
     }
 }
 
-// This function is for when a user clicks the "Add Current Song to Playlist" button.
+/**
+ * Adds the currently selected song to the currently selected playlist
+ *
+ * Validates that both a playlist and a song are selected before proceeding
+ */
 void MainWindow::onAddCurrentSongToPlaylistClicked()
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -687,8 +768,11 @@ void MainWindow::onAddCurrentSongToPlaylistClicked()
     loadPlaylistEditorSongsToUI();
 }
 
-// This function is for when a user clicks on a song in the music library. 
-// Current Song to Playlist, it adds the correct song.
+/**
+ * Handles song selection from the music library
+ *
+ * @param row Index of the selected song in the displayed list
+ */
 void MainWindow::onMusicLibrarySongSelected(int row)
 {
     if (row < 0 || row >= static_cast<int>(currentSearchResults.size()))
@@ -707,7 +791,6 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     }
 
     selectedLibrarySong = selectedSong;
-    //mediaControl.setCurrentSong(selectedSong);
 
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
 
@@ -721,7 +804,11 @@ void MainWindow::onMusicLibrarySongSelected(int row)
     }
 }
 
-// This function loads the list of songs from the music library into the playlist editor UI.
+/**
+ * Loads the songs from the current playlist into the playlist editor's song list
+ *
+ * This is the right panel in the playlist editor showing playlist contents
+ */
 void MainWindow::loadPlaylistEditorSongsToUI() {
     ui->playlistSongsList->clear();
 
@@ -749,7 +836,11 @@ void MainWindow::loadPlaylistEditorSongsToUI() {
     }
 }
 
-// A function to play a song from a double clicked song card
+/**
+ * Plays a song when its card is double-clicked
+ *
+ * @param song Shared pointer to the song to play
+ */
 void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
 {
     if (!song) return;
@@ -789,8 +880,9 @@ void MainWindow::onSongCardDoubleClicked(std::shared_ptr<Song> song)
 }
 
 
-//  This function allows the user to click on the playlist name label in the playlist editor to rename the playlist. 
-// It uses an input dialog to get the new name and updates the playlist and UI accordingly.
+/**
+ * Event filter for handling clicks on the playlist name label
+ */
 bool MainWindow::eventFilter(QObject* watched, QEvent* event)
 {
     if (watched == ui->playlistNameLabel && event->type() == QEvent::MouseButtonPress)
@@ -864,7 +956,11 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
 //__________________________________________________________________________________________________________________________________ //
 
 
-// This function refreshes the playlist editor song list UI while keeping the current selection highlighted.
+/**
+ * Refreshes the playlist editor UI while preserving the current selection
+ *
+ * @param row The row index to keep selected after refresh
+ */
 void MainWindow::refreshPlaylistViewsAndKeepSelection(int row)
 {
     {
@@ -883,7 +979,11 @@ void MainWindow::refreshPlaylistViewsAndKeepSelection(int row)
     }
 }
 
-// This function is for when a user clicks on a song in the playlist editor's song list.
+/**
+ * Tracks which song is selected in the playlist editor
+ *
+ * @param row Index of the selected song
+ */
 void MainWindow::onPlaylistEditorSongSelected(int row)
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -909,8 +1009,9 @@ void MainWindow::onPlaylistEditorSongSelected(int row)
     currentPlaylistSongIndex = row;
 }
 
-// This function is for when a user clicks the "Move Up" button in the playlist editor. 
-// It moves the selected song up in the playlist order.
+/**
+ * Moves the selected song up one position in the playlist
+ */
 void MainWindow::onMoveUpClicked()
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -939,7 +1040,9 @@ void MainWindow::onMoveUpClicked()
     refreshPlaylistViewsAndKeepSelection(newRow);
 }
 
-// This function is for when a user clicks the "Move Down" button in the playlist editor.
+/**
+ * Moves the selected song down one position in the playlist
+ */
 void MainWindow::onMoveDownClicked()
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -970,7 +1073,9 @@ void MainWindow::onMoveDownClicked()
     refreshPlaylistViewsAndKeepSelection(newRow);
 }
 
-// This function is for when a user clicks the "Reorder Playlist" button in the playlist editor.
+/**
+ * Opens a dialog to reorder a song to a specific position in the playlist
+ */
 void MainWindow::onReorderClicked()
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -1017,7 +1122,11 @@ void MainWindow::onReorderClicked()
     refreshPlaylistViewsAndKeepSelection(newRow);
 }
 
-//  This function is for when a user clicks the "Remove from Playlist" button in the playlist editor.
+/**
+ * Removes the selected song from the current playlist
+ *
+ * Confirms with user before deletion
+ */
 void MainWindow::onTrashButtonClicked()
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();
@@ -1100,6 +1209,10 @@ void MainWindow::onTrashButtonClicked()
 //___________________________________________________SONG EDITOR FUNCTION______________________________________________//
 //__________________________________________________________________________________________________________________________________ //
 
+
+/**
+ * Saves changes made to the current song's metadata
+ */
 void MainWindow::onSongEditorSubmitButtonClicked() {
     std::shared_ptr<Song> currentSong = mediaControl.getCurrentSong();
 
@@ -1182,6 +1295,9 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
     }
 }
 
+/**
+ * Deletes the currently selected song from the library
+ */
 void MainWindow::onSongEditorDeleteButtonClicked() {
     if (!selectedLibrarySong) {
         QMessageBox::warning(this, "No Song Selected",
@@ -1207,6 +1323,9 @@ void MainWindow::onSongEditorDeleteButtonClicked() {
     loadCurrentPlaylistToUI();
 }
 
+/**
+ * Displays the analytics page with statistics about the music library
+ */
 void MainWindow::onAnalyticsButtonClicked() {
     // First switch to the Analytics page
     previousPageIndex = ui->stackedWidget->currentIndex();
@@ -1266,6 +1385,11 @@ void MainWindow::onAnalyticsButtonClicked() {
     ui->genreTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
+/**
+ * Updates the total listening time display on the analytics page
+ *
+ * Fetches current total listening time from the analytics engine
+ */
 void MainWindow::updateAnalyticsDisplay() {
     // Get all songs
     const auto& allSongs = playlistManager.getMusicLibrary()->getSongs();
@@ -1291,7 +1415,13 @@ void MainWindow::updateAnalyticsDisplay() {
 }
 
 
-// This function is for when a user clicks the "Delete Playlist" button in the playlist editor.
+/**
+ * Deletes a playlist after user confirmation
+ *
+ * @param playlistID The ID of the playlist to delete
+ *
+ * Removes the playlist from the library and refreshes the UI
+ */
 void MainWindow::onDeletePlaylistButtonClicked(QString playlistID)
 {
     QMessageBox::StandardButton reply = QMessageBox::question(
@@ -1319,6 +1449,9 @@ void MainWindow::onDeletePlaylistButtonClicked(QString playlistID)
     ui->stackedWidget->setCurrentWidget(ui->songPlayerPage);
 }
 
+/**
+ * Tracks listening time while music is playing
+ */
 void MainWindow::updateListeningTime() {
     if (mediaControl.usePlayer()->playbackState() == QMediaPlayer::PlayingState) {
         auto currentSong = mediaControl.getCurrentSong();
@@ -1333,7 +1466,11 @@ void MainWindow::updateListeningTime() {
     }
 }
 
-// Sorting the Playlist by title, artist, or album when the corresponding header is clicked.
+/**
+ * Sorts the current playlist by user-selected criteria
+ *
+ * Options: Artist, Genre, Album
+ */
 void MainWindow::onSortButtonClicked()
 {
     const auto& playlists = playlistManager.getMusicLibrary()->getPlaylists();

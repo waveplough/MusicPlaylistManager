@@ -3,7 +3,12 @@
 #include <QtWidgets>
 #include "LibraryCard.h"
 
-
+/**
+ *  Creates a visual card widget representing a song in the library
+ *
+ * @param song Shared pointer to the Song object this card represents
+ * @param parent Parent widget 
+ */
 LibraryCard::LibraryCard(std::shared_ptr<Song> song, QWidget* parent)
     : QWidget(parent)
     , song(song)
@@ -42,13 +47,20 @@ LibraryCard::LibraryCard(std::shared_ptr<Song> song, QWidget* parent)
     }
 }
 
+/**
+ * Cleans up the UI components
+ */
 LibraryCard::~LibraryCard()
 {
     delete ui;
 }
 
-// This function is called when the user double-clicks on the library card. 
-// It emits a signal with the associated song, which can be connected to a slot in the main window to play the song.
+/**
+ * This function is called when the user double - clicks on the library card.
+ * It emits a signal with the associated song, which can be connected to a slot in the main window to play the song.
+ * 
+ * @param event Mouse Event that is transmitted when the card is clicked
+ */
 void LibraryCard::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if (song)

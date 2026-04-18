@@ -5,14 +5,28 @@
 
 #include <unordered_map>
 
+/**
+ * Initializes the DataManager with a reference to the MusicLibrary
+ * @param library Shared pointer to the MusicLibrary that will be used for data operations
+ */
 DataManager::DataManager(std::shared_ptr<MusicLibrary>& library) : musicLibrary(library)             // Initialize Reference To Library
 {
 }
 
+/**
+ * Cleans up any resources
+ */
 DataManager::~DataManager()                                                    // Destructor
 {
 }
 
+/**
+ * Extracts metadata from an audio file and creates a new Song object
+ *
+ * @param filename Path to the audio file
+ * @param player QMediaPlayer instance used to read metadata from the file
+ * @return Shared pointer to the newly created Song, or nullptr if duplicate or error
+ */
 std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMediaPlayer& player) {
 
     QMediaMetaData metaData = player.metaData();
@@ -70,6 +84,12 @@ std::shared_ptr<Song> DataManager::parseSongData(const QString& filename, QMedia
     return newSong;
 }
 
+/**
+ * Saves the entire music library and playlists to a JSON file
+ *
+ * @param filename Path where the JSON file will be saved
+ * @return true if save was successful, false if file couldn't be opened or written
+ */
 bool DataManager::saveData(const std::string& filename) const
 {
     QFileInfo fileInfo(QString::fromStdString(filename));
@@ -142,6 +162,12 @@ bool DataManager::saveData(const std::string& filename) const
     return true;
 }
 
+/**
+ * Loads the music library and playlists from a JSON file
+ *
+ * @param filename Path to the JSON file to load
+ * @return true if load was successful, false if file couldn't be opened or parsing failed
+ */
 bool DataManager::loadData(const std::string& filename)
 {
     QFile inFile(QString::fromStdString(filename));                            // Open File For Reading

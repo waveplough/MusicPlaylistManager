@@ -4,6 +4,12 @@
 #include <qpainter.h>
 #include "songCard.h"
 
+/**
+ * Creates a visual card widget representing a song in a playlist
+ *
+ * @param song Shared pointer to the Song object this card represents
+ * @param parent Parent widget
+ */
 songCard::songCard(std::shared_ptr<Song> song, QWidget *parent)
 	: QWidget(parent)
 	, song(song)
@@ -34,11 +40,19 @@ songCard::songCard(std::shared_ptr<Song> song, QWidget *parent)
     }
 }
 
+/**
+ * Cleans up UI components
+ */
 songCard::~songCard()
 {
 	delete ui;
 }
 
+/**
+ * Event handler for mouse double-click events on the card
+ *
+ * @param playSong Mouse event containing click information
+ */
 void songCard::mouseDoubleClickEvent(QMouseEvent *playSong)
 {
     emit songCardDoubleClick(this->song);

@@ -23,10 +23,10 @@ Playlist::Playlist(const std::string& id, const std::string& name)              
  *
  * @return Total duration in seconds, or 0 if playlist is empty
  */
-int Playlist::computeTotalDuration() const {                                    // Sums the total duration
+int Playlist::computeTotalDuration() const {                                    
         return std::accumulate(songs.begin(), songs.end(), 0,
             [](int total, const std::shared_ptr<Song>& song) {                  
-                if (!song) {                                                    // Suleiman, check this logic. Updated for .m3u
+                if (!song) {                                                    
                     return total;
                 }
                 else {

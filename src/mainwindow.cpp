@@ -1223,16 +1223,16 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         return;
     }
 
-    // Get the text from UI
-    QString titleText = ui->lineEditSongName->text();
-    QString artistText = ui->lineEditArtist->text();
-    QString albumText = ui->lineEditAlbum->text();
-    QString genreText = ui->lineEditGenre->text();
+    // Get the text from UI and trim whitespace from both ends
+    QString titleText = ui->lineEditSongName->text().trimmed();
+    QString artistText = ui->lineEditArtist->text().trimmed();
+    QString albumText = ui->lineEditAlbum->text().trimmed();
+    QString genreText = ui->lineEditGenre->text().trimmed();
 
     bool hasError = false;
     QString errorMessage;
 
-    // Validate title name 
+    // Validate title name (after trimming)
     if (titleText.isEmpty()) {
         errorMessage += QString("Title cannot be empty\n");
         hasError = true;
@@ -1242,7 +1242,7 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         hasError = true;
     }
 
-    // Validate artist name
+    // Validate artist name (after trimming)
     if (artistText.isEmpty()) {
         errorMessage += QString("Artist cannot be empty\n");
         hasError = true;
@@ -1252,13 +1252,13 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         hasError = true;
     }
 
-    // Validate album name 
+    // Validate album name (after trimming)
     if (albumText.length() > 100) {
         errorMessage += QString("Album exceeds the 100 character limit (you entered %1)\n").arg(albumText.length());
         hasError = true;
     }
 
-    // Validate genre 
+    // Validate genre (after trimming) - default to "Unknown" if empty
     if (genreText.isEmpty()) {
         genreText = "Unknown";
     }
@@ -1273,7 +1273,7 @@ void MainWindow::onSongEditorSubmitButtonClicked() {
         return;
     }
 
-    // Assign to the current song
+    // Assign to the current song (values are already trimmed)
     QFileInfo fileInfo(QString::fromStdString(currentSong->getFilePath()));
     currentSong->setTitle(titleText.toStdString());
     currentSong->setArtist(artistText.toStdString());

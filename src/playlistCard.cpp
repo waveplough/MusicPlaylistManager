@@ -4,6 +4,12 @@
 #include <qpainter.h>
 #include "playlistCard.h"
 
+/**
+ * Formats a duration in seconds into a human-readable string
+ *
+ * @param totalSeconds Duration in seconds to format
+ * @return Formatted string with leading zeros
+ */
 static QString formatDuration(int totalSeconds)
 {
     int hours = totalSeconds / 3600;
@@ -16,6 +22,12 @@ static QString formatDuration(int totalSeconds)
         .arg(seconds, 2, 10, QChar('0'));
 }
 
+/**
+ * Creates a visual card widget representing a playlist
+ *
+ * @param playlist Pointer to the Playlist object this card represents
+ * @param parent Parent widget (usually the QListWidget containing this card)d
+ */
 playlistCard::playlistCard(Playlist* playlist, QWidget* parent)
     : QWidget(parent)
     , playlist(playlist)
@@ -37,6 +49,9 @@ playlistCard::playlistCard(Playlist* playlist, QWidget* parent)
         });
 }
 
+/**
+ * Cleans up UI components
+ */
 playlistCard::~playlistCard()
 {
 	delete ui;

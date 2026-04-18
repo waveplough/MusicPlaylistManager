@@ -1,7 +1,13 @@
 #include "MediaController.h"
 
-// Media controller class is instantiated for use program-wide.
-// QMediaPlayeri intiialized in class object constructor
+/**
+ * Initializes the media player and audio output components
+ *
+ * @param parent Parent QObject (main window)
+ *
+ * The MediaController is instantiated once at program startup and provides
+ * a global interface for audio playback throughout the application.
+ */
 MediaController::MediaController(QObject* parent)
 	: QObject(parent)
 	, trueMediaPlayer(new QMediaPlayer(this))
@@ -13,6 +19,9 @@ MediaController::MediaController(QObject* parent)
 	trueMediaPlayer->setAudioOutput(audioOutput);
 }
 
+/**
+ * Cleans up the media player and audio output
+ */
 MediaController::~MediaController()
 {}
 

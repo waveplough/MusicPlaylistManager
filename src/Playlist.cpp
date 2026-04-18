@@ -1,14 +1,28 @@
 #include "Playlist.h"
 #include <algorithm>
 
+/**
+ * Creates a playlist with a generated ID and default name
+ */
 Playlist::Playlist() :  playlistID(generateID()),                               // Default constructor
                         name("Default"), 
                         songs{} {}
 
+/**
+ * Creates a playlist with specified ID and name
+ *
+ * @param id Unique identifier for the playlist (must be unique across all playlists)
+ * @param name Display name of the playlist (user-facing)
+ */
 Playlist::Playlist(const std::string& id, const std::string& name)              // Parameterized constructor
                     :   playlistID(id), 
                         name(name) {}
 
+/**
+ * Computes the total duration of all songs in the playlist
+ *
+ * @return Total duration in seconds, or 0 if playlist is empty
+ */
 int Playlist::computeTotalDuration() const {                                    // Sums the total duration
         return std::accumulate(songs.begin(), songs.end(), 0,
             [](int total, const std::shared_ptr<Song>& song) {                  
@@ -26,6 +40,9 @@ int Playlist::computeTotalDuration() const {                                    
             });
 }
 
+/**
+ * Displays all playlist information to the console
+ */
 void Playlist::displayPlaylist() const {
   
     std::cout << "Playlist: " << name << " (ID: " << playlistID << ")\n";
@@ -36,7 +53,12 @@ void Playlist::displayPlaylist() const {
     }
 }
 
-void Playlist::addSong(const std::shared_ptr<Song>& song) {                     // Adds a song to the playlist
+/**
+ * Adds a song to the playlist
+ *
+ * @param song Shared pointer to the Song object to add
+ */
+void Playlist::addSong(const std::shared_ptr<Song>& song) {                
     // if song already exists (checks by the ID)
     for (const auto& existing : songs) {
         if (existing->getItemID() == song->getItemID()) {
@@ -46,7 +68,12 @@ void Playlist::addSong(const std::shared_ptr<Song>& song) {                     
     songs.push_back(song);
 }
 
-void Playlist::removeSong(const std::string& songID) {                          // Finds and deletes a song
+/**
+ * Removes a song from the playlist by its ID
+ *
+ * @param songID Unique identifier of the song to remove
+ */
+void Playlist::removeSong(const std::string& songID) {                          
     for (auto s = songs.begin(); s != songs.end(); s++) {
         if ((*s)->getItemID() == songID) {
             songs.erase(s);
@@ -55,8 +82,13 @@ void Playlist::removeSong(const std::string& songID) {                          
     }
 }
 
-// This function moves a song from one index to another, shifting the other songs accordingly.
-void Playlist::reorderSong(size_t oldIndex, size_t newIndex)                       // Moves a song from one index to another, shifting the other songs accordingly
+/**
+ * Moves a song from one index to another within the playlist
+ *
+ * @param oldIndex Current position of the song
+ * @param newIndex Desired new position 
+ */
+void Playlist::reorderSong(size_t oldIndex, size_t newIndex)                       
 {
     if (oldIndex >= songs.size() || newIndex >= songs.size()) {
         return;
@@ -92,7 +124,11 @@ void Playlist::reorderSong(size_t oldIndex, size_t newIndex)                    
 //*******************************************************************************************************//
 // Sorting the playlist//
 //*******************************************************************************************************//
-void Playlist::sortByArtist()                                                   // Sort by Artist
+
+/**
+ * Sorts the playlist songs alphabetically by artist name
+ */
+void Playlist::sortByArtist()                                                   
 {
     std::sort(songs.begin(), songs.end(),
         [](const std::shared_ptr<Song>& a, const std::shared_ptr<Song>& b) {
@@ -103,7 +139,10 @@ void Playlist::sortByArtist()                                                   
         });
 }
 
-void Playlist::sortByGenre()                                                   // Sort by Genre
+/**
+ * Sorts the playlist songs alphabetically by genre
+ */
+void Playlist::sortByGenre()                                                   
 {
     std::sort(songs.begin(), songs.end(),
         [](const std::shared_ptr<Song>& a, const std::shared_ptr<Song>& b) {
@@ -114,7 +153,10 @@ void Playlist::sortByGenre()                                                   /
         });
 }
 
-void Playlist::sortByAlbum()                                                   // Sort by Album
+/**
+ * Sorts the playlist songs alphabetically by album name
+ */
+void Playlist::sortByAlbum()                                                   
 {
     std::sort(songs.begin(), songs.end(),
         [](const std::shared_ptr<Song>& a, const std::shared_ptr<Song>& b) {

@@ -90,35 +90,41 @@ void Playlist::removeSong(const std::string& songID) {
  */
 void Playlist::reorderSong(size_t oldIndex, size_t newIndex)                       
 {
-    if (oldIndex >= songs.size() || newIndex >= songs.size()) {
-        return;
-    }
 
-    if (oldIndex == newIndex) {
-        return;
-    }
-
-    if (oldIndex < newIndex) {
-        size_t lower = oldIndex;
-        std::shared_ptr<Song> lowerSong = songs[lower];
-        size_t higher = newIndex;
-        size_t i = 0;
-
-        for (i = lower; i < higher; i++) {
-            songs[i] = songs[i + 1];
+    try {
+        if (oldIndex >= songs.size() || newIndex >= songs.size()) {
+            throw std::out_of_range("Invalid index for reordering");
         }
-        songs[i] = lowerSong;
-    }
-    else {
-        size_t lower = newIndex;
-        size_t higher = oldIndex;
-        std::shared_ptr<Song> higherSong = songs[higher];
-        size_t i = 0;
 
-        for (i = higher; i > lower; i--) {
-            songs[i] = songs[i - 1];
+        if (oldIndex == newIndex) {
+            return;
         }
-        songs[i] = higherSong;
+
+        if (oldIndex < newIndex) {
+            size_t lower = oldIndex;
+            std::shared_ptr<Song> lowerSong = songs[lower];
+            size_t higher = newIndex;
+            size_t i = 0;
+
+            for (i = lower; i < higher; i++) {
+                songs[i] = songs[i + 1];
+            }
+            songs[i] = lowerSong;
+        }
+        else {
+            size_t lower = newIndex;
+            size_t higher = oldIndex;
+            std::shared_ptr<Song> higherSong = songs[higher];
+            size_t i = 0;
+
+            for (i = higher; i > lower; i--) {
+                songs[i] = songs[i - 1];
+            }
+            songs[i] = higherSong;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Reorder error: " << e.what() << std::endl;
     }
 }
 //*******************************************************************************************************//
